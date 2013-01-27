@@ -191,6 +191,14 @@ function skewY(a) {
   return skew(0, a)
 }
 
+function perspective(p) {
+  p = - 1/p
+  return [1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, p,
+    0, 0, 0, 1]
+}
+
 function matrix(m) {
   if (isAffine(m)) {
     return 'matrix(' + m.filter(function(_, i){return ~[0,1,4,5,12,13].indexOf(i)})

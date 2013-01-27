@@ -31,16 +31,19 @@
     // translate
     check('translate', matrix(translate(10, 20)), transform('translate(10px, 20px)')),
     check('translate3d', matrix(translate(10, 20, 50)), transform('translate3d(10px, 20px, 50px)')),
-    
+
     // skew
     check('skewX', matrix(skew(10)), transform('skewX(10deg)')),
     check('skewY', matrix(skew(0, 20)), transform('skewY(20deg)')),
     check('skew', matrix(skew(10, 20)), transform('skew(10deg, 20deg)')),
-    
+
     // skew
     check('skewX', matrix(skew(10)), transform('skewX(10deg)')),
     check('skewY', matrix(skew(0, 20)), transform('skewY(20deg)')),
-    check('skew', matrix(skew(10, 20)), transform('skew(10deg, 20deg)'))
+    check('skew', matrix(skew(10, 20)), transform('skew(10deg, 20deg)')),
+
+    // perspective
+    check('perspective', matrix(perspective(100)), transform('perspective(100)')),
   ]
   var failed = tests.filter(function(t) { return !t }).length
   if (failed) {
