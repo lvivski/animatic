@@ -60,6 +60,7 @@ function translate(tx, ty, tz) {
   tx || (tx = 0)
   ty || (ty = 0)
   tz || (tz = 0)
+  
   return [1, 0, 0, 0,
     0, 1, 0, 0,
     0, 0, 1, 0,
