@@ -12,6 +12,18 @@
 <body>
   <script src="js/matrix.js"></script>
   <script>
+  function transform(s) {
+    return new WebKitCSSMatrix(s).toString()
+  }
+
+  function check(name, a, b) {
+    if (a !== b) {
+      console.log(name +'\n'+ a +'\n'+ b)
+      return false
+    } else {
+      return true
+    }
+  }
   var tests = [
     // rotate
     check('rotateX', matrix(rotateX(90)), transform('rotateX(90deg)')),
