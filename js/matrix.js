@@ -1,9 +1,11 @@
 var sin = Math.sin,
     cos = Math.cos,
     tan = Math.tan,
-    abs = Math.abs,
     sqrt = Math.sqrt,
-    pi = Math.PI
+    abs = Math.abs,
+    round = Math.round,
+    pi = Math.PI,
+    slice = Array.prototype.slice
 
 function rad(d) {
   return d ? d * pi / 180 : 0
@@ -46,7 +48,7 @@ function multiply(a, b) { // doesn't work for perspective
 
   return 2 >= arguments.length
     ? c
-    : multiply.apply(null, [c].concat([].slice.call(arguments, 2)))
+    : multiply.apply(null, [c].concat(slice.call(arguments, 2)))
 }
 
 function translate(tx, ty, tz) {
@@ -204,11 +206,18 @@ function perspective(p) {
     0, 0, 0, 1]
 }
 
+function clamp(n) {
+  return round(n * 1000000) / 1000000;
+}
+
+function filterAffine(_, i) {
+  return [0,1,4,5,12,13].indexOf(i) !== -1
+}
+
 function matrix(m) {
   if (isAffine(m)) {
-    return 'matrix(' + m.filter(function(_, i){return ~[0,1,4,5,12,13].indexOf(i)})
-      .map(function(e){return e.toFixed(6)}).join(', ') + ')'
+    return 'matrix(' + m.filter(filterAffine).map(clamp).join(', ') + ')'
   }
-  return 'matrix3d(' + m.map(function(e){return e.toFixed(6)}).join(', ') + ')'
+  return 'matrix3d(' + m.map(clamp).join(', ') + ')'
 }
 

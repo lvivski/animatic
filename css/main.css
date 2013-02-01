@@ -11,7 +11,7 @@ body {
   padding: 0;
 }
 
-.world {
+.container {
   display: inline-block;
   width: 100%;
   height: 100%;
@@ -22,7 +22,7 @@ body {
   width: 100px;
   height: 100px;
   display: inline-block;
-  background: blue;
+  background: rgb(70,120,255);
   margin: 10px;
 }
 
