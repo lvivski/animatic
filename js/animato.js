@@ -215,13 +215,14 @@ for (var i = 0; i < 50; i++) {
   var item = new Item({
     dom: el
   })
-  item.update = function(i){
-    return function(){
-      return
+  
+  !function(i){
+    item.update = function(){
       var time = Date.now() / 1000;
       this.setTransform(matrix(translateZ(Math.cos(5 * (10 * i*i + time)) * 10)))
     }
   }(i)
+  
   world.items.push(item)
   container.dom.appendChild(el)
 }
