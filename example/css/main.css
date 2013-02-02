@@ -24,5 +24,6 @@ body {
   display: inline-block;
   background: rgb(70,120,255);
   margin: 10px;
+  border: 1px solid;
 }
 
