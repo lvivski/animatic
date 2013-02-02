@@ -1,14 +1,7 @@
-var sin = Math.sin,
-    cos = Math.cos,
-    tan = Math.tan,
-    sqrt = Math.sqrt,
-    abs = Math.abs,
-    round = Math.round,
-    pi = Math.PI,
-    slice = Array.prototype.slice
+var slice = Array.prototype.slice
 
 function rad(d) {
-  return d ? d * pi / 180 : 0
+  return d ? d * Math.PI / 180 : 0
 }
 
 function isAffine(m) {
@@ -101,14 +94,14 @@ function rotate(ax, ay, az) {
   ay = rad(ay)
   az = rad(az)
 
-  var sx = sin(ax),
-      cx = cos(ax),
+  var sx = Math.sin(ax),
+      cx = Math.cos(ax),
 
-      sy = sin(ay),
-      cy = cos(ay),
+      sy = Math.sin(ay),
+      cy = Math.cos(ay),
 
-      sz = sin(az),
-      cz = cos(az)
+      sz = Math.sin(az),
+      cz = Math.cos(az)
 
   return [cy*cz, cx*sz+sx*sy*cz, sx*sz-cx*sy*cz, 0,
     -cy*sz, cx*cz-sx*sy*sz, sx*cz+cx*sy*sz, 0,
@@ -119,8 +112,8 @@ function rotate(ax, ay, az) {
 function rotateX(a) {
   a = rad(a)
 
-  var s = sin(a),
-      c = cos(a)
+  var s = Math.sin(a),
+      c = Math.cos(a)
 
   return [1, 0, 0, 0,
     0, c, s, 0,
@@ -131,8 +124,8 @@ function rotateX(a) {
 function rotateY(a) {
   a = rad(a)
 
-  var s = sin(a),
-      c = cos(a)
+  var s = Math.sin(a),
+      c = Math.cos(a)
 
   return [c, 0, -s, 0,
     0, 1, 0, 0,
@@ -143,8 +136,8 @@ function rotateY(a) {
 function rotateZ(a) {
   a = rad(a)
 
-  var s = sin(a),
-      c = cos(a)
+  var s = Math.sin(a),
+      c = Math.cos(a)
 
   return [c, s, 0, 0,
     -s, c, 0, 0,
@@ -155,9 +148,9 @@ function rotateZ(a) {
 function rotate3d(x, y, z, a) {
   a = rad(a)
 
-  var s = sin(a),
-      c = cos(a),
-      len = sqrt(x*x + y*y + z*z)
+  var s = Math.sin(a),
+      c = Math.cos(a),
+      len = Math.sqrt(x*x + y*y + z*z)
 
   if (len === 0) {
     x = 0
@@ -184,8 +177,8 @@ function skew(ax, ay) {
   ax = rad(ax)
   ay = rad(ay)
 
-  return [1, tan(ay), 0, 0,
-    tan(ax), 1, 0, 0,
+  return [1, Math.tan(ay), 0, 0,
+    Math.tan(ax), 1, 0, 0,
     0, 0, 1, 0,
     0, 0, 0, 1]
 }
@@ -207,7 +200,7 @@ function perspective(p) {
 }
 
 function clamp(n) {
-  return round(n * 1000000) / 1000000;
+  return Math.round(n * 1000000) / 1000000;
 }
 
 function filterAffine(_, i) {

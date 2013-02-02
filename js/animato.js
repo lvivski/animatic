@@ -8,15 +8,15 @@ World.prototype.init = function init() {
   var self = this,
       onFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
       
-  onFrame(function update() {
-    self.update()
+  onFrame(function update(timestamp) {
+    self.update(timestamp)
     onFrame(update)
   })
 }
 
-World.prototype.update = function update() {
+World.prototype.update = function update(timestamp) {
   for (var i = 0, len = this.items.length; i < len; i++) {
-    this.items[i].update()
+    this.items[i].update(timestamp)
   }
 }
 
@@ -44,9 +44,9 @@ Item.prototype.setTransform = function setTransform(transform) {
   this.dom.style.webkitTransform = transform
 }
 
-Item.prototype.update = function update() {
+Item.prototype.update = function update(timestamp) {
   var self = this
-  this.animate()
+  this.animate(timestamp)
   this.setTransform(matrix(
       multiply.apply(null,
         Object.keys(self.state).map(function (t) {
@@ -74,15 +74,14 @@ Item.prototype.scale = function scale(s) {
   this.state.scale[2] += s[2]
 }
 
-
 Item.prototype.clear = function clear() {
   this.state.translate = [0, 0, 0]
   this.state.rotate = [0, 0, 0]
   this.state.scale = [0, 0, 0]
 }
 
-Item.prototype.animation = function animation(transform, duration, callback) {
-  this.animations.push(new Animation(this, transform, duration, callback))
+Item.prototype.animation = function animation(transform, duration, easing, callback) {
+  this.animations.push(new Animation(this, transform, duration, easing, callback))
   
   this.transform = {
     translate: [0, 0, 0],
@@ -91,12 +90,12 @@ Item.prototype.animation = function animation(transform, duration, callback) {
   }
 }
 
-Item.prototype.animate = function animate() {
+Item.prototype.animate = function animate(timestamp) {
   if (this.animations.length === 0 && this._dirty) {
     this.animation({
       translate: this.transform.translate,
       rotate: this.transform.rotate,
-    }, 500)
+    })
     this._dirty = false
   }
   if (this.animations.length === 0) return
@@ -109,7 +108,7 @@ Item.prototype.animate = function animate() {
       first.end()
       continue
     }
-    first.run()
+    first.run(timestamp)
     break
   }
 }
@@ -129,7 +128,7 @@ Item.prototype.reset = function reset() {
   }
 }
 
-function Animation(item, transform, duration, callback) {
+function Animation(item, transform, duration, easing, callback) {
   this.item = item
   this.initial = {
     translate: item.state.translate,
@@ -143,7 +142,9 @@ function Animation(item, transform, duration, callback) {
 
   this.start = null
   
-  this.duration = duration || 0
+  this.duration = duration || 500
+  
+  this.easing = easings[easing] || easings.linear
 
   this.callback = callback
 }
@@ -153,17 +154,19 @@ Animation.prototype.init = function init() {
   this.start = Date.now()
 }
 
-Animation.prototype.run = function run() {
-  var percent = (Date.now() - this.start) / this.duration
+Animation.prototype.run = function run(timestamp) {
+  var percent = (timestamp - this.start) / this.duration
 
   if (percent < 0)
     percent = 0
     
-  var transform = this.item.state,
+  percent = this.easing(percent)
+    
+  var state = this.item.state,
       initial = this.initial
 
   if (this.translate && (this.translate[0] || this.translate[1] || this.translate[2])) {
-    transform.translate = [
+    state.translate = [
       initial.translate[0] + this.translate[0] * percent,
       initial.translate[1] + this.translate[1] * percent,
       initial.translate[2] + this.translate[2] * percent
@@ -171,7 +174,7 @@ Animation.prototype.run = function run() {
   }
   
   if (this.rotate && (this.rotate[0] || this.rotate[1] || this.rotate[2])) {
-    transform.rotate = [
+    state.rotate = [
       initial.rotate[0] + this.rotate[0] * percent,
       initial.rotate[1] + this.rotate[1] * percent,
       initial.rotate[2] + this.rotate[2] * percent
@@ -179,7 +182,7 @@ Animation.prototype.run = function run() {
   } 
   
   if (this.scale && (this.scale[0] || this.scale[1] || this.scale[2])) {
-    transform.scale = [
+    state.scale = [
       initial.scale[0] + this.scale[0] * percent,
       initial.scale[1] + this.scale[1] * percent,
       initial.scale[2] + this.scale[2] * percent
@@ -234,31 +237,30 @@ window.addEventListener('keyup', function(){container.reset()}, false)
 
 function onKeyDown(e) {
   var transform = container.transform
-
   switch(e.keyCode) {
     case keys.UP:
-      transform.rotate[0] = 10
+      transform.rotate[0] = 50
       break
     case keys.DOWN:
-      transform.rotate[0] = -10
+      transform.rotate[0] = -50
       break
     case keys.LEFT:
-      transform.rotate[1] = -10
+      transform.rotate[1] = -50
       break
     case keys.RIGHT:
-      transform.rotate[1] = 10
+      transform.rotate[1] = 50
       break
     case keys.w:
-      transform.translate[1] = 10
+      transform.translate[1] = 100
       break
     case keys.s:
-      transform.translate[1] = -10
+      transform.translate[1] = -100
       break
     case keys.a:
-      transform.translate[0] = -10
+      transform.translate[0] = -100
       break
     case keys.d:
-      transform.translate[0] = 10
+      transform.translate[0] = 100
       break
   }
   container._dirty = true
