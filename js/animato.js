@@ -20,17 +20,28 @@ World.prototype.update = function update() {
   }
 }
 
-
 function Item(options) {
   this.dom = options.dom
   
-  this.transform = {
+  this.state = {
     translate: [0, 0, 0],
     rotate: [0, 0, 0],
     scale: [1, 1, 1]
   }
   
+  this.transform = {
+    translate: [0, 0, 0],
+    rotate: [0, 0, 0],
+    scale: [0, 0, 0]
+  }
+  
   this.animations = []
+  
+  this._dirty = false
+}
+
+Item.prototype.setTransform = function setTransform(transform) {
+  this.dom.style.webkitTransform = transform
 }
 
 Item.prototype.update = function update() {
@@ -38,56 +49,56 @@ Item.prototype.update = function update() {
   this.animate()
   this.setTransform(matrix(
       multiply.apply(null,
-        Object.keys(self.transform).map(function (t) {
-          return window[t].apply(null,self.transform[t])
+        Object.keys(self.state).map(function (t) {
+          return window[t].apply(null,self.state[t])
         })
       )
   ))
 }
 
-Item.prototype.setTransform = function setTransform(transform) {
-  this.dom.style.webkitTransform = transform
-}
-
-Item.prototype.reset = function reset() {
-  if (this.animations.length === 0) return
-  for (var i = 0, len = this.animations.length; i < len; i++) {
-    var a = this.animations[i]
-    a.end()
-  }
-  this.animations = []
-}
-
 Item.prototype.translate = function translate(t) {
-  this.transform.translate[0] += t[0]
-  this.transform.translate[1] += t[1]
-  this.transform.translate[2] += t[2]
+  this.state.translate[0] += t[0]
+  this.state.translate[1] += t[1]
+  this.state.translate[2] += t[2]
 }
  
 Item.prototype.rotate = function rotate(r) {
-  this.transform.rotate[0] += r[0]
-  this.transform.rotate[1] += r[1]
-  this.transform.rotate[2] += r[2]
+  this.state.rotate[0] += r[0]
+  this.state.rotate[1] += r[1]
+  this.state.rotate[2] += r[2]
 }
  
 Item.prototype.scale = function scale(s) {
-  this.transform.scale[0] += s[0]
-  this.transform.scale[1] += s[1]
-  this.transform.scale[2] += s[2]
+  this.state.scale[0] += s[0]
+  this.state.scale[1] += s[1]
+  this.state.scale[2] += s[2]
 }
 
 
 Item.prototype.clear = function clear() {
-  this.transform.translate = [0, 0, 0]
-  this.transform.rotate = [0, 0, 0]
-  this.transform.scale = [0, 0, 0]
+  this.state.translate = [0, 0, 0]
+  this.state.rotate = [0, 0, 0]
+  this.state.scale = [0, 0, 0]
 }
 
 Item.prototype.animation = function animation(transform, duration, callback) {
   this.animations.push(new Animation(this, transform, duration, callback))
+  
+  this.transform = {
+    translate: [0, 0, 0],
+    rotate: [0, 0, 0],
+    scale: [0, 0, 0]
+  }
 }
 
 Item.prototype.animate = function animate() {
+  if (this.animations.length === 0 && this._dirty) {
+    this.animation({
+      translate: this.transform.translate,
+      rotate: this.transform.rotate,
+    }, 500)
+    this._dirty = false
+  }
   if (this.animations.length === 0) return
   
   while (this.animations.length !== 0) {
@@ -103,9 +114,28 @@ Item.prototype.animate = function animate() {
   }
 }
 
+Item.prototype.reset = function reset() {
+  if (this.animations.length === 0) return
+  for (var i = 0, len = this.animations.length; i < len; i++) {
+    var a = this.animations[i]
+    a.end()
+  }
+  this.animations = []
+  
+  this.transform = {
+    translate: [0, 0, 0],
+    rotate: [0, 0, 0],
+    scale: [0, 0, 0]
+  }
+}
+
 function Animation(item, transform, duration, callback) {
   this.item = item
-  this.initial = item.transform
+  this.initial = {
+    translate: item.state.translate,
+    rotate: item.state.rotate,
+    scale: item.state.scale
+  }
   
   this.translate = transform.translate
   this.rotate = transform.rotate
@@ -129,7 +159,7 @@ Animation.prototype.run = function run() {
   if (percent < 0)
     percent = 0
     
-  var transform = this.item.transform,
+  var transform = this.item.state,
       initial = this.initial
 
   if (this.translate && (this.translate[0] || this.translate[1] || this.translate[2])) {
@@ -202,41 +232,33 @@ window.addEventListener('keydown', onKeyDown, false)
 window.addEventListener('keyup', function(){container.reset()}, false)
 
 function onKeyDown(e) {
-  if (container.animations.length !== 0) return
-  
-  var translate = [0, 0, 0],
-      rotate = [0, 0, 0]
+  var transform = container.transform
 
   switch(e.keyCode) {
     case keys.UP:
-      rotate[0] = 1
+      transform.rotate[0] = 10
       break
     case keys.DOWN:
-      rotate[0] = -1
+      transform.rotate[0] = -10
       break
     case keys.LEFT:
-      rotate[1] = -1
+      transform.rotate[1] = -10
       break
     case keys.RIGHT:
-      rotate[1] = 1
+      transform.rotate[1] = 10
       break
     case keys.w:
-      translate[1] = 10
+      transform.translate[1] = 10
       break
     case keys.s:
-      translate[1] = -10
+      transform.translate[1] = -10
       break
     case keys.a:
-      translate[0] = -10
+      transform.translate[0] = -10
       break
     case keys.d:
-      translate[0] = 10
+      transform.translate[0] = 10
       break
   }
-
-  container.animation({
-    translate: translate,
-    rotate: rotate
-  }, 500)
-
+  container._dirty = true
 }
