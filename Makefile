@@ -23,7 +23,8 @@ anima.js: ${FILES}
 
 anima.min.js: anima.js
 	@rm -f $@
-	@$(JS_COMPILER) $< -mt -c -nc -o $@
+	@$(JS_COMPILER) $< -mt -c -nc -o $@ \
+		&& du -h anima.js anima.min.js
 
 install:
 	mkdir -p node_modules
