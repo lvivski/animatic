@@ -1,4 +1,4 @@
-var Matrix = (function(){
+var Matrix = window.Matrix = (function(){
   var slice = Array.prototype.slice,
       radians = Math.PI / 180
 
@@ -215,6 +215,3 @@ var Matrix = (function(){
   }
 
 }())
-
-
-

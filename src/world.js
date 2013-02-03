@@ -13,8 +13,10 @@ World.prototype.init = function init() {
   })
 }
 
-World.prototype.add = function add(item) {
-  return this.items.push(item)
+World.prototype.add = function add(node) {
+  var item = new Item(node)
+  this.items.push(item)
+  return item
 }
 
 World.prototype.update = function update(timestamp) {
@@ -26,4 +28,3 @@ World.prototype.update = function update(timestamp) {
 World.prototype.on = function on(event, handler) {
   window.addEventListener(event, handler)
 }
-

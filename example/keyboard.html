@@ -12,16 +12,10 @@
 <body>
   <div class="container"></div>
 </body>
-<script src="../lib/src/matrix.js"></script>
-<script src="../lib/src/easings.js"></script>
-<script src="../lib/src/eventemmiter.js"></script>
-<script src="../lib/src/animation.js"></script>
-<script src="../lib/src/world.js"></script>
-<script src="../lib/src/item.js"></script>
+<script src="../anima.js"></script>
 <script>
- var container = new Item({
-        dom: document.querySelector('.container')
-      }),
+  var world = anima.init(),
+      container = world.add(document.querySelector('.container')),
       keys = {
         UP: 38,
         DOWN: 40,
@@ -32,17 +26,11 @@
         d: 65,
         a: 68
       }
-      
-  var world = new World()
-
-  world.add(container)
 
   for (var i = 0; i < 50; i++) {
     var el = document.createElement('div')
     el.className = 'block'
-    var item = new Item({
-      dom: el
-    })
+    var item = world.add(el)
   
     !function(i){
       item.update = function(timestamp){
@@ -50,8 +38,7 @@
         this.dom.style.webkitTransform = Matrix.toString(Matrix.translateZ(Math.cos(2 * (i*i + time)) * 50))
       }
     }(i)
-  
-    world.add(item)
+    
     container.dom.appendChild(el)
   }
   

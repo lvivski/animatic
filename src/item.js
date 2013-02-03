@@ -1,7 +1,7 @@
-function Item(options) {
+function Item(node) {
   EventEmitter.call(this)
   
-  this.dom = options.dom
+  this.dom = node
   
   this.animations = []
   

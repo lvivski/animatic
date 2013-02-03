@@ -12,20 +12,10 @@
 <body>
   <div class="block"></div>
 </body>
-<script src="../lib/src/matrix.js"></script>
-<script src="../lib/src/easings.js"></script>
-<script src="../lib/src/eventemmiter.js"></script>
-<script src="../lib/src/animation.js"></script>
-<script src="../lib/src/world.js"></script>
-<script src="../lib/src/item.js"></script>
+<script src="../anima.js"></script>
 <script>
-  var world = new World()
-      item = new Item({
-        dom: document.querySelector('.block')
-      })
-      
-  world.items.push(item)
-  world.init()
+  var world = anima.init()
+      item = world.add(document.querySelector('.block'))
   
   item
     .animation({
