@@ -4,6 +4,7 @@ FILES = \
 	src/easings.js \
 	src/eventemmiter.js \
 	src/animation.js \
+	src/parallel.js \
 	src/world.js \
 	src/matrix.js \
 	src/item.js
@@ -26,7 +27,7 @@ anima.min.js: anima.js
 	@$(JS_COMPILER) $< -mt -c -nc -o $@ \
 		&& du -h anima.js anima.min.js
 
-install:
+deps:
 	mkdir -p node_modules
 	npm install
 

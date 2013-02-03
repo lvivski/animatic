@@ -24,7 +24,7 @@ var Matrix = window.Matrix = {
 
     return 2 >= arguments.length
       ? c
-      : multiply.apply(null, [c].concat(Array.ptototype.slice.call(arguments, 2)))
+      : multiply.apply(null, [c].concat(Array.prototype.slice.call(arguments, 2)))
   },
   translate: function translate(tx, ty, tz) {
     tx || (tx = 0)

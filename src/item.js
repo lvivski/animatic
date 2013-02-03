@@ -85,6 +85,13 @@ Item.prototype.animation = function animation(transform, duration, easing) {
   return animation
 }
 
+Item.prototype.paranim = 
+Item.prototype.parallel = function parallel(animations) {
+  var parallel = new Parallel(this, animations)
+  this.animations.push(parallel)
+  return parallel
+}
+
 Item.prototype.animate = function animate(timestamp) {
   if (this.animations.length === 0 && this._dirty) {
     this.animation({

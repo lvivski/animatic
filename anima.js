@@ -123,6 +123,55 @@
     !abort && this.transform(1);
     this.emit("end");
   };
+  function Parallel(item, animations) {
+    EventEmitter.call(this);
+    this.item = item;
+    function A(args) {
+      Animation.apply(this, args);
+    }
+    A.prototype = Animation.prototype;
+    this.animations = animations.map(function(a) {
+      return new A([ item ].concat(a));
+    });
+    this.start = null;
+    this.duration = Math.max.apply(null, animations.map(function(a) {
+      return a[1] || 500;
+    }));
+  }
+  Parallel.prototype = new EventEmitter();
+  Parallel.prototype.constructor = Parallel;
+  Parallel.prototype.init = function init() {
+    if (this.start !== null) return;
+    this.start = Date.now();
+    for (var i = 0, len = this.animations.length; i < len; ++i) {
+      var a = this.animations[i];
+      a.init();
+    }
+  };
+  Parallel.prototype.animation = function animaiton() {
+    return this.item.animation.apply(this.item, arguments);
+  };
+  Parallel.prototype.parallel = function animaiton() {
+    return this.item.parallel.apply(this.item, arguments);
+  };
+  Parallel.prototype.run = function run(timestamp) {
+    for (var i = 0; i < this.animations.length; ++i) {
+      var a = this.animations[i];
+      if (a.start + a.duration <= Date.now()) {
+        this.animations.splice(i, 1);
+        a.end();
+        --i;
+        continue;
+      }
+      a.run(timestamp);
+    }
+  };
+  Parallel.prototype.end = function end(abort) {
+    this.animations.forEach(function(a) {
+      a.end(abort);
+    });
+    this.emit("end");
+  };
   function World(items) {
     this.items = items || [];
     this.init();
@@ -166,7 +215,7 @@
       c[12] = a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + b[12];
       c[13] = a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + b[13];
       c[14] = a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + b[14];
-      return 2 >= arguments.length ? c : multiply.apply(null, [ c ].concat(Array.ptototype.slice.call(arguments, 2)));
+      return 2 >= arguments.length ? c : multiply.apply(null, [ c ].concat(Array.prototype.slice.call(arguments, 2)));
     },
     translate: function translate(tx, ty, tz) {
       tx || (tx = 0);
@@ -336,6 +385,11 @@
       scale: [ 0, 0, 0 ]
     };
     return animation;
+  };
+  Item.prototype.paranim = Item.prototype.parallel = function parallel(animations) {
+    var parallel = new Parallel(this, animations);
+    this.animations.push(parallel);
+    return parallel;
   };
   Item.prototype.animate = function animate(timestamp) {
     if (this.animations.length === 0 && this._dirty) {
