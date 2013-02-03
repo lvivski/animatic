@@ -11,7 +11,7 @@
   <script src="../src/matrix.js"></script>
   <script>
   function transform(s) {
-    return new WebKitCSSMatrix(s).toString().replace(/\.000000/g,'').replace(/ /g, '')
+    return new WebKitCSSMatrix(s).toString()
   }
 
   function check(name, a, b) {
@@ -25,39 +25,39 @@
   
   var tests = [
     // rotate
-    check('rotateX', Matrix.toString(Matrix.rotateX(90)), transform('rotateX(90deg)')),
-    check('rotateX(3d)', Matrix.toString(Matrix.rotate3d(1,0,0, 90)), transform('rotate3d(1,0,0, 90deg)')),
-    check('-rotateX(3d)', Matrix.toString(Matrix.rotate3d(-1,0,0, 90)), transform('rotate3d(-1,0,0, 90deg)')),
-    check('rotateY', Matrix.toString(Matrix.rotateY(90)), transform('rotateY(90deg)')),
-    check('rotateY(3d)', Matrix.toString(Matrix.rotate3d(0,1,0, 90)), transform('rotate3d(0,1,0, 90deg)')),
-    check('-rotateY(3d)', Matrix.toString(Matrix.rotate3d(0,-1,0, 90)), transform('rotate3d(0,-1,0, 90deg)')),
-    check('rotateZ', Matrix.toString(Matrix.rotateZ(90)), transform('rotateZ(90deg)')),
-    check('rotateZ(3d)', Matrix.toString(Matrix.rotate3d(0,0,1, 90)), transform('rotate3d(0,0,1, 90deg)')),
-    check('-rotateZ(3d)', Matrix.toString(Matrix.rotate3d(0,0,-1, 90)), transform('rotate3d(0,0,-1, 90deg)')),
-    check('rotateXY', Matrix.toString(Matrix.rotate(90, 90)), transform('rotateX(90deg) rotateY(90deg)')),
-    check('rotateXY(3d)', Matrix.toString(Matrix.rotate3d(1,1,0, 90)), transform('rotate3d(1,1,0, 90deg)')),
-    check('rotateXYZ', Matrix.toString(Matrix.rotate(90, 90, 90)), transform('rotateX(90deg) rotateY(90deg) rotateZ(90deg)')),
-    check('rotateXYZ(3d)', Matrix.toString(Matrix.rotate3d(1,1,1, 90)), transform('rotate3d(1,1,1, 90deg)')),
+    check('rotateX', Matrix.toTestString(Matrix.rotateX(90)), transform('rotateX(90deg)')),
+    check('rotateX(3d)', Matrix.toTestString(Matrix.rotate3d(1,0,0, 90)), transform('rotate3d(1,0,0, 90deg)')),
+    check('-rotateX(3d)', Matrix.toTestString(Matrix.rotate3d(-1,0,0, 90)), transform('rotate3d(-1,0,0, 90deg)')),
+    check('rotateY', Matrix.toTestString(Matrix.rotateY(90)), transform('rotateY(90deg)')),
+    check('rotateY(3d)', Matrix.toTestString(Matrix.rotate3d(0,1,0, 90)), transform('rotate3d(0,1,0, 90deg)')),
+    check('-rotateY(3d)', Matrix.toTestString(Matrix.rotate3d(0,-1,0, 90)), transform('rotate3d(0,-1,0, 90deg)')),
+    check('rotateZ', Matrix.toTestString(Matrix.rotateZ(90)), transform('rotateZ(90deg)')),
+    check('rotateZ(3d)', Matrix.toTestString(Matrix.rotate3d(0,0,1, 90)), transform('rotate3d(0,0,1, 90deg)')),
+    check('-rotateZ(3d)', Matrix.toTestString(Matrix.rotate3d(0,0,-1, 90)), transform('rotate3d(0,0,-1, 90deg)')),
+    check('rotateXY', Matrix.toTestString(Matrix.rotate(90, 90)), transform('rotateX(90deg) rotateY(90deg)')),
+    check('rotateXY(3d)', Matrix.toTestString(Matrix.rotate3d(1,1,0, 90)), transform('rotate3d(1,1,0, 90deg)')),
+    check('rotateXYZ', Matrix.toTestString(Matrix.rotate(90, 90, 90)), transform('rotateX(90deg) rotateY(90deg) rotateZ(90deg)')),
+    check('rotateXYZ(3d)', Matrix.toTestString(Matrix.rotate3d(1,1,1, 90)), transform('rotate3d(1,1,1, 90deg)')),
     -
     // translate
-    check('translate', Matrix.toString(Matrix.translate(10, 20)), transform('translate(10px, 20px)')),
-    check('translate3d', Matrix.toString(Matrix.translate(10, 20, 50)), transform('translate3d(10px, 20px, 50px)')),
+    check('translate', Matrix.toTestString(Matrix.translate(10, 20)), transform('translate(10px, 20px)')),
+    check('translate3d', Matrix.toTestString(Matrix.translate(10, 20, 50)), transform('translate3d(10px, 20px, 50px)')),
 
     // skew
-    check('skewX', Matrix.toString(Matrix.skew(10)), transform('skewX(10deg)')),
-    check('skewY', Matrix.toString(Matrix.skew(0, 20)), transform('skewY(20deg)')),
-    check('skew', Matrix.toString(Matrix.skew(10, 20)), transform('skew(10deg, 20deg)')),
+    check('skewX', Matrix.toTestString(Matrix.skewX(10)), transform('skewX(10deg)')),
+    check('skewY', Matrix.toTestString(Matrix.skewY(20)), transform('skewY(20deg)')),
+    check('skew', Matrix.toTestString(Matrix.skew(10, 20)), transform('skew(10deg, 20deg)')),
 
-    // skew
-    check('skewX', Matrix.toString(Matrix.skew(10)), transform('skewX(10deg)')),
-    check('skewY', Matrix.toString(Matrix.skew(0, 20)), transform('skewY(20deg)')),
-    check('skew', Matrix.toString(Matrix.skew(10, 20)), transform('skew(10deg, 20deg)')),
+    // scale
+    check('scaleX', Matrix.toTestString(Matrix.scaleX(10)), transform('scaleX(10)')),
+    check('scaleY', Matrix.toTestString(Matrix.scaleY(20)), transform('scaleY(20)')),
+    check('scale', Matrix.toTestString(Matrix.scale(10, 20)), transform('scale(10, 20)')),
 
     // perspective
-    check('perspective', Matrix.toString(Matrix.perspective(100)), transform('perspective(100)')),
+    check('perspective', Matrix.toTestString(Matrix.perspective(100)), transform('perspective(100)')),
 
     // multiply
-    check('multiply', Matrix.toString(Matrix.multiply(Matrix.translate(10, 20), Matrix.rotateX(90))), Matrix.transform('rotateX(90deg) translate(10px, 20px)')),
+    check('multiply', Matrix.toTestString(Matrix.multiply(Matrix.translate(10, 20), Matrix.rotateX(90))), transform('rotateX(90deg) translate(10px, 20px)')),
   ]
   
   var failed = tests.filter(function(t) { return !t }).length
