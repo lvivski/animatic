@@ -35,7 +35,7 @@
       
   var world = new World()
 
-  world.items.push(container)
+  world.add(container)
 
   for (var i = 0; i < 50; i++) {
     var el = document.createElement('div')
@@ -51,11 +51,9 @@
       }
     }(i)
   
-    world.items.push(item)
+    world.add(item)
     container.dom.appendChild(el)
   }
-
-  world.init()
   
   world.on('keydown', onKeyDown)
   world.on('keyup', function(){ container.reset() })  
