@@ -362,10 +362,8 @@
     this.style();
   };
   Item.prototype.style = function() {
-    var self = this;
-    this.dom.style.webkitTransform = Matrix.toString(Matrix.multiply.apply(null, Object.keys(self.state).map(function(t) {
-      return Matrix[t].apply(null, self.state[t]);
-    })));
+    var state = this.state;
+    this.dom.style.webkitTransform = Matrix.toString(Matrix.multiply(Matrix.translate.apply(null, state.translate), Matrix.rotate.apply(null, state.rotate), Matrix.scale.apply(null, state.scale)));
   };
   Item.prototype.translate = function translate(t) {
     this.state.translate[0] += t[0];

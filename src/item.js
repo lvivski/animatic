@@ -40,12 +40,12 @@ Item.prototype.update = function update(tick) {
 }
 
 Item.prototype.style = function() {
-  var self = this
+  var state = this.state
   this.dom.style.webkitTransform = Matrix.toString(
-    Matrix.multiply.apply(null,
-      Object.keys(self.state).map(function (t) {
-        return Matrix[t].apply(null, self.state[t])
-      })
+    Matrix.multiply(
+      Matrix.translate.apply(null, state.translate),
+      Matrix.rotate.apply(null, state.rotate),
+      Matrix.scale.apply(null, state.scale)
     )
   )
 }
