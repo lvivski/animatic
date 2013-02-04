@@ -18,6 +18,7 @@
 </body>
 <script src="../anima.js"></script>
 <script>
+window.addEventListener("click", function runtime(){
   var world = anima.init(),
       item = world.add(document.querySelector('.block'))
   
@@ -50,6 +51,6 @@
       translate: [0, 50, 0],
       rotate: [0,0,0]
     }, 150, 'ease-in-quad')
-  
+})
 </script>
 </html>

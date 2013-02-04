@@ -14,6 +14,7 @@
 </body>
 <script src="../anima.js"></script>
 <script>
+window.addEventListener("click", function runtime(){
   var world = anima.init()
       item = world.add(document.querySelector('.block'))
   
@@ -25,6 +26,6 @@
     .animation({
       translate: [100, 0, 0],
     }, 500, 'linear', 500)
-  
+})
 </script>
 </html>
