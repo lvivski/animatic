@@ -23,12 +23,11 @@ Animation.prototype.init = function init(tick) {
   if (this.start !== null) return
   this.start = tick
   
-  function id(x){return x}
   var state = this.item.state
   this.initial = {
-    translate: state.translate.map(id),
-    rotate: state.rotate.map(id),
-    scale: state.scale.map(id)
+    translate: state.translate.slice(),
+    rotate: state.rotate.slice(),
+    scale: state.scale.slice()
   }
 }
 
