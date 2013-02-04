@@ -24,7 +24,8 @@ anima.js: ${FILES}
 
 anima.min.js: anima.js
 	@rm -f $@
-	@$(JS_COMPILER) $< -mt -c -nc -o $@ \
+	@$(JS_COMPILER) $< -c -m -o $@ \
+		--source-map $@.map \
 		&& du -h anima.js anima.min.js
 
 deps:
@@ -32,4 +33,4 @@ deps:
 	npm install
 
 clean:
-	rm -f anima*.js
+	rm -f anima*.js*

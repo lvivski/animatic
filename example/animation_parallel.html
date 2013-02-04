@@ -16,8 +16,10 @@
 <body>
   <div class="block"></div>
 </body>
-<script src="../anima.js"></script>
+<script src="../anima.min.js"></script>
 <script>
+
+window.addEventListener("click", function runtime(){
   var world = anima.init()
       item = world.add(document.querySelector('.block'))
   
@@ -78,6 +80,8 @@
           translate: [20, 0, 0]
         }, 150]
       ])
+})
+  
   
 </script>
 </html>
