@@ -26,8 +26,7 @@ Parallel.prototype.init = function init() {
   if (this.start !== null) return
   this.start = Date.now()
   for (var i = 0, len = this.animations.length; i < len; ++i) {
-    var a = this.animations[i]
-    a.init()
+    this.animations[i].init()
   }
 }
 
@@ -53,8 +52,8 @@ Parallel.prototype.run = function run(timestamp) {
 }
 
 Parallel.prototype.end = function end(abort) {
-  this.animations.forEach(function(a){
-    a.end(abort)
-  })
+  for (var i = 0, len = this.animations.length; i < len; ++i) {
+    this.animations[i].end(abort)
+  }
   this.emit('end')
 }

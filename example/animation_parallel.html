@@ -6,7 +6,11 @@
   <title>Matrix</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
-  <style></style>
+  <style>
+    .block {
+      border-radius: 50%;
+    }
+  </style>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
@@ -47,15 +51,15 @@
           translate: [0, -100, 0]
         }, 350, 'ease-out-quad'],
         [{
-          translate: [30, 0, 0]
+          translate: [50, 0, 0]
         }, 350]
       ])
       .parallel([
         [{
           translate: [0, 100, 0]
-        }, 300, 'ease-out-quad'],
+        }, 300, 'ease-in-quad'],
         [{
-          translate: [30, 0, 0]
+          translate: [50, 0, 0]
         }, 300]
       ])
       .parallel([
@@ -63,7 +67,7 @@
           translate: [0, -50, 0]
         }, 200, 'ease-out-quad'],
         [{
-          translate: [10, 0, 0]
+          translate: [20, 0, 0]
         }, 200]
       ])
       .parallel([
@@ -71,7 +75,7 @@
           translate: [0, 50, 0]
         }, 150, 'ease-in-quad'],
         [{
-          translate: [10, 0, 0]
+          translate: [20, 0, 0]
         }, 150]
       ])
   
