@@ -35,7 +35,8 @@
     !function(i){
       item.update = function(timestamp){
         var time = timestamp / 1000;
-        this.dom.style.webkitTransform = Matrix.toString(Matrix.translateZ(Math.cos(2 * (i*i + time)) * 50))
+        this.state.translate[2] = Math.cos(2 * (i*i + time)) * 50
+        this.style()
       }
     }(i)
     

@@ -1,6 +1,6 @@
 var radians = Math.PI / 180
 
-var Matrix = window.Matrix = {
+var Matrix = {
   id: function id() {
     return [1, 0, 0, 0,
       0, 1, 0, 0,

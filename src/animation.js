@@ -2,8 +2,7 @@ function Animation(item, transform, duration, easing, delay) {
   EventEmitter.call(this)
   
   this.item = item
-  
-  this.translate = transform.translate
+  this.translate = transform.translate 
   this.rotate = transform.rotate
   this.scale = transform.scale
   
@@ -19,9 +18,9 @@ function Animation(item, transform, duration, easing, delay) {
 Animation.prototype = new EventEmitter
 Animation.prototype.constructor = Animation
 
-Animation.prototype.init = function init() {
+Animation.prototype.init = function init(tick) {
   if (this.start !== null) return
-  this.start = Date.now()
+  this.start = tick
   function id(x){return x}
   var state = this.item.state
   this.initial = {
@@ -35,56 +34,37 @@ Animation.prototype.animation = function animaiton() {
   return this.item.animation.apply(this.item, arguments)
 }
 
-Animation.prototype.run = function run(timestamp) {
-  var percent = (timestamp - this.start) / this.duration
+Animation.prototype.run = function run(tick) {
+  var percent = (tick - this.start) / this.duration
 
   if (percent < 0)
     percent = 0
     
   percent = this.easing(percent)
-    
   this.transform(percent)
+}
+
+Animation.prototype.set = function set(state, initial, transform, percent) {
+  if (transform && transform.length) {
+    if (transform[0]) {
+      state[0] = initial[0] + transform[0] * percent
+    }
+    if (transform[1]) {
+      state[1] = initial[1] + transform[1] * percent
+    }
+    if (transform[2]) {
+      state[2] = initial[2] + transform[2] * percent
+    }
+  }
 }
 
 Animation.prototype.transform = function change(percent) {
   var state = this.item.state,
       initial = this.initial
-  
-  if (this.translate) {
-    if (this.translate[0]) {
-      state.translate[0] = initial.translate[0] + this.translate[0] * percent
-    }
-    if (this.translate[1]) {
-      state.translate[1] = initial.translate[1] + this.translate[1] * percent
-    }
-    if (this.translate[2]) {
-      state.translate[2] = initial.translate[2] + this.translate[2] * percent
-    }
-  }
-  
-  if (this.rotate) {
-    if (this.rotate[0]) {
-      state.rotate[0] = initial.rotate[0] + this.rotate[0] * percent
-    }
-    if (this.rotate[1]) {
-      state.rotate[1] = initial.rotate[1] + this.rotate[1] * percent
-    }
-    if (this.rotate[2]) {
-      state.rotate[2] = initial.rotate[2] + this.rotate[2] * percent
-    }
-  }
-  
-  if (this.scale) {
-    if (this.scale[0]) {
-      state.scale[0] = initial.scale[0] + this.scale[0] * percent
-    }
-    if (this.scale[1]) {
-      state.scale[1] = initial.scale[1] + this.scale[1] * percent
-    }
-    if (this.scale[2]) {
-      state.scale[2] = initial.scale[2] + this.scale[2] * percent
-    }
-  }
+      
+  this.set(state.translate, initial.translate, this.translate, percent)
+  this.set(state.rotate, initial.rotate, this.rotate, percent)
+  this.set(state.scale, initial.scale, this.scale, percent)
 }
 
 Animation.prototype.end = function end(abort) {

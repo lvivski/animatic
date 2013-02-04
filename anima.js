@@ -88,9 +88,9 @@
   }
   Animation.prototype = new EventEmitter();
   Animation.prototype.constructor = Animation;
-  Animation.prototype.init = function init() {
+  Animation.prototype.init = function init(tick) {
     if (this.start !== null) return;
-    this.start = Date.now();
+    this.start = tick;
     function id(x) {
       return x;
     }
@@ -104,47 +104,30 @@
   Animation.prototype.animation = function animaiton() {
     return this.item.animation.apply(this.item, arguments);
   };
-  Animation.prototype.run = function run(timestamp) {
-    var percent = (timestamp - this.start) / this.duration;
+  Animation.prototype.run = function run(tick) {
+    var percent = (tick - this.start) / this.duration;
     if (percent < 0) percent = 0;
     percent = this.easing(percent);
     this.transform(percent);
   };
+  Animation.prototype.set = function set(state, initial, transform, percent) {
+    if (transform && transform.length) {
+      if (transform[0]) {
+        state[0] = initial[0] + transform[0] * percent;
+      }
+      if (transform[1]) {
+        state[1] = initial[1] + transform[1] * percent;
+      }
+      if (transform[2]) {
+        state[2] = initial[2] + transform[2] * percent;
+      }
+    }
+  };
   Animation.prototype.transform = function change(percent) {
     var state = this.item.state, initial = this.initial;
-    if (this.translate) {
-      if (this.translate[0]) {
-        state.translate[0] = initial.translate[0] + this.translate[0] * percent;
-      }
-      if (this.translate[1]) {
-        state.translate[1] = initial.translate[1] + this.translate[1] * percent;
-      }
-      if (this.translate[2]) {
-        state.translate[2] = initial.translate[2] + this.translate[2] * percent;
-      }
-    }
-    if (this.rotate) {
-      if (this.rotate[0]) {
-        state.rotate[0] = initial.rotate[0] + this.rotate[0] * percent;
-      }
-      if (this.rotate[1]) {
-        state.rotate[1] = initial.rotate[1] + this.rotate[1] * percent;
-      }
-      if (this.rotate[2]) {
-        state.rotate[2] = initial.rotate[2] + this.rotate[2] * percent;
-      }
-    }
-    if (this.scale) {
-      if (this.scale[0]) {
-        state.scale[0] = initial.scale[0] + this.scale[0] * percent;
-      }
-      if (this.scale[1]) {
-        state.scale[1] = initial.scale[1] + this.scale[1] * percent;
-      }
-      if (this.scale[2]) {
-        state.scale[2] = initial.scale[2] + this.scale[2] * percent;
-      }
-    }
+    this.set(state.translate, initial.translate, this.translate, percent);
+    this.set(state.rotate, initial.rotate, this.rotate, percent);
+    this.set(state.scale, initial.scale, this.scale, percent);
   };
   Animation.prototype.end = function end(abort) {
     !abort && this.transform(1);
@@ -167,29 +150,26 @@
   }
   Parallel.prototype = new EventEmitter();
   Parallel.prototype.constructor = Parallel;
-  Parallel.prototype.init = function init() {
+  Parallel.prototype.init = function init(tick) {
     if (this.start !== null) return;
-    this.start = Date.now();
+    this.start = tick;
     for (var i = 0, len = this.animations.length; i < len; ++i) {
-      this.animations[i].init();
+      this.animations[i].init(tick);
     }
   };
   Parallel.prototype.animation = function animaiton() {
     return this.item.animation.apply(this.item, arguments);
   };
-  Parallel.prototype.parallel = function animaiton() {
-    return this.item.parallel.apply(this.item, arguments);
-  };
-  Parallel.prototype.run = function run(timestamp) {
+  Parallel.prototype.run = function run(tick) {
     for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i];
-      if (a.start + a.duration <= Date.now()) {
+      if (a.start + a.duration <= tick) {
         this.animations.splice(i, 1);
         a.end();
         --i;
         continue;
       }
-      a.run(timestamp);
+      a.run(tick);
     }
   };
   Parallel.prototype.end = function end(abort) {
@@ -204,8 +184,8 @@
   }
   World.prototype.init = function init() {
     var self = this, onFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
-    onFrame(function update(timestamp) {
-      self.update(timestamp);
+    onFrame(function update(tick) {
+      self.update(tick);
       onFrame(update);
     });
   };
@@ -214,16 +194,16 @@
     this.items.push(item);
     return item;
   };
-  World.prototype.update = function update(timestamp) {
+  World.prototype.update = function update(tick) {
     for (var i = 0, len = this.items.length; i < len; i++) {
-      this.items[i].update(timestamp);
+      this.items[i].update(tick);
     }
   };
   World.prototype.on = function on(event, handler) {
     window.addEventListener(event, handler);
   };
   var radians = Math.PI / 180;
-  var Matrix = window.Matrix = {
+  var Matrix = {
     id: function id() {
       return [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
     },
@@ -375,9 +355,12 @@
       this._dirty = true;
     });
   };
-  Item.prototype.update = function update(timestamp) {
+  Item.prototype.update = function update(tick) {
+    this.animate(tick);
+    this.style();
+  };
+  Item.prototype.style = function() {
     var self = this;
-    this.animate(timestamp);
     this.dom.style.webkitTransform = Matrix.toString(Matrix.multiply.apply(null, Object.keys(self.state).map(function(t) {
       return Matrix[t].apply(null, self.state[t]);
     })));
@@ -402,8 +385,13 @@
     this.state.rotate = [ 0, 0, 0 ];
     this.state.scale = [ 0, 0, 0 ];
   };
-  Item.prototype.anim = Item.prototype.animation = function animation(transform, duration, easing) {
-    var animation = new Animation(this, transform, duration, easing);
+  Item.prototype.animation = function animation(transform, duration, easing) {
+    var animation;
+    if (Array.isArray(transform)) {
+      animation = new Parallel(this, transform);
+    } else {
+      animation = new Animation(this, transform, duration, easing);
+    }
     this.animations.push(animation);
     this.transform = {
       translate: [ 0, 0, 0 ],
@@ -412,29 +400,21 @@
     };
     return animation;
   };
-  Item.prototype.paranim = Item.prototype.parallel = function parallel(animations) {
-    var parallel = new Parallel(this, animations);
-    this.animations.push(parallel);
-    return parallel;
-  };
-  Item.prototype.animate = function animate(timestamp) {
+  Item.prototype.animate = function animate(tick) {
     if (this.animations.length === 0 && this._dirty) {
-      this.animation({
-        translate: this.transform.translate,
-        rotate: this.transform.rotate
-      });
+      this.animation(this.transform);
       this._dirty = false;
     }
     if (this.animations.length === 0) return;
     while (this.animations.length !== 0) {
       var first = this.animations[0];
-      first.init();
-      if (first.start + first.duration <= Date.now()) {
+      first.init(tick);
+      if (first.start + first.duration <= tick) {
         this.animations.shift();
         first.end();
         continue;
       }
-      first.run(timestamp);
+      first.run(tick);
       break;
     }
   };

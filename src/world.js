@@ -7,8 +7,8 @@ World.prototype.init = function init() {
   var self = this,
       onFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
       
-  onFrame(function update(timestamp) {
-    self.update(timestamp)
+  onFrame(function update(tick) {
+    self.update(tick)
     onFrame(update)
   })
 }
@@ -19,9 +19,9 @@ World.prototype.add = function add(node) {
   return item
 }
 
-World.prototype.update = function update(timestamp) {
+World.prototype.update = function update(tick) {
   for (var i = 0, len = this.items.length; i < len; i++) {
-    this.items[i].update(timestamp)
+    this.items[i].update(tick)
   }
 }
 

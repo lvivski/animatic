@@ -22,7 +22,7 @@
       item = world.add(document.querySelector('.block'))
   
     item
-      .parallel([
+      .animation([
         [{
           translate: [0, 300, 0]
         }, 500, 'ease-in-quad'],
@@ -30,7 +30,7 @@
           translate: [100, 0, 0]
         }, 500]
       ])
-      .parallel([
+      .animation([
         [{
           translate: [0, -200, 0]
         }, 450, 'ease-out-quad'],
@@ -38,7 +38,7 @@
           translate: [70, 0, 0]
         }, 450]
       ])
-      .parallel([
+      .animation([
         [{
           translate: [0, 200, 0]
         }, 400, 'ease-in-quad'],
@@ -46,7 +46,7 @@
           translate: [70, 0, 0]
         }, 400]
       ])
-      .parallel([
+      .animation([
         [{
           translate: [0, -100, 0]
         }, 350, 'ease-out-quad'],
@@ -54,7 +54,7 @@
           translate: [50, 0, 0]
         }, 350]
       ])
-      .parallel([
+      .animation([
         [{
           translate: [0, 100, 0]
         }, 300, 'ease-in-quad'],
@@ -62,7 +62,7 @@
           translate: [50, 0, 0]
         }, 300]
       ])
-      .parallel([
+      .animation([
         [{
           translate: [0, -50, 0]
         }, 200, 'ease-out-quad'],
@@ -70,7 +70,7 @@
           translate: [20, 0, 0]
         }, 200]
       ])
-      .parallel([
+      .animation([
         [{
           translate: [0, 50, 0]
         }, 150, 'ease-in-quad'],

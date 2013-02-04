@@ -22,11 +22,11 @@ function Parallel(item, animations) {
 Parallel.prototype = new EventEmitter
 Parallel.prototype.constructor = Parallel
 
-Parallel.prototype.init = function init() {
+Parallel.prototype.init = function init(tick) {
   if (this.start !== null) return
-  this.start = Date.now()
+  this.start = tick
   for (var i = 0, len = this.animations.length; i < len; ++i) {
-    this.animations[i].init()
+    this.animations[i].init(tick)
   }
 }
 
@@ -34,20 +34,16 @@ Parallel.prototype.animation = function animaiton() {
   return this.item.animation.apply(this.item, arguments)
 }
 
-Parallel.prototype.parallel = function animaiton() {
-  return this.item.parallel.apply(this.item, arguments)
-}
-
-Parallel.prototype.run = function run(timestamp) {
+Parallel.prototype.run = function run(tick) {
   for (var i = 0; i < this.animations.length; ++i) {
     var a = this.animations[i]
-    if (a.start + a.duration <= Date.now()) {
+    if (a.start + a.duration <= tick) {
       this.animations.splice(i, 1)
       a.end()
       --i
       continue
     }
-    a.run(timestamp)
+    a.run(tick)
   }
 }
 

@@ -34,15 +34,19 @@ Item.prototype.init = function init() {
   })
 }
 
-Item.prototype.update = function update(timestamp) {
+Item.prototype.update = function update(tick) {
+  this.animate(tick)
+  this.style()
+}
+
+Item.prototype.style = function() {
   var self = this
-  this.animate(timestamp)
   this.dom.style.webkitTransform = Matrix.toString(
-      Matrix.multiply.apply(null,
-        Object.keys(self.state).map(function (t) {
-          return Matrix[t].apply(null, self.state[t])
-        })
-      )
+    Matrix.multiply.apply(null,
+      Object.keys(self.state).map(function (t) {
+        return Matrix[t].apply(null, self.state[t])
+      })
+    )
   )
 }
 
@@ -70,9 +74,13 @@ Item.prototype.clear = function clear() {
   this.state.scale = [0, 0, 0]
 }
 
-Item.prototype.anim = 
 Item.prototype.animation = function animation(transform, duration, easing) {
-  var animation = new Animation(this, transform, duration, easing)
+  var animation
+  if (Array.isArray(transform)) {
+    animation = new Parallel(this, transform)
+  } else {
+    animation = new Animation(this, transform, duration, easing)
+  }
   
   this.animations.push(animation)
   
@@ -85,32 +93,22 @@ Item.prototype.animation = function animation(transform, duration, easing) {
   return animation
 }
 
-Item.prototype.paranim = 
-Item.prototype.parallel = function parallel(animations) {
-  var parallel = new Parallel(this, animations)
-  this.animations.push(parallel)
-  return parallel
-}
-
-Item.prototype.animate = function animate(timestamp) {
+Item.prototype.animate = function animate(tick) {
   if (this.animations.length === 0 && this._dirty) {
-    this.animation({
-      translate: this.transform.translate,
-      rotate: this.transform.rotate,
-    })
+    this.animation(this.transform)
     this._dirty = false
   }
   if (this.animations.length === 0) return
   
   while (this.animations.length !== 0) {
     var first = this.animations[0]
-    first.init()
-    if (first.start + first.duration <= Date.now()) {
+    first.init(tick)
+    if (first.start + first.duration <= tick) {
       this.animations.shift()
       first.end()
       continue
     }
-    first.run(timestamp)
+    first.run(tick)
     break
   }
 }
