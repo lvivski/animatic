@@ -2,6 +2,7 @@ function Animation(item, transform, duration, easing, delay) {
   EventEmitter.call(this)
   
   this.item = item
+  
   this.translate = transform.translate 
   this.rotate = transform.rotate
   this.scale = transform.scale
@@ -21,6 +22,7 @@ Animation.prototype.constructor = Animation
 Animation.prototype.init = function init(tick) {
   if (this.start !== null) return
   this.start = tick
+  
   function id(x){return x}
   var state = this.item.state
   this.initial = {
@@ -35,25 +37,25 @@ Animation.prototype.animation = function animaiton() {
 }
 
 Animation.prototype.run = function run(tick) {
-  var percent = (tick - this.start) / this.duration
-
-  if (percent < 0)
-    percent = 0
-    
+  if (tick - this.start < this.delay) return
+  
+  var percent = (tick - this.delay - this.start) / this.duration
+  if (percent < 0) percent = 0
   percent = this.easing(percent)
+  
   this.transform(percent)
 }
 
-Animation.prototype.set = function set(state, initial, transform, percent) {
-  if (transform && transform.length) {
-    if (transform[0]) {
-      state[0] = initial[0] + transform[0] * percent
+Animation.prototype.set = function set(type, state, initial, percent) {
+  if (this[type] && this[type].length) {
+    if (this[type][0]) {
+      state[type][0] = initial[type][0] + this[type][0] * percent
     }
-    if (transform[1]) {
-      state[1] = initial[1] + transform[1] * percent
+    if (this[type][1]) {
+      state[type][1] = initial[type][1] + this[type][1] * percent
     }
-    if (transform[2]) {
-      state[2] = initial[2] + transform[2] * percent
+    if (this[type][2]) {
+      state[type][2] = initial[type][2] + this[type][2] * percent
     }
   }
 }
@@ -62,9 +64,9 @@ Animation.prototype.transform = function change(percent) {
   var state = this.item.state,
       initial = this.initial
       
-  this.set(state.translate, initial.translate, this.translate, percent)
-  this.set(state.rotate, initial.rotate, this.rotate, percent)
-  this.set(state.scale, initial.scale, this.scale, percent)
+  this.set("translate", state, initial, percent)
+  this.set("rotate", state, initial, percent)
+  this.set("scale", state, initial, percent)
 }
 
 Animation.prototype.end = function end(abort) {

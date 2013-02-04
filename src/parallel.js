@@ -14,8 +14,10 @@ function Parallel(item, animations) {
   
   this.start = null
   
-  this.duration = Math.max.apply(null, animations.map(function(a){
-    return a[1] || 500
+  this.delay = 0
+  
+  this.duration = Math.max.apply(null, this.animations.map(function(a){
+    return a.duration + a.delay
   }))
 }
 
@@ -37,7 +39,7 @@ Parallel.prototype.animation = function animaiton() {
 Parallel.prototype.run = function run(tick) {
   for (var i = 0; i < this.animations.length; ++i) {
     var a = this.animations[i]
-    if (a.start + a.duration <= tick) {
+    if (a.start + a.delay + a.duration <= tick) {
       this.animations.splice(i, 1)
       a.end()
       --i

@@ -105,29 +105,30 @@
     return this.item.animation.apply(this.item, arguments);
   };
   Animation.prototype.run = function run(tick) {
-    var percent = (tick - this.start) / this.duration;
+    if (tick - this.start < this.delay) return;
+    var percent = (tick - this.delay - this.start) / this.duration;
     if (percent < 0) percent = 0;
     percent = this.easing(percent);
     this.transform(percent);
   };
-  Animation.prototype.set = function set(state, initial, transform, percent) {
-    if (transform && transform.length) {
-      if (transform[0]) {
-        state[0] = initial[0] + transform[0] * percent;
+  Animation.prototype.set = function set(type, state, initial, percent) {
+    if (this[type] && this[type].length) {
+      if (this[type][0]) {
+        state[type][0] = initial[type][0] + this[type][0] * percent;
       }
-      if (transform[1]) {
-        state[1] = initial[1] + transform[1] * percent;
+      if (this[type][1]) {
+        state[type][1] = initial[type][1] + this[type][1] * percent;
       }
-      if (transform[2]) {
-        state[2] = initial[2] + transform[2] * percent;
+      if (this[type][2]) {
+        state[type][2] = initial[type][2] + this[type][2] * percent;
       }
     }
   };
   Animation.prototype.transform = function change(percent) {
     var state = this.item.state, initial = this.initial;
-    this.set(state.translate, initial.translate, this.translate, percent);
-    this.set(state.rotate, initial.rotate, this.rotate, percent);
-    this.set(state.scale, initial.scale, this.scale, percent);
+    this.set("translate", state, initial, percent);
+    this.set("rotate", state, initial, percent);
+    this.set("scale", state, initial, percent);
   };
   Animation.prototype.end = function end(abort) {
     !abort && this.transform(1);
@@ -144,8 +145,9 @@
       return new A([ item ].concat(a));
     });
     this.start = null;
-    this.duration = Math.max.apply(null, animations.map(function(a) {
-      return a[1] || 500;
+    this.delay = 0;
+    this.duration = Math.max.apply(null, this.animations.map(function(a) {
+      return a.duration + a.delay;
     }));
   }
   Parallel.prototype = new EventEmitter();
@@ -163,7 +165,7 @@
   Parallel.prototype.run = function run(tick) {
     for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i];
-      if (a.start + a.duration <= tick) {
+      if (a.start + a.delay + a.duration <= tick) {
         this.animations.splice(i, 1);
         a.end();
         --i;
@@ -385,12 +387,12 @@
     this.state.rotate = [ 0, 0, 0 ];
     this.state.scale = [ 0, 0, 0 ];
   };
-  Item.prototype.animation = function animation(transform, duration, easing) {
+  Item.prototype.animation = function animation(transform, duration, easing, delay) {
     var animation;
     if (Array.isArray(transform)) {
       animation = new Parallel(this, transform);
     } else {
-      animation = new Animation(this, transform, duration, easing);
+      animation = new Animation(this, transform, duration, easing, delay);
     }
     this.animations.push(animation);
     this.transform = {
@@ -409,7 +411,7 @@
     while (this.animations.length !== 0) {
       var first = this.animations[0];
       first.init(tick);
-      if (first.start + first.duration <= tick) {
+      if (first.start + first.delay + first.duration <= tick) {
         this.animations.shift();
         first.end();
         continue;

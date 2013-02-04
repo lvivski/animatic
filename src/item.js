@@ -74,12 +74,12 @@ Item.prototype.clear = function clear() {
   this.state.scale = [0, 0, 0]
 }
 
-Item.prototype.animation = function animation(transform, duration, easing) {
+Item.prototype.animation = function animation(transform, duration, easing, delay) {
   var animation
   if (Array.isArray(transform)) {
     animation = new Parallel(this, transform)
   } else {
-    animation = new Animation(this, transform, duration, easing)
+    animation = new Animation(this, transform, duration, easing, delay)
   }
   
   this.animations.push(animation)
@@ -103,7 +103,7 @@ Item.prototype.animate = function animate(tick) {
   while (this.animations.length !== 0) {
     var first = this.animations[0]
     first.init(tick)
-    if (first.start + first.duration <= tick) {
+    if (first.start + first.delay + first.duration <= tick) {
       this.animations.shift()
       first.end()
       continue
