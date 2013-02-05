@@ -77,7 +77,7 @@ Item.prototype.clear = function clear() {
 Item.prototype.animation = function animation(transform, duration, easing, delay) {
   var animation
   if (Array.isArray(transform)) {
-    animation = new Parallel(this, transform)
+    animation = new Parallel(this, transform, duration, easing, delay)
   } else {
     animation = new Animation(this, transform, duration, easing, delay)
   }

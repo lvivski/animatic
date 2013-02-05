@@ -91,14 +91,11 @@
   Animation.prototype.init = function init(tick) {
     if (this.start !== null) return;
     this.start = tick;
-    function id(x) {
-      return x;
-    }
     var state = this.item.state;
     this.initial = {
-      translate: state.translate.map(id),
-      rotate: state.rotate.map(id),
-      scale: state.scale.map(id)
+      translate: state.translate.slice(),
+      rotate: state.rotate.slice(),
+      scale: state.scale.slice()
     };
   };
   Animation.prototype.animation = function animaiton() {
@@ -134,15 +131,11 @@
     !abort && this.transform(1);
     this.emit("end");
   };
-  function Parallel(item, animations) {
+  function Parallel(item, animations, duration, easing, delay) {
     EventEmitter.call(this);
     this.item = item;
-    function A(args) {
-      Animation.apply(this, args);
-    }
-    A.prototype = Animation.prototype;
     this.animations = animations.map(function(a) {
-      return new A([ item ].concat(a));
+      return new Animation(item, a.transform, a.duration || duration, a.easing || easing, a.delay || delay);
     });
     this.start = null;
     this.delay = 0;
@@ -388,7 +381,7 @@
   Item.prototype.animation = function animation(transform, duration, easing, delay) {
     var animation;
     if (Array.isArray(transform)) {
-      animation = new Parallel(this, transform);
+      animation = new Parallel(this, transform, duration, easing, delay);
     } else {
       animation = new Animation(this, transform, duration, easing, delay);
     }

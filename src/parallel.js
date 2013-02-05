@@ -1,15 +1,10 @@
-function Parallel(item, animations) {
+function Parallel(item, animations, duration, easing, delay) {
   EventEmitter.call(this)
   
   this.item = item
   
-  function A(args){
-    Animation.apply(this, args)
-  }
-  A.prototype = Animation.prototype
-  
   this.animations = animations.map(function(a){
-    return new A([item].concat(a))
+    return new Animation(item, a.transform, a.duration || duration, a.easing || easing, a.delay || delay)
   })
   
   this.start = null

@@ -25,61 +25,61 @@ window.addEventListener("click", function runtime(){
   
     item
       .animation([
-        [{
-          translate: [0, 300, 0]
-        }, 500, 'ease-in-quad'],
-        [{
-          translate: [100, 0, 0]
-        }, 500]
-      ])
+        {
+          transform: { translate: [0, 300, 0] },
+          easing: 'ease-in-quad'
+        },{
+          transform: { translate: [100, 0, 0] }
+        }
+      ], 500)
       .animation([
-        [{
-          translate: [0, -200, 0]
-        }, 450, 'ease-out-quad'],
-        [{
-          translate: [70, 0, 0]
-        }, 450]
-      ])
+        {
+          transform: { translate: [0, -200, 0] },
+          easing: 'ease-out-quad'
+        },{
+          transform: { translate: [70, 0, 0] }
+        }
+      ], 450)
       .animation([
-        [{
-          translate: [0, 200, 0]
-        }, 400, 'ease-in-quad'],
-        [{
-          translate: [70, 0, 0]
-        }, 400]
-      ])
+        {
+          transform: { translate: [0, 200, 0] },
+          easing: 'ease-in-quad'
+        },{
+          transform: { translate: [70, 0, 0] }
+        }
+      ], 400)
       .animation([
-        [{
-          translate: [0, -100, 0]
-        }, 350, 'ease-out-quad'],
-        [{
-          translate: [50, 0, 0]
-        }, 350]
-      ])
+        {
+          transform: { translate: [0, -100, 0] },
+          easing: 'ease-out-quad'
+        },{
+          transform: { translate: [50, 0, 0] }
+        }
+      ], 350)
       .animation([
-        [{
-          translate: [0, 100, 0]
-        }, 300, 'ease-in-quad'],
-        [{
-          translate: [50, 0, 0]
-        }, 300]
-      ])
+        {
+          transform: { translate: [0, 100, 0] },
+          easing: 'ease-in-quad'
+        },{
+          transform: { translate: [50, 0, 0] }
+        }
+      ], 300)
       .animation([
-        [{
-          translate: [0, -50, 0]
-        }, 200, 'ease-out-quad'],
-        [{
-          translate: [20, 0, 0]
-        }, 200]
-      ])
+        {
+          transform: { translate: [0, -50, 0] },
+          easing: 'ease-out-quad'
+        },{
+          transform: { translate: [20, 0, 0] }
+        }
+      ], 200)
       .animation([
-        [{
-          translate: [0, 50, 0]
-        }, 150, 'ease-in-quad'],
-        [{
-          translate: [20, 0, 0]
-        }, 150]
-      ])
+        {
+          transform: { translate: [0, 50, 0] },
+          easing: 'ease-in-quad'
+        },{
+          transform: { translate: [20, 0, 0] }
+        }
+      ], 150)
 })
   
   
