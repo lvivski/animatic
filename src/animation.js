@@ -9,11 +9,11 @@ function Animation(item, transform, duration, easing, delay) {
   
   this.start = null
   
-  this.duration = duration || 500
+  this.duration = duration || transform.duration || 500
   
-  this.delay = delay || 0
+  this.delay = delay || transform.delay || 0
   
-  this.easing = easings[easing] || easings.linear
+  this.easing = easings[easing] || easings[transform.easing] || easings.linear
 }
 
 Animation.prototype = new EventEmitter

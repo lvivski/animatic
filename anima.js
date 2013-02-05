@@ -82,9 +82,9 @@
     this.rotate = transform.rotate;
     this.scale = transform.scale;
     this.start = null;
-    this.duration = duration || 500;
-    this.delay = delay || 0;
-    this.easing = easings[easing] || easings.linear;
+    this.duration = duration || transform.duration || 500;
+    this.delay = delay || transform.delay || 0;
+    this.easing = easings[easing] || easings[transform.easing] || easings.linear;
   }
   Animation.prototype = new EventEmitter();
   Animation.prototype.constructor = Animation;
@@ -135,7 +135,11 @@
     EventEmitter.call(this);
     this.item = item;
     this.animations = animations.map(function(a) {
-      return new Animation(item, a.transform, a.duration || duration, a.easing || easing, a.delay || delay);
+      return new Animation(item, a.transform || {
+        translate: a.translate,
+        rotate: a.rotate,
+        scale: a.scale
+      }, a.duration || duration, a.easing || easing, a.delay || delay);
     });
     this.start = null;
     this.delay = 0;
@@ -327,6 +331,8 @@
     EventEmitter.call(this);
     this.dom = node;
     this.animations = [];
+    this.state = {};
+    this.transform = {};
     this._dirty = false;
     this.init();
   }
@@ -338,11 +344,7 @@
       rotate: [ 0, 0, 0 ],
       scale: [ 1, 1, 1 ]
     };
-    this.transform = {
-      translate: [ 0, 0, 0 ],
-      rotate: [ 0, 0, 0 ],
-      scale: [ 0, 0, 0 ]
-    };
+    this.zero("transform");
     this.on("transform", function onTransform(translate, rotate, scale) {
       this.transform.translate = translate;
       this.transform.rotate = rotate;
@@ -358,39 +360,27 @@
     var state = this.state;
     this.dom.style.webkitTransform = Matrix.toString(Matrix.multiply(Matrix.translate.apply(null, state.translate), Matrix.rotate.apply(null, state.rotate), Matrix.scale.apply(null, state.scale)));
   };
+  Item.prototype.add = function add(type, a) {
+    this.state[type][0] += a[0];
+    this.state[type][1] += a[1];
+    this.state[type][2] += a[2];
+  };
   Item.prototype.translate = function translate(t) {
-    this.state.translate[0] += t[0];
-    this.state.translate[1] += t[1];
-    this.state.translate[2] += t[2];
+    this.add("translate", t);
   };
   Item.prototype.rotate = function rotate(r) {
-    this.state.rotate[0] += r[0];
-    this.state.rotate[1] += r[1];
-    this.state.rotate[2] += r[2];
+    this.add("rotate", r);
   };
   Item.prototype.scale = function scale(s) {
-    this.state.scale[0] += s[0];
-    this.state.scale[1] += s[1];
-    this.state.scale[2] += s[2];
+    this.add("scale", s);
   };
   Item.prototype.clear = function clear() {
-    this.state.translate = [ 0, 0, 0 ];
-    this.state.rotate = [ 0, 0, 0 ];
-    this.state.scale = [ 0, 0, 0 ];
+    this.null("state");
   };
   Item.prototype.animation = function animation(transform, duration, easing, delay) {
-    var animation;
-    if (Array.isArray(transform)) {
-      animation = new Parallel(this, transform, duration, easing, delay);
-    } else {
-      animation = new Animation(this, transform, duration, easing, delay);
-    }
+    var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, easing, delay);
     this.animations.push(animation);
-    this.transform = {
-      translate: [ 0, 0, 0 ],
-      rotate: [ 0, 0, 0 ],
-      scale: [ 0, 0, 0 ]
-    };
+    this.zero("transform");
     return animation;
   };
   Item.prototype.animate = function animate(tick) {
@@ -411,6 +401,11 @@
       break;
     }
   };
+  Item.prototype.zero = function zero(type) {
+    this[type].translate = [ 0, 0, 0 ];
+    this[type].rotate = [ 0, 0, 0 ];
+    this[type].scale = [ 0, 0, 0 ];
+  };
   Item.prototype.reset = function reset() {
     if (this.animations.length === 0) return;
     for (var i = 0, len = this.animations.length; i < len; i++) {
@@ -418,10 +413,6 @@
       a.end(true);
     }
     this.animations = [];
-    this.transform = {
-      translate: [ 0, 0, 0 ],
-      rotate: [ 0, 0, 0 ],
-      scale: [ 0, 0, 0 ]
-    };
+    this.zero("transform");
   };
 })();

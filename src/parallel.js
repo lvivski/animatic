@@ -4,7 +4,16 @@ function Parallel(item, animations, duration, easing, delay) {
   this.item = item
   
   this.animations = animations.map(function(a){
-    return new Animation(item, a.transform, a.duration || duration, a.easing || easing, a.delay || delay)
+    return new Animation(item,
+      a.transform || {
+        translate: a.translate,
+        rotate: a.rotate,
+        scale: a.scale
+      },
+      a.duration || duration,
+      a.easing || easing,
+      a.delay || delay
+    )
   })
   
   this.start = null
