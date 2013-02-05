@@ -35,7 +35,7 @@ item.animate({translate: [x, y, z]}, 500, 'ease-in-out-quad', 100)
 ### Sequential animations
 You can create sequential animations with ease :)
 ```js
-item.animate(…).animate(…).animate(...)
+item.animate(...).animate(...).animate(...)
 ```
 
 ### Parallel animations
