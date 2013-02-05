@@ -1,7 +1,21 @@
 {
   "name": "anima",
+  "author": "Yehor Lvivski <lvivski@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lvivski/anima"
+  },
+  "description": "CSS animations with soul",
   "version": "0.0.1",
+  "keywords": [
+    "css",
+    "animation",
+    "js",
+    "transform"
+  ],
+
   "devDependencies": {
     "uglify-js": "*"
-  }
+  },
+  "license": "MIT"
 }
