@@ -18,13 +18,11 @@
 </body>
 <script src="../anima.js"></script>
 <script>
-
-window.addEventListener("click", function runtime(){
   var world = anima.init()
       item = world.add(document.querySelector('.block'))
   
     item
-      .animation([
+      .animate([
         {
           translate: [0, 300, 0],
           easing: 'ease-in-quad'
@@ -32,7 +30,7 @@ window.addEventListener("click", function runtime(){
           translate: [100, 0, 0]
         }
       ], 500)
-      .animation([
+      .animate([
         {
           translate: [0, -200, 0],
           easing: 'ease-out-quad'
@@ -40,7 +38,7 @@ window.addEventListener("click", function runtime(){
           translate: [70, 0, 0]
         }
       ], 450)
-      .animation([
+      .animate([
         {
           translate: [0, 200, 0],
           easing: 'ease-in-quad'
@@ -48,7 +46,7 @@ window.addEventListener("click", function runtime(){
           translate: [70, 0, 0]
         }
       ], 400)
-      .animation([
+      .animate([
         {
           translate: [0, -100, 0],
           easing: 'ease-out-quad'
@@ -56,7 +54,7 @@ window.addEventListener("click", function runtime(){
           translate: [50, 0, 0]
         }
       ], 350)
-      .animation([
+      .animate([
         {
           translate: [0, 100, 0],
           easing: 'ease-in-quad'
@@ -64,7 +62,7 @@ window.addEventListener("click", function runtime(){
           translate: [50, 0, 0]
         }
       ], 300)
-      .animation([
+      .animate([
         {
           translate: [0, -50, 0],
           easing: 'ease-out-quad'
@@ -72,7 +70,7 @@ window.addEventListener("click", function runtime(){
           translate: [20, 0, 0]
         }
       ], 200)
-      .animation([
+      .animate([
         {
           translate: [0, 50, 0],
           easing: 'ease-in-quad'
@@ -80,8 +78,5 @@ window.addEventListener("click", function runtime(){
           translate: [20, 0, 0]
         }
       ], 150)
-})
-  
-  
 </script>
 </html>

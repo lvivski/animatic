@@ -97,9 +97,10 @@
       rotate: state.rotate.slice(),
       scale: state.scale.slice()
     };
+    this.emit("start");
   };
-  Animation.prototype.animation = function animaiton() {
-    return this.item.animation.apply(this.item, arguments);
+  Animation.prototype.animate = function animate() {
+    return this.item.animate.apply(this.item, arguments);
   };
   Animation.prototype.run = function run(tick) {
     if (tick - this.start < this.delay) return;
@@ -155,9 +156,10 @@
     for (var i = 0, len = this.animations.length; i < len; ++i) {
       this.animations[i].init(tick);
     }
+    this.emit("start");
   };
-  Parallel.prototype.animation = function animaiton() {
-    return this.item.animation.apply(this.item, arguments);
+  Parallel.prototype.animate = function animate() {
+    return this.item.animate.apply(this.item, arguments);
   };
   Parallel.prototype.run = function run(tick) {
     for (var i = 0; i < this.animations.length; ++i) {
@@ -356,7 +358,7 @@
     });
   };
   Item.prototype.update = function update(tick) {
-    this.animate(tick);
+    this.animation(tick);
     this.style();
   };
   Item.prototype.style = function() {
@@ -380,15 +382,15 @@
   Item.prototype.clear = function clear() {
     this.null("state");
   };
-  Item.prototype.animation = function animation(transform, duration, easing, delay) {
+  Item.prototype.animate = function animate(transform, duration, easing, delay) {
     var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, easing, delay);
     this.animations.push(animation);
     this.zero("transform");
     return animation;
   };
-  Item.prototype.animate = function animate(tick) {
+  Item.prototype.animation = function animation(tick) {
     if (this.animations.length === 0 && this._dirty) {
-      this.animation(this.transform);
+      this.animate(this.transform);
       this._dirty = false;
     }
     if (this.animations.length === 0) return;

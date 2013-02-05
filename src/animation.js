@@ -29,10 +29,11 @@ Animation.prototype.init = function init(tick) {
     rotate: state.rotate.slice(),
     scale: state.scale.slice()
   }
+  this.emit('start')
 }
 
-Animation.prototype.animation = function animaiton() {
-  return this.item.animation.apply(this.item, arguments)
+Animation.prototype.animate = function animate() {
+  return this.item.animate.apply(this.item, arguments)
 }
 
 Animation.prototype.run = function run(tick) {

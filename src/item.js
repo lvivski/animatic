@@ -35,7 +35,7 @@ Item.prototype.init = function init() {
 }
 
 Item.prototype.update = function update(tick) {
-  this.animate(tick)
+  this.animation(tick)
   this.style()
 }
 
@@ -72,7 +72,7 @@ Item.prototype.clear = function clear() {
   this.null("state")
 }
 
-Item.prototype.animation = function animation(transform, duration, easing, delay) {
+Item.prototype.animate = function animate(transform, duration, easing, delay) {
   var ctor = Array.isArray(transform) ? Parallel : Animation,
       animation = new ctor(this, transform, duration, easing, delay)
   
@@ -83,9 +83,9 @@ Item.prototype.animation = function animation(transform, duration, easing, delay
   return animation
 }
 
-Item.prototype.animate = function animate(tick) {
+Item.prototype.animation = function animation(tick) {
   if (this.animations.length === 0 && this._dirty) {
-    this.animation(this.transform)
+    this.animate(this.transform)
     this._dirty = false
   }
   if (this.animations.length === 0) return

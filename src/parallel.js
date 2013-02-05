@@ -34,10 +34,11 @@ Parallel.prototype.init = function init(tick) {
   for (var i = 0, len = this.animations.length; i < len; ++i) {
     this.animations[i].init(tick)
   }
+  this.emit('start')
 }
 
-Parallel.prototype.animation = function animaiton() {
-  return this.item.animation.apply(this.item, arguments)
+Parallel.prototype.animate = function animate() {
+  return this.item.animate.apply(this.item, arguments)
 }
 
 Parallel.prototype.run = function run(tick) {

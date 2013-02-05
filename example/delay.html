@@ -14,18 +14,16 @@
 </body>
 <script src="../anima.js"></script>
 <script>
-window.addEventListener("click", function runtime(){
   var world = anima.init()
       item = world.add(document.querySelector('.block'))
   
   item
-    .animation({
+    .animate({
       translate: [200, 200, 100],
       rotate: [0,0,5]
     }, 500)
-    .animation({
+    .animate({
       translate: [100, 0, 0],
     }, 500, 'linear', 500)
-})
 </script>
 </html>

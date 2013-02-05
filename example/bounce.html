@@ -18,39 +18,30 @@
 </body>
 <script src="../anima.js"></script>
 <script>
-window.addEventListener("click", function runtime(){
   var world = anima.init(),
       item = world.add(document.querySelector('.block'))
   
   item
-    .animation({
-      translate: [0, 300, 0],
-      rotate: [0,0,0]
+    .animate({
+      translate: [0, 300, 0]
     }, 500, 'ease-in-quad')
-    .animation({
-      translate: [0, -200, 0],
-      rotate: [0,0,0]
+    .animate({
+      translate: [0, -200, 0]
     }, 450, 'ease-out-quad')
-    .animation({
-      translate: [0, 200, 0],
-      rotate: [0,0,0]
+    .animate({
+      translate: [0, 200, 0]
     }, 400, 'ease-in-quad')
-    .animation({
-      translate: [0, -100, 0],
-      rotate: [0,0,0]
+    .animate({
+      translate: [0, -100, 0]
     }, 350, 'ease-out-quad')
-    .animation({
-      translate: [0, 100, 0],
-      rotate: [0,0,0]
+    .animate({
+      translate: [0, 100, 0]
     }, 300, 'ease-in-quad')
-    .animation({
-      translate: [0, -50, 0],
-      rotate: [0,0,0]
+    .animate({
+      translate: [0, -50, 0]
     }, 200, 'ease-out-quad')
-    .animation({
-      translate: [0, 50, 0],
-      rotate: [0,0,0]
+    .animate({
+      translate: [0, 50, 0]
     }, 150, 'ease-in-quad')
-})
 </script>
 </html>
