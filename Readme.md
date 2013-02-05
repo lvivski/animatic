@@ -6,7 +6,7 @@ With Anima it's easy to animate over a hundred object at a time.
 ## Motivation
 CSS animations have some limits, the main is that you can't really have full control over them. And it's near impossible to stop transitions without dirty hacks.
 
-Anima uses uncommon approach to CSS animation. Well, It doesn't really use CSS transitions or `@keyframes`. On the contrary, it uses CSS transforms and 3d-transfors together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff.
+Anima uses uncommon approach to CSS animation. Well, It doesn't really use CSS transitions or `@keyframes`. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff.
 
 ## Api
 At first you cave to initialize the World, so the frame loop will start
