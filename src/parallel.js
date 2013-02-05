@@ -45,9 +45,8 @@ Parallel.prototype.run = function run(tick) {
   for (var i = 0; i < this.animations.length; ++i) {
     var a = this.animations[i]
     if (a.start + a.delay + a.duration <= tick) {
-      this.animations.splice(i, 1)
+      this.animations.splice(i--, 1)
       a.end()
-      --i
       continue
     }
     a.run(tick)

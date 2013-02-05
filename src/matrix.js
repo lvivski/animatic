@@ -53,6 +53,7 @@ var Matrix = {
     sx || (sx = 1)
     sy || (sy = 1)
     sz || (sz = 1)
+
     return [sx, 0, 0, 0,
       0, sy, 0, 0,
       0, 0, sz, 0,

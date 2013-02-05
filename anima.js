@@ -66,9 +66,9 @@
     return this;
   };
   EventEmitter.prototype.emit = function(event) {
-    var args = Array.prototype.slice.call(arguments, 1), handlers = this.handlers[event], len;
+    var args = Array.prototype.slice.call(arguments, 1), handlers = this.handlers[event];
     if (handlers) {
-      len = handlers.length;
+      var len = handlers.length;
       for (var i = 0; i < len; ++i) {
         handlers[i].apply(this, args);
       }
@@ -165,9 +165,8 @@
     for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i];
       if (a.start + a.delay + a.duration <= tick) {
-        this.animations.splice(i, 1);
+        this.animations.splice(i--, 1);
         a.end();
-        --i;
         continue;
       }
       a.run(tick);
@@ -380,7 +379,7 @@
     this.add("scale", s);
   };
   Item.prototype.clear = function clear() {
-    this.null("state");
+    this.zero("state");
   };
   Item.prototype.animate = function animate(transform, duration, easing, delay) {
     var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, easing, delay);

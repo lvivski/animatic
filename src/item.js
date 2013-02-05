@@ -69,7 +69,7 @@ Item.prototype.scale = function scale(s) {
 }
 
 Item.prototype.clear = function clear() {
-  this.null("state")
+  this.zero("state")
 }
 
 Item.prototype.animate = function animate(transform, duration, easing, delay) {
