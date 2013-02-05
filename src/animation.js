@@ -2,9 +2,9 @@
  * Creates new animation
  * @param {Item} item Object to animate
  * @param {Object} transform
- * @param {Number} duration
- * @param {String} easing Timing function
- * @param {Number} delay
+ * @param {number} duration
+ * @param {string} easing Timing function
+ * @param {number} delay
  * @constructor
  */
 function Animation(item, transform, duration, easing, delay) {
@@ -30,7 +30,7 @@ Animation.prototype.constructor = Animation
 
 /**
  * Starts animation timer
- * @param {Number} tick Timestamp
+ * @param {number} tick Timestamp
  * @fires Animation#start
  */
 Animation.prototype.init = function init(tick) {
@@ -52,7 +52,7 @@ Animation.prototype.animate = function animate() {
 
 /**
  * Runs one tick of animation
- * @param {Number} tick
+ * @param {number} tick
  */
 Animation.prototype.run = function run(tick) {
   if (tick - this.start < this.delay) return
@@ -66,10 +66,10 @@ Animation.prototype.run = function run(tick) {
 
 /**
  * Sets new item state
- * @param {String} type
+ * @param {string} type
  * @param {Object} state
  * @param {Object} initial
- * @param {Number} percent
+ * @param {number} percent
  */
 Animation.prototype.set = function set(type, state, initial, percent) {
   if (this[type] && this[type].length) {
@@ -87,7 +87,7 @@ Animation.prototype.set = function set(type, state, initial, percent) {
 
 /**
  * Transforms item
- * @param {Number} percent
+ * @param {number} percent
  */
 Animation.prototype.transform = function change(percent) {
   var state = this.item.state,
@@ -100,7 +100,7 @@ Animation.prototype.transform = function change(percent) {
 
 /**
  * Ends animation
- * @param {Boolean} abort
+ * @param {boolean} abort
  * @fires Animation#end
  */
 Animation.prototype.end = function end(abort) {

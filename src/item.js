@@ -45,7 +45,7 @@ Item.prototype.init = function init() {
 
 /**
  * Updates item on frame
- * @param {Number} tick
+ * @param {number} tick
  */
 Item.prototype.update = function update(tick) {
   this.animation(tick)
@@ -68,7 +68,7 @@ Item.prototype.style = function() {
 
 /**
  * Adds values to state params
- * @param {String} type
+ * @param {string} type
  * @param {Array} a
  */
 Item.prototype.add = function add(type, a) {
@@ -111,9 +111,9 @@ Item.prototype.clear = function clear() {
 /**
  * Adds animation
  * @param {Object|Array} transform
- * @param {Number} duration
- * @param {String} easing
- * @param {Number} delay
+ * @param {number} duration
+ * @param {string} easing
+ * @param {number} delay
  * @return {Animation|Parallel}
  */
 Item.prototype.animate = function animate(transform, duration, easing, delay) {
@@ -129,7 +129,7 @@ Item.prototype.animate = function animate(transform, duration, easing, delay) {
 
 /**
  * Runs animation on frame
- * @param {Number} tick
+ * @param {number} tick
  */
 Item.prototype.animation = function animation(tick) {
   if (this.animations.length === 0 && this._dirty) {
@@ -153,7 +153,7 @@ Item.prototype.animation = function animation(tick) {
 
 /**
  * Clears Item's state or transform
- * @param {String} type
+ * @param {string} type
  */
 Item.prototype.zero = function zero(type) {
   this[type].translate = [0, 0, 0]

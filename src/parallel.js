@@ -2,9 +2,9 @@
  * Creates a set of parallel animations
  * @param {Item} item
  * @param {Array} animations
- * @param {Number} duration
- * @param {String} easing
- * @param {Number} delay
+ * @param {number} duration
+ * @param {string} easing
+ * @param {number} delay
  * @constructor
  */
 function Parallel(item, animations, duration, easing, delay) {
@@ -39,7 +39,7 @@ Parallel.prototype.constructor = Parallel
 
 /**
  * Initializes all animations in a set
- * @param {Number} tick
+ * @param {number} tick
  * @fires Parallel#start
  */
 Parallel.prototype.init = function init(tick) {
@@ -57,7 +57,7 @@ Parallel.prototype.animate = function animate() {
 
 /**
  * Runs one tick of animations
- * @param {Number} tick
+ * @param {number} tick
  */
 Parallel.prototype.run = function run(tick) {
   for (var i = 0; i < this.animations.length; ++i) {
@@ -73,7 +73,7 @@ Parallel.prototype.run = function run(tick) {
 
 /**
  * Ends all animations in a set
- * @param {Boolean} abort
+ * @param {boolean} abort
  * @fires Parallel#end
  */
 Parallel.prototype.end = function end(abort) {

@@ -1,5 +1,5 @@
 /**
- * EventEmmiter
+ * EventEmitter
  * @constructor
  */
 function EventEmitter() {
@@ -8,9 +8,9 @@ function EventEmitter() {
 
 /**
  * Adds handler for event
- * @param {String} event
+ * @param {string} event
  * @param {Function} handler
- * @return {*}
+ * @return {EventEmitter}
  */
 EventEmitter.prototype.on = function(event, handler) {
   (this.handlers[event] = this.handlers[event] || [])
@@ -20,9 +20,9 @@ EventEmitter.prototype.on = function(event, handler) {
 
 /**
  * Removes event handler
- * @param {String} event
+ * @param {string} event
  * @param {Function} handler
- * @return {*}
+ * @return {EventEmitter}
  */
 EventEmitter.prototype.off = function(event, handler) {
   var handlers = this.handlers[event]
@@ -38,8 +38,8 @@ EventEmitter.prototype.off = function(event, handler) {
 
 /**
  * Triggers event
- * @param {String} event
- * @return {*}
+ * @param {string} event
+ * @return {EventEmitter}
  */
 EventEmitter.prototype.emit = function(event){
   var args = Array.prototype.slice.call(arguments, 1),

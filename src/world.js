@@ -1,6 +1,6 @@
 /**
  * Creates new world and start frame loop
- * @param {Array} items
+ * @param {Array=} items
  * @constructor
  */
 function World(items) {
@@ -34,7 +34,7 @@ World.prototype.add = function add(node) {
 
 /**
  * Update the World on frame
- * @param {Number} tick
+ * @param {number} tick
  */
 World.prototype.update = function update(tick) {
   for (var i = 0, len = this.items.length; i < len; i++) {
@@ -44,9 +44,9 @@ World.prototype.update = function update(tick) {
 
 /**
  * Adds handler to window event
- * @param {String} event
+ * @param {string} event
  * @param {Function} handler
  */
 World.prototype.on = function on(event, handler) {
-  window.addEventListener(event, handler)
+  window.addEventListener(event, handler, true)
 }

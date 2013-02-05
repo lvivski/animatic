@@ -198,7 +198,7 @@
     }
   };
   World.prototype.on = function on(event, handler) {
-    window.addEventListener(event, handler);
+    window.addEventListener(event, handler, true);
   };
   var radians = Math.PI / 180;
   var Matrix = {
