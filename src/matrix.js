@@ -1,5 +1,9 @@
 var radians = Math.PI / 180
 
+/**
+ * Matrix object for transformation calculations
+ * @type {Object}
+ */
 var Matrix = {
   id: function id() {
     return [1, 0, 0, 0,
@@ -28,7 +32,7 @@ var Matrix = {
   },
   translate: function translate(tx, ty, tz) {
     if (!(tx || ty || tz)) return Matrix.id()
-    
+
     tx || (tx = 0)
     ty || (ty = 0)
     tz || (tz = 0)
@@ -49,7 +53,7 @@ var Matrix = {
   },
   scale: function scale(sx, sy, sz) {
     if (!(sx || sy || sz)) return Matrix.id()
-    
+
     sx || (sx = 1)
     sy || (sy = 1)
     sz || (sz = 1)
@@ -70,11 +74,11 @@ var Matrix = {
   },
   rotate: function rotate(ax, ay, az) {
     if (!(ax || ay || az)) return Matrix.id()
-    
+
     ax || (ax = 0)
     ay || (ay = 0)
     az || (az = 0)
-    
+
     ax *= radians
     ay *= radians
     az *= radians

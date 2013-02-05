@@ -1,9 +1,7 @@
 (function() {
-  window.anima = {
-    init: function() {
-      this.world = new World();
-      return this.world;
-    }
+  var anima = window.anima = {};
+  anima.init = function() {
+    return new World();
   };
   var easings = function() {
     var fn = {

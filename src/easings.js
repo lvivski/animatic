@@ -1,3 +1,8 @@
+/**
+ * Different timing functions
+ * used for Animations
+ * @type {*}
+ */
 var easings = (function(){
   var fn = {
     quad: function (p) {
@@ -42,6 +47,6 @@ var easings = (function(){
         : 1 - ease(p * -2 + 2) / 2
     }
   })
-  
+
   return easings
 }())
