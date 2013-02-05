@@ -223,6 +223,7 @@
       return 2 >= arguments.length ? c : multiply.apply(null, [ c ].concat(Array.prototype.slice.call(arguments, 2)));
     },
     translate: function translate(tx, ty, tz) {
+      if (!(tx || ty || tz)) return Matrix.id();
       tx || (tx = 0);
       ty || (ty = 0);
       tz || (tz = 0);
@@ -238,6 +239,7 @@
       return this.translate(0, 0, t);
     },
     scale: function scale(sx, sy, sz) {
+      if (!(sx || sy || sz)) return Matrix.id();
       sx || (sx = 1);
       sy || (sy = 1);
       sz || (sz = 1);
@@ -253,6 +255,7 @@
       return this.scale(0, 0, s);
     },
     rotate: function rotate(ax, ay, az) {
+      if (!(ax || ay || az)) return Matrix.id();
       ax || (ax = 0);
       ay || (ay = 0);
       az || (az = 0);
