@@ -4,11 +4,11 @@
     return new World(true);
   };
   !function() {
-    var vendors = [ "webkit", "Moz", "O", "ms" ], i = -1;
-    while (!window.requestAnimationFrame && ++i < vendors.length) {
-      var vendor = vendors[i].toLowerCase();
+    var vendors = [ "webkit", "Moz", "O", "ms" ], i = 0;
+    while (!window.requestAnimationFrame && i < vendors.length) {
+      var vendor = vendors[i++].toLowerCase();
       window.requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
-      window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendors[i] + "CancelRequestAnimationFrame"];
+      window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];
     }
     window.transformProperty = function() {
       var style = document.createElement("div").style;

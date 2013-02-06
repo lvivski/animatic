@@ -1,11 +1,11 @@
 !function(){
-  var vendors = ['webkit', 'Moz', 'O', 'ms'], i = -1;
+  var vendors = ['webkit', 'Moz', 'O', 'ms'], i = 0;
 
-  while(!window.requestAnimationFrame && ++i < vendors.length) {
-    var vendor = vendors[i].toLowerCase()
+  while(!window.requestAnimationFrame && i < vendors.length) {
+    var vendor = vendors[i++].toLowerCase()
     window.requestAnimationFrame = window[vendor + 'RequestAnimationFrame']
     window.cancelAnimationFrame = window[vendor + 'CancelAnimationFrame']
-                    || window[vendors[i] + 'CancelRequestAnimationFrame']
+                    || window[vendor + 'CancelRequestAnimationFrame']
   }
 
   window.transformProperty = function () {
