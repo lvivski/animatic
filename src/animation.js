@@ -93,9 +93,9 @@ Animation.prototype.transform = function change(percent) {
   var state = this.item.state,
       initial = this.initial
 
-  this.set("translate", state, initial, percent)
-  this.set("rotate", state, initial, percent)
-  this.set("scale", state, initial, percent)
+  this.set('translate', state, initial, percent)
+  this.set('rotate', state, initial, percent)
+  this.set('scale', state, initial, percent)
 }
 
 /**

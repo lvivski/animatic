@@ -33,7 +33,7 @@ Item.prototype.init = function init() {
     scale: [1, 1, 1]
   }
 
-  this.zero("transform")
+  this.zero('transform')
 
   this.on('transform', function onTransform(translate, rotate, scale) {
     this.transform.translate = translate
@@ -57,7 +57,7 @@ Item.prototype.update = function update(tick) {
  */
 Item.prototype.style = function() {
   var state = this.state
-  this.dom.style.webkitTransform = Matrix.toString(
+  this.dom.style[transformProperty] = Matrix.toString(
     Matrix.multiply(
       Matrix.translate.apply(null, state.translate),
       Matrix.rotate.apply(null, state.rotate),
@@ -82,7 +82,7 @@ Item.prototype.add = function add(type, a) {
  * @param {Array} t Coordinates
  */
 Item.prototype.translate = function translate(t) {
-  this.add("translate", t)
+  this.add('translate', t)
 }
 
 /**
@@ -90,7 +90,7 @@ Item.prototype.translate = function translate(t) {
  * @param {Array} r Angles in radians
  */
 Item.prototype.rotate = function rotate(r) {
-  this.add("rotate", r)
+  this.add('rotate', r)
 }
 
 /**
@@ -98,14 +98,14 @@ Item.prototype.rotate = function rotate(r) {
  * @param {Array} s Scale values
  */
 Item.prototype.scale = function scale(s) {
-  this.add("scale", s)
+  this.add('scale', s)
 }
 
 /**
  * Clears item transform
  */
 Item.prototype.clear = function clear() {
-  this.zero("state")
+  this.zero('state')
 }
 
 /**
@@ -122,7 +122,7 @@ Item.prototype.animate = function animate(transform, duration, easing, delay) {
 
   this.animations.push(animation)
 
-  this.zero("transform")
+  this.zero('transform')
 
   return animation
 }
@@ -172,5 +172,5 @@ Item.prototype.reset = function reset() {
   }
   this.animations = []
 
-  this.zero("transform")
+  this.zero('transform')
 }

@@ -9,5 +9,5 @@ var anima = window.anima = {}
  * @return {World}
  */
 anima.init = function () {
-  return new World()
+  return new World(true)
 }

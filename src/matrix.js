@@ -182,7 +182,7 @@ var Matrix = {
   toString: function toString(m) {
     for (var i = 0, l = m.length; i < l; ++i)
       if (Math.abs(m[i]) < 1e-6) m[i] = 0
-    return "matrix3d(" + m.join() + ")"
+    return 'matrix3d(' + m.join() + ')'
   },
   toTestString: function toTestString(m) {
     function clamp(n) {

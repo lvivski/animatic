@@ -1,6 +1,7 @@
 JS_COMPILER ?= ./node_modules/uglify-js/bin/uglifyjs
 FILES = \
 	src/core.js \
+	src/utils.js \
 	src/easings.js \
 	src/eventemitter.js \
 	src/animation.js \

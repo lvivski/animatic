@@ -1,24 +1,33 @@
 /**
  * Creates new world and start frame loop
- * @param {Array=} items
+ * @param {boolean=} start
  * @constructor
  */
-function World(items) {
-  this.items = items || []
-  this.init()
+function World(start) {
+  this.items = []
+  this._nextTick = null
+  start && this.init()
 }
 
 /**
  * Starts new frame loop
  */
 World.prototype.init = function init() {
-  var self = this,
-      onFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+  var self = this
 
-  onFrame(function update(tick) {
+  function update(tick) {
     self.update(tick)
-    onFrame(update)
-  })
+    self._nextTick = requestAnimationFrame(update)
+  }
+
+  this._nextTick = requestAnimationFrame(update)
+}
+
+/**
+ * Stops the world
+ */
+World.prototype.stop = function stop() {
+  this._nextTick && cancelAnimationFrame(this._nextTick)
 }
 
 /**
