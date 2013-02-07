@@ -55,6 +55,10 @@ Parallel.prototype.animate = function animate() {
   return this.item.animate.apply(this.item, arguments)
 }
 
+Parallel.prototype.toCSS = function css() {
+  return this.item.toCSS()
+}
+
 /**
  * Runs one tick of animations
  * @param {number} tick
