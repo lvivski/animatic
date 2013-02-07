@@ -3,6 +3,7 @@ FILES = \
 	src/core.js \
 	src/utils.js \
 	src/easings.js \
+	src/css.js \
 	src/eventemitter.js \
 	src/animation.js \
 	src/parallel.js \

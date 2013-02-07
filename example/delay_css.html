@@ -14,7 +14,7 @@
 </body>
 <script src="../anima.js"></script>
 <script>
-  var world = anima.js(),
+  var world = anima.css(),
       item = world.add(document.querySelector('.block'))
 
   item
@@ -25,5 +25,6 @@
     .animate({
       translate: [100, 0, 0],
     }, 500, 'linear', 500)
+    .toCSS()
 </script>
 </html>

@@ -7,7 +7,7 @@
  * @param {number} delay
  * @constructor
  */
-function Parallel(item, animations, duration, easing, delay) {
+function Parallel(item, animations, duration, ease, delay) {
   EventEmitter.call(this)
 
   this.item = item
@@ -20,7 +20,7 @@ function Parallel(item, animations, duration, easing, delay) {
         scale: a.scale
       },
       a.duration || duration,
-      a.easing || easing,
+      a.ease || ease,
       a.delay || delay
     )
   })

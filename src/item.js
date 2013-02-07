@@ -56,8 +56,16 @@ Item.prototype.update = function update(tick) {
  * Sets style to the dom node
  */
 Item.prototype.style = function() {
+  this.dom.style[transformProperty] = this.matrix()
+}
+
+/**
+ * Calculates CSS transform matrix for state
+ * @return {String}
+ */
+Item.prototype.matrix = function() {
   var state = this.state
-  this.dom.style[transformProperty] = Matrix.toString(
+  return Matrix.toString(
     Matrix.multiply(
       Matrix.translate.apply(null, state.translate),
       Matrix.rotate.apply(null, state.rotate),
@@ -116,9 +124,9 @@ Item.prototype.clear = function clear() {
  * @param {number} delay
  * @return {Animation|Parallel}
  */
-Item.prototype.animate = function animate(transform, duration, easing, delay) {
+Item.prototype.animate = function animate(transform, duration, ease, delay) {
   var ctor = Array.isArray(transform) ? Parallel : Animation,
-      animation = new ctor(this, transform, duration, easing, delay)
+      animation = new ctor(this, transform, duration, ease, delay)
 
   this.animations.push(animation)
 
@@ -173,4 +181,8 @@ Item.prototype.reset = function reset() {
   this.animations = []
 
   this.zero('transform')
+}
+
+Item.prototype.toCSS = function toCSS() {
+  return new CSS(this.animations).toString()
 }

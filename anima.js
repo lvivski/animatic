@@ -1,7 +1,10 @@
 (function() {
   var anima = window.anima = {};
-  anima.init = function() {
+  anima.js = function() {
     return new World(true);
+  };
+  anima.css = function() {
+    return new World();
   };
   !function() {
     var vendors = [ "webkit", "Moz", "O", "ms" ], i = 0;
@@ -63,8 +66,65 @@
         return p < .5 ? ease(p * 2) / 2 : 1 - ease(p * -2 + 2) / 2;
       };
     });
+    easings.css = {
+      linear: "cubic-bezier(0.000, 0.000, 1.000, 1.000)",
+      "ease-in-quad": "cubic-bezier(0.550, 0.085, 0.680, 0.530)",
+      "ease-in-cubic": "cubic-bezier(0.550, 0.055, 0.675, 0.190)",
+      "ease-in-quart": "cubic-bezier(0.895, 0.030, 0.685, 0.220)",
+      "ease-in-quint": "cubic-bezier(0.755, 0.050, 0.855, 0.060)",
+      "ease-in-sine": "cubic-bezier(0.470, 0.000, 0.745, 0.715)",
+      "ease-in-expo": "cubic-bezier(0.950, 0.050, 0.795, 0.035)",
+      "ease-in-circ": "cubic-bezier(0.600, 0.040, 0.980, 0.335)",
+      "ease-in-back": "cubic-bezier(0.600, -0.280, 0.735, 0.045)",
+      "ease-out-quad": "cubic-bezier(0.250, 0.460, 0.450, 0.940)",
+      "ease-out-cubic": "cubic-bezier(0.215, 0.610, 0.355, 1.000)",
+      "ease-out-quart": "cubic-bezier(0.165, 0.840, 0.440, 1.000)",
+      "ease-out-quint": "cubic-bezier(0.230, 1.000, 0.320, 1.000)",
+      "ease-out-sine": "cubic-bezier(0.390, 0.575, 0.565, 1.000)",
+      "ease-out-expo": "cubic-bezier(0.190, 1.000, 0.220, 1.000)",
+      "ease-out-circ": "cubic-bezier(0.075, 0.820, 0.165, 1.000)",
+      "ease-out-back": "cubic-bezier(0.175, 0.885, 0.320, 1.275)",
+      "ease-out-quad": "cubic-bezier(0.455, 0.030, 0.515, 0.955)",
+      "ease-out-cubic": "cubic-bezier(0.645, 0.045, 0.355, 1.000)",
+      "ease-in-out-quart": "cubic-bezier(0.770, 0.000, 0.175, 1.000)",
+      "ease-in-out-quint": "cubic-bezier(0.860, 0.000, 0.070, 1.000)",
+      "ease-in-out-sine": "cubic-bezier(0.445, 0.050, 0.550, 0.950)",
+      "ease-in-out-expo": "cubic-bezier(1.000, 0.000, 0.000, 1.000)",
+      "ease-in-out-circ": "cubic-bezier(0.785, 0.135, 0.150, 0.860)",
+      "ease-in-out-back": "cubic-bezier(0.680, -0.550, 0.265, 1.550)"
+    };
     return easings;
   }();
+  function CSS(animations) {
+    this.stylesheet = document.styleSheets[0];
+    this.animations = animations;
+    this.total = this.animations.map(function(a) {
+      return a.delay + a.duration;
+    }).reduce(function(a, b) {
+      return a + b;
+    });
+  }
+  CSS.prototype.percent = function percent(time) {
+    return (time * 100 / this.total).toFixed(3);
+  };
+  CSS.prototype.toString = function toString() {
+    var animation = '"a' + (Date.now() + Math.floor(Math.random() * 100)) + '"';
+    var rule = [ "@-webkit-keyframes " + animation + "{" ];
+    var time = 0;
+    for (var i = 0, len = this.animations.length; i < len; i++) {
+      var a = this.animations[i];
+      a.init();
+      if (a.delay) {
+        rule.push(this.percent(time += a.delay) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "-webkit-animation-timing-function:" + a.easeName + ";", "}");
+      }
+      a.transform(1);
+      rule.push(this.percent(time += a.duration) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "-webkit-animation-timing-function:" + a.easeName + ";", "}");
+    }
+    rule.push("}");
+    this.stylesheet.insertRule(rule.join(""));
+    a.item.dom.style.WebkitAnimation = animation + " " + this.total + "ms forwards";
+    console.log(a.item.dom.style);
+  };
   function EventEmitter() {
     this.handlers = {};
   }
@@ -91,7 +151,7 @@
     }
     return this;
   };
-  function Animation(item, transform, duration, easing, delay) {
+  function Animation(item, transform, duration, ease, delay) {
     EventEmitter.call(this);
     this.item = item;
     this.translate = transform.translate;
@@ -100,7 +160,8 @@
     this.start = null;
     this.duration = duration || transform.duration || 500;
     this.delay = delay || transform.delay || 0;
-    this.easing = easings[easing] || easings[transform.easing] || easings.linear;
+    this.ease = easings[ease] || easings[transform.ease] || easings.linear;
+    this.easeName = ease || "linear";
   }
   Animation.prototype = new EventEmitter();
   Animation.prototype.constructor = Animation;
@@ -118,11 +179,14 @@
   Animation.prototype.animate = function animate() {
     return this.item.animate.apply(this.item, arguments);
   };
+  Animation.prototype.toCSS = function css() {
+    return this.item.toCSS();
+  };
   Animation.prototype.run = function run(tick) {
     if (tick - this.start < this.delay) return;
     var percent = (tick - this.delay - this.start) / this.duration;
     if (percent < 0) percent = 0;
-    percent = this.easing(percent);
+    percent = this.ease(percent);
     this.transform(percent);
   };
   Animation.prototype.set = function set(type, state, initial, percent) {
@@ -138,7 +202,7 @@
       }
     }
   };
-  Animation.prototype.transform = function change(percent) {
+  Animation.prototype.transform = function transform(percent) {
     var state = this.item.state, initial = this.initial;
     this.set("translate", state, initial, percent);
     this.set("rotate", state, initial, percent);
@@ -148,7 +212,7 @@
     !abort && this.transform(1);
     this.emit("end");
   };
-  function Parallel(item, animations, duration, easing, delay) {
+  function Parallel(item, animations, duration, ease, delay) {
     EventEmitter.call(this);
     this.item = item;
     this.animations = animations.map(function(a) {
@@ -156,7 +220,7 @@
         translate: a.translate,
         rotate: a.rotate,
         scale: a.scale
-      }, a.duration || duration, a.easing || easing, a.delay || delay);
+      }, a.duration || duration, a.ease || ease, a.delay || delay);
     });
     this.start = null;
     this.delay = 0;
@@ -382,8 +446,11 @@
     this.style();
   };
   Item.prototype.style = function() {
+    this.dom.style[transformProperty] = this.matrix();
+  };
+  Item.prototype.matrix = function() {
     var state = this.state;
-    this.dom.style[transformProperty] = Matrix.toString(Matrix.multiply(Matrix.translate.apply(null, state.translate), Matrix.rotate.apply(null, state.rotate), Matrix.scale.apply(null, state.scale)));
+    return Matrix.toString(Matrix.multiply(Matrix.translate.apply(null, state.translate), Matrix.rotate.apply(null, state.rotate), Matrix.scale.apply(null, state.scale)));
   };
   Item.prototype.add = function add(type, a) {
     this.state[type][0] += a[0];
@@ -402,8 +469,8 @@
   Item.prototype.clear = function clear() {
     this.zero("state");
   };
-  Item.prototype.animate = function animate(transform, duration, easing, delay) {
-    var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, easing, delay);
+  Item.prototype.animate = function animate(transform, duration, ease, delay) {
+    var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, ease, delay);
     this.animations.push(animation);
     this.zero("transform");
     return animation;
@@ -439,5 +506,8 @@
     }
     this.animations = [];
     this.zero("transform");
+  };
+  Item.prototype.toCSS = function toCSS() {
+    return new CSS(this.animations).toString();
   };
 })();

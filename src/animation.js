@@ -7,7 +7,7 @@
  * @param {number} delay
  * @constructor
  */
-function Animation(item, transform, duration, easing, delay) {
+function Animation(item, transform, duration, ease, delay) {
   EventEmitter.call(this)
 
   this.item = item
@@ -22,7 +22,9 @@ function Animation(item, transform, duration, easing, delay) {
 
   this.delay = delay || transform.delay || 0
 
-  this.easing = easings[easing] || easings[transform.easing] || easings.linear
+  this.ease = easings[ease] || easings[transform.ease] || easings.linear
+  
+  this.easeName = ease || 'linear'
 }
 
 Animation.prototype = new EventEmitter
@@ -50,6 +52,10 @@ Animation.prototype.animate = function animate() {
   return this.item.animate.apply(this.item, arguments)
 }
 
+Animation.prototype.toCSS = function css() {
+  return this.item.toCSS()
+}
+
 /**
  * Runs one tick of animation
  * @param {number} tick
@@ -59,7 +65,7 @@ Animation.prototype.run = function run(tick) {
 
   var percent = (tick - this.delay - this.start) / this.duration
   if (percent < 0) percent = 0
-  percent = this.easing(percent)
+  percent = this.ease(percent)
 
   this.transform(percent)
 }
@@ -89,7 +95,7 @@ Animation.prototype.set = function set(type, state, initial, percent) {
  * Transforms item
  * @param {number} percent
  */
-Animation.prototype.transform = function change(percent) {
+Animation.prototype.transform = function transform(percent) {
   var state = this.item.state,
       initial = this.initial
 
