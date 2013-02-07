@@ -56,7 +56,7 @@ CSS.prototype.toString = function toString() {
       rule.push(
         this.percent(time += a.duration) + '% {',
         '-webkit-transform:' + a.item.matrix() + ';',
-        aNext.easeName && '-webkit-animation-timing-function:' + easings.css[aNext.easeName] + ';',
+        aNext && aNext.easeName && '-webkit-animation-timing-function:' + easings.css[aNext.easeName] + ';',
         '}'
       )
     } else { // Parallel (it doesn't work with custom easings for now)

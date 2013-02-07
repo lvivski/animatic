@@ -116,7 +116,7 @@
         i === 0 && rule.push("0% {", "-webkit-animation-timing-function:" + easings.css[a.easeName] + ";", "}");
         a.delay && rule.push(this.percent(time += a.delay) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "}");
         a.transform(1);
-        rule.push(this.percent(time += a.duration) + "% {", "-webkit-transform:" + a.item.matrix() + ";", aNext.easeName && "-webkit-animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
+        rule.push(this.percent(time += a.duration) + "% {", "-webkit-transform:" + a.item.matrix() + ";", aNext && aNext.easeName && "-webkit-animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
       } else {
         var frames = [];
         a.animations.forEach(function(a) {
