@@ -108,37 +108,21 @@
     return (time * 100 / this.total).toFixed(3);
   };
   CSS.prototype.toString = function toString() {
-    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), rule = [ "@-webkit-keyframes " + animation + "{" ], time = 0;
+    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), time = 0, rule = [ "@-webkit-keyframes " + animation + "{" ];
     for (var i = 0, len = this.animations.length; i < len; i++) {
       var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
       if (a instanceof Animation) {
-        if (i === 0) {
-          rule.push("0% {", "-webkit-animation-timing-function:" + easings.css[a.easeName] + ";", "}");
-        }
-        if (a.delay) {
-          rule.push(this.percent(time += a.delay) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "}");
-        }
+        i === 0 && rule.push("0% {", "-webkit-animation-timing-function:" + easings.css[a.easeName] + ";", "}");
+        a.delay && rule.push(this.percent(time += a.delay) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "}");
         a.transform(1);
         rule.push(this.percent(time += a.duration) + "% {", "-webkit-transform:" + a.item.matrix() + ";", aNext.easeName && "-webkit-animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
       } else {
         var frames = [];
-        for (var j = 0, l = a.animations.length; j < l; ++j) {
-          var pa = a.animations[j];
-          frames.push(pa.delay, pa.delay + pa.duration);
-        }
-        frames = frames.sort(function(a, b) {
-          return a > b;
+        a.animations.forEach(function(a) {
+          a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay);
+          a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration);
         });
-        frames = function() {
-          var a = [];
-          for (var i = 0, l = frames.length; i < l; ++i) {
-            if (i !== frames.lastIndexOf(frames[i])) continue;
-            a.push(frames[i]);
-          }
-          return a;
-        }();
-        frames.shift();
         for (var k = 0, m = frames.length; k < m; ++k) {
           var frame = frames[k];
           for (var j = 0, l = a.animations.length; j < l; ++j) {
