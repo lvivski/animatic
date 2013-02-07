@@ -112,18 +112,20 @@
     var rule = [ "@-webkit-keyframes " + animation + "{" ];
     var time = 0;
     for (var i = 0, len = this.animations.length; i < len; i++) {
-      var a = this.animations[i];
+      var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
+      if (i === 0) {
+        rule.push("0% {", "-webkit-animation-timing-function:" + easings.css[a.easeName] + ";", "}");
+      }
       if (a.delay) {
-        rule.push(this.percent(time += a.delay) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "-webkit-animation-timing-function:" + a.easeName + ";", "}");
+        rule.push(this.percent(time += a.delay) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "}");
       }
       a.transform(1);
-      rule.push(this.percent(time += a.duration) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "-webkit-animation-timing-function:" + a.easeName + ";", "}");
+      rule.push(this.percent(time += a.duration) + "% {", "-webkit-transform:" + a.item.matrix() + ";", aNext && "-webkit-animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
     }
     rule.push("}");
     this.stylesheet.insertRule(rule.join(""));
     a.item.dom.style.WebkitAnimation = animation + " " + this.total + "ms forwards";
-    console.log(a.item.dom.style);
   };
   function EventEmitter() {
     this.handlers = {};
