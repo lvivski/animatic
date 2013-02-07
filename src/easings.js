@@ -9,7 +9,7 @@ var easings = (function(){
       return Math.pow(p, 2)
     },
     cubic: function (p) {
-      return Math.pow(p, 2)
+      return Math.pow(p, 3)
     },
     quart: function (p) {
       return Math.pow(p, 4)
