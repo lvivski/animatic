@@ -78,7 +78,8 @@ CSS.prototype.toString = function toString() {
         }
         return a
       }()
-
+      frames.shift()
+      
       for (var k = 0, m = frames.length; k < m; ++k) {
         var frame = frames[k]
         for (var j = 0, l = a.animations.length; j < l; ++j) {
@@ -97,7 +98,7 @@ CSS.prototype.toString = function toString() {
   }
   rule.push('}')
   this.stylesheet.insertRule(rule.join(''))
-  console.log(rule.join(''))
-  console.log(this.stylesheet.cssRules[0].cssText)
+  // console.log(rule.join(''))
+  // console.log(this.stylesheet.cssRules[0].cssText)
   a.item.dom.style.WebkitAnimation = animation + ' ' + this.total + 'ms forwards'
 }
