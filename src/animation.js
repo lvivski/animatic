@@ -12,8 +12,8 @@ function Animation(item, transform, duration, ease, delay) {
 
   this.item = item
 
-  this.translate = transform.translate
-  this.rotate = transform.rotate
+  this.translate = transform.translate && transform.translate.map(parseFloat)
+  this.rotate = transform.rotate && transform.rotate.map(parseFloat)
   this.scale = transform.scale
 
   this.start = null

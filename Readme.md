@@ -2,6 +2,7 @@
 CSS animations with a soul
 
 With Anima it's easy to animate over a hundred object at a time.
+And it's only **3.5k** when gzipped.
 
 ## Motivation
 CSS animations have some limits, the main is that you can't really have full control over them. And it's near impossible to stop transitions without dirty hacks.
@@ -48,6 +49,7 @@ item.animate({
   delay: 100
 })
 ```
+_**Note**: transformations' values are relative to the last known `Item` state, it's initial state or the state after previous animation. Angles for `rotate` should be in degrees._
 
 ### Sequential animations
 You can create sequential animations with ease :)
@@ -93,7 +95,7 @@ You can learn more about them at [easings.net](http://easings.net)
 
 ## Examples
 ### requestAnimationFrame
-- [keyboard control](anima/blob/master/example/keyboard.html)
+- [keyboard control](anima/blob/master/example/keyboard.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
 - [animation chain](anima/blob/master/example/bounce.html)
 - [parallel animations](anima/blob/master/example/parallel.html)
 - [delayed animation](anima/blob/master/example/delay.html)
