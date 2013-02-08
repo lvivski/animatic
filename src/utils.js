@@ -2,7 +2,7 @@
  * Vendor specific stuff
  */
 !function(){
-  var vendors = ['webkit', 'Moz', 'O', 'ms'], i = 0;
+  var vendors = ['webkit', 'Moz', 'O', 'ms'], i = 0
 
   while(!window.requestAnimationFrame && i < vendors.length) {
     var vendor = vendors[i++].toLowerCase()
