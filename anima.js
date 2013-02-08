@@ -13,6 +13,7 @@
       window.requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
       window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];
     }
+    vendor || (vendor = vendors[0]);
     window.vendor = vendor ? "-" + vendor + "-" : "";
     window.transformProperty = getProperty("transform");
     window.animationProperty = getProperty("animation");

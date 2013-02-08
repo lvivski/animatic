@@ -10,6 +10,8 @@
     window.cancelAnimationFrame = window[vendor + 'CancelAnimationFrame']
                         || window[vendor + 'CancelRequestAnimationFrame']
   }
+  
+  vendor || (vendor = vendors[0]) // Chrome supports rAF without prefix, but css properties only with "-webkit"
 
   window.vendor = vendor ? '-' + vendor + '-' : ''
 
