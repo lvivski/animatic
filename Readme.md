@@ -13,7 +13,7 @@ Anima gives you the ability to use delays and durations normally, even for pure 
 
 _**Note**: `CSS` mode is experimental for now, not everything works as expected._
 
-## Api
+## API
 At first you cave to initialize the World, so the frame loop will start (so called `JS` mode)
 ```js
 var world = anima.js()
@@ -67,8 +67,7 @@ item.animate([{
 	duration: 500,
 	easing: 'ease-in-out-quad',
 	delay: 100
-},
-{
+},{
 	rotate : [angleX,angleY,angleZ],
 	duration: 1000,
 	easing: 'ease-in-expo',
