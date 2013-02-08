@@ -1,0 +1,29 @@
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  -webkit-perspective: 300px;
+  -webkit-transform-style: preserve-3d;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  -webkit-transform-style: preserve-3d;
+}
+
+.block {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  background: rgb(70,120,255);
+  margin: 10px;
+  border: 1px solid;
+}
+
