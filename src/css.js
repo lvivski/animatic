@@ -30,7 +30,7 @@ CSS.prototype.percent = function percent(time) {
 CSS.prototype.toString = function toString() {
   var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100)),
       time = 0,
-      rule = ['@-webkit-keyframes ' + animation + '{']
+      rule = ['@' + vendor + 'keyframes ' + animation + '{']
 
   for (var i = 0, len = this.animations.length; i < len; i++) {
     var a = this.animations[i],
@@ -41,13 +41,13 @@ CSS.prototype.toString = function toString() {
     if (a instanceof Animation) { // Single
       i === 0 && rule.push(
         '0% {',
-        '-webkit-animation-timing-function:' + easings.css[a.easeName] + ';',
+        vendor + 'animation-timing-function:' + easings.css[a.easeName] + ';',
         '}'
       )
 
       a.delay && rule.push(
         this.percent(time += a.delay) + '% {',
-        '-webkit-transform:' + a.item.matrix() + ';',
+        vendor +'transform:' + a.item.matrix() + ';',
         '}'
       )
 
@@ -55,8 +55,8 @@ CSS.prototype.toString = function toString() {
 
       rule.push(
         this.percent(time += a.duration) + '% {',
-        '-webkit-transform:' + a.item.matrix() + ';',
-        aNext && aNext.easeName && '-webkit-animation-timing-function:' + easings.css[aNext.easeName] + ';',
+        vendor + 'transform:' + a.item.matrix() + ';',
+        aNext && aNext.easeName && vendor + 'animation-timing-function:' + easings.css[aNext.easeName] + ';',
         '}'
       )
     } else { // Parallel (it doesn't work with custom easings for now)
@@ -74,9 +74,10 @@ CSS.prototype.toString = function toString() {
             continue
           pa.transform((frame - pa.delay) / pa.duration)
         }
+
         rule.push(
           this.percent(time += frame) + '% {',
-          '-webkit-transform:' + a.item.matrix() + ';',
+          vendor + 'transform:' + a.item.matrix() + ';',
           '}'
         )
       }
@@ -85,7 +86,6 @@ CSS.prototype.toString = function toString() {
 
   rule.push('}')
   this.stylesheet.insertRule(rule.join(''))
-  // console.log(rule.join(''))
-  // console.log(this.stylesheet.cssRules[0].cssText)
-  a.item.dom.style.WebkitAnimation = animation + ' ' + this.total + 'ms forwards'
+  a.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms forwards'
+  return rule.slice(1, -1).join('')
 }

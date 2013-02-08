@@ -3,7 +3,7 @@
  * @param {Item} item
  * @param {Array} animations
  * @param {number} duration
- * @param {string} easing
+ * @param {string} ease
  * @param {number} delay
  * @constructor
  */
@@ -55,8 +55,8 @@ Parallel.prototype.animate = function animate() {
   return this.item.animate.apply(this.item, arguments)
 }
 
-Parallel.prototype.toCSS = function css() {
-  return this.item.toCSS()
+Parallel.prototype.css = function css() {
+  return this.item.css()
 }
 
 /**

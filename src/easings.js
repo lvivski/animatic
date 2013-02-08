@@ -47,7 +47,7 @@ var easings = (function(){
         : 1 - ease(p * -2 + 2) / 2
     }
   })
-  
+
   easings.css = {
     'linear': 'cubic-bezier(0.000, 0.000, 1.000, 1.000)',
     'ease-in-quad': 'cubic-bezier(0.550, 0.085, 0.680, 0.530)',
@@ -66,8 +66,8 @@ var easings = (function(){
     'ease-out-expo': 'cubic-bezier(0.190, 1.000, 0.220, 1.000)',
     'ease-out-circ': 'cubic-bezier(0.075, 0.820, 0.165, 1.000)',
     'ease-out-back': 'cubic-bezier(0.175, 0.885, 0.320, 1.275)',
-    'ease-out-quad': 'cubic-bezier(0.455, 0.030, 0.515, 0.955)',
-    'ease-out-cubic': 'cubic-bezier(0.645, 0.045, 0.355, 1.000)',
+    'ease-in-out-quad': 'cubic-bezier(0.455, 0.030, 0.515, 0.955)',
+    'ease-in-out-cubic': 'cubic-bezier(0.645, 0.045, 0.355, 1.000)',
     'ease-in-out-quart': 'cubic-bezier(0.770, 0.000, 0.175, 1.000)',
     'ease-in-out-quint': 'cubic-bezier(0.860, 0.000, 0.070, 1.000)',
     'ease-in-out-sine': 'cubic-bezier(0.445, 0.050, 0.550, 0.950)',

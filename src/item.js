@@ -120,7 +120,7 @@ Item.prototype.clear = function clear() {
  * Adds animation
  * @param {Object|Array} transform
  * @param {number} duration
- * @param {string} easing
+ * @param {string} ease
  * @param {number} delay
  * @return {Animation|Parallel}
  */
@@ -183,6 +183,6 @@ Item.prototype.reset = function reset() {
   this.zero('transform')
 }
 
-Item.prototype.toCSS = function toCSS() {
+Item.prototype.css = function css() {
   return new CSS(this.animations).toString()
 }

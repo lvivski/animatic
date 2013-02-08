@@ -13,16 +13,19 @@
       window.requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
       window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];
     }
-    window.transformProperty = function() {
-      var style = document.createElement("div").style;
+    window.vendor = vendor ? "-" + vendor + "-" : "";
+    window.transformProperty = getProperty("transform");
+    window.animationProperty = getProperty("animation");
+    function getProperty(property) {
+      var style = document.createElement("div").style, Property = property[0].toUpperCase() + property.slice(1);
       if (typeof style.transform === "undefined") {
         return vendors.filter(function(vendor) {
-          return typeof style[vendor + "Transform"] !== "undefined";
-        })[0] + "Transform";
+          return typeof style[vendor + Property] !== "undefined";
+        })[0] + Property;
       } else {
-        return "transform";
+        return property;
       }
-    }();
+    }
   }();
   var easings = function() {
     var fn = {
@@ -84,8 +87,8 @@
       "ease-out-expo": "cubic-bezier(0.190, 1.000, 0.220, 1.000)",
       "ease-out-circ": "cubic-bezier(0.075, 0.820, 0.165, 1.000)",
       "ease-out-back": "cubic-bezier(0.175, 0.885, 0.320, 1.275)",
-      "ease-out-quad": "cubic-bezier(0.455, 0.030, 0.515, 0.955)",
-      "ease-out-cubic": "cubic-bezier(0.645, 0.045, 0.355, 1.000)",
+      "ease-in-out-quad": "cubic-bezier(0.455, 0.030, 0.515, 0.955)",
+      "ease-in-out-cubic": "cubic-bezier(0.645, 0.045, 0.355, 1.000)",
       "ease-in-out-quart": "cubic-bezier(0.770, 0.000, 0.175, 1.000)",
       "ease-in-out-quint": "cubic-bezier(0.860, 0.000, 0.070, 1.000)",
       "ease-in-out-sine": "cubic-bezier(0.445, 0.050, 0.550, 0.950)",
@@ -108,15 +111,15 @@
     return (time * 100 / this.total).toFixed(3);
   };
   CSS.prototype.toString = function toString() {
-    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), time = 0, rule = [ "@-webkit-keyframes " + animation + "{" ];
+    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), time = 0, rule = [ "@" + vendor + "keyframes " + animation + "{" ];
     for (var i = 0, len = this.animations.length; i < len; i++) {
       var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
       if (a instanceof Animation) {
-        i === 0 && rule.push("0% {", "-webkit-animation-timing-function:" + easings.css[a.easeName] + ";", "}");
-        a.delay && rule.push(this.percent(time += a.delay) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "}");
+        i === 0 && rule.push("0% {", vendor + "animation-timing-function:" + easings.css[a.easeName] + ";", "}");
+        a.delay && rule.push(this.percent(time += a.delay) + "% {", vendor + "transform:" + a.item.matrix() + ";", "}");
         a.transform(1);
-        rule.push(this.percent(time += a.duration) + "% {", "-webkit-transform:" + a.item.matrix() + ";", aNext && aNext.easeName && "-webkit-animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
+        rule.push(this.percent(time += a.duration) + "% {", vendor + "transform:" + a.item.matrix() + ";", aNext && aNext.easeName && vendor + "animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
       } else {
         var frames = [];
         a.animations.forEach(function(a) {
@@ -130,13 +133,14 @@
             if (pa.delay >= frame || pa.delay + pa.duration < frame) continue;
             pa.transform((frame - pa.delay) / pa.duration);
           }
-          rule.push(this.percent(time += frame) + "% {", "-webkit-transform:" + a.item.matrix() + ";", "}");
+          rule.push(this.percent(time += frame) + "% {", vendor + "transform:" + a.item.matrix() + ";", "}");
         }
       }
     }
     rule.push("}");
     this.stylesheet.insertRule(rule.join(""));
-    a.item.dom.style.WebkitAnimation = animation + " " + this.total + "ms forwards";
+    a.item.dom.style[animationProperty] = animation + " " + this.total + "ms forwards";
+    return rule.slice(1, -1).join("");
   };
   function EventEmitter() {
     this.handlers = {};
@@ -192,8 +196,8 @@
   Animation.prototype.animate = function animate() {
     return this.item.animate.apply(this.item, arguments);
   };
-  Animation.prototype.toCSS = function css() {
-    return this.item.toCSS();
+  Animation.prototype.css = function css() {
+    return this.item.css();
   };
   Animation.prototype.run = function run(tick) {
     if (tick - this.start < this.delay) return;
@@ -254,8 +258,8 @@
   Parallel.prototype.animate = function animate() {
     return this.item.animate.apply(this.item, arguments);
   };
-  Parallel.prototype.toCSS = function css() {
-    return this.item.toCSS();
+  Parallel.prototype.css = function css() {
+    return this.item.css();
   };
   Parallel.prototype.run = function run(tick) {
     for (var i = 0; i < this.animations.length; ++i) {
@@ -523,7 +527,7 @@
     this.animations = [];
     this.zero("transform");
   };
-  Item.prototype.toCSS = function toCSS() {
+  Item.prototype.css = function css() {
     return new CSS(this.animations).toString();
   };
 })();

@@ -3,7 +3,7 @@
  * @param {Item} item Object to animate
  * @param {Object} transform
  * @param {number} duration
- * @param {string} easing Timing function
+ * @param {string} ease Timing function
  * @param {number} delay
  * @constructor
  */
@@ -23,7 +23,7 @@ function Animation(item, transform, duration, ease, delay) {
   this.delay = delay || transform.delay || 0
 
   this.ease = easings[ease] || easings[transform.ease] || easings.linear
-  
+
   this.easeName = ease || 'linear'
 }
 
@@ -52,8 +52,8 @@ Animation.prototype.animate = function animate() {
   return this.item.animate.apply(this.item, arguments)
 }
 
-Animation.prototype.toCSS = function css() {
-  return this.item.toCSS()
+Animation.prototype.css = function css() {
+  return this.item.css()
 }
 
 /**
