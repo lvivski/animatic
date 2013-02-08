@@ -7,7 +7,9 @@ And it's only **3.5k** when gzipped.
 ## Motivation
 CSS animations have some limits, the main is that you can't really have full control over them. And it's near impossible to stop transitions without dirty hacks.
 
-Anima uses uncommon approach to CSS animation. Well, It doesn't really use CSS transitions or `@keyframes` in `JS` mode. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. `CSS` mode allows you to generate pure `CSS` animations.
+Another problem is calculating percents for keyframes. People create animations with time in mind, not percents. You always think of _"it should fly and rotate for a half of a second, then stand still for another second and continue flying"_, and not `0% start 50% fly 70% stop 90% fly`.
+
+Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: `JS` and `CSS`. The first one doesn't really use CSS transitions or `@keyframes`. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. `CSS` mode allows you to generate pure CSS animations, but it has less control features for now.
 
 _**Note**: `CSS` mode is experimental for now, not everything works as expected._
 
