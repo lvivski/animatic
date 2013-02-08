@@ -30,7 +30,7 @@ so the world is looping now, waiting for item transformations to animate
 
 API remains the same in `CSS` mode, but you have to call the `.css()` method explicitly at the end of desired `.animate()`'s
 ```js
-item.animate(…).css()
+item.animate(...).css()
 ```
 
 ### Single animation
@@ -96,12 +96,12 @@ You can learn more about them at [easings.net](http://easings.net)
 
 ## Examples
 ### requestAnimationFrame
-- [keyboard control](anima/blob/master/example/keyboard.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
-- [animation chain](anima/blob/master/example/bounce.html)
-- [parallel animations](anima/blob/master/example/parallel.html)
-- [delayed animation](anima/blob/master/example/delay.html)
+- [keyboard control](example/keyboard.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
+- [animation chain](example/bounce.html)
+- [parallel animations](example/parallel.html)
+- [delayed animation](example/delay.html)
 
 ### pure CSS
-- [animation chain](anima/blob/master/example/bounce_css.html)
-- [delayed animation](anima/blob/master/example/delay_css.html)
-- [parallel animations](anima/blob/master/example/parallel_css.html) (do not support custom `timing-functions` for now)
+- [animation chain](example/bounce_css.html)
+- [delayed animation](example/delay_css.html)
+- [parallel animations](example/parallel_css.html) (do not support custom `timing-functions` for now)

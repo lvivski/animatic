@@ -5,15 +5,14 @@
     "type": "git",
     "url": "git://github.com/lvivski/anima"
   },
-  "description": "CSS animations with soul",
-  "version": "0.0.1",
+  "description": "CSS animations with a soul",
+  "version": "0.1.0",
   "keywords": [
     "css",
     "animation",
     "js",
     "transform"
   ],
-
   "devDependencies": {
     "uglify-js": "*"
   },
