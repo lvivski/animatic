@@ -85,7 +85,7 @@ CSS.prototype.toString = function toString() {
   }
 
   rule.push('}')
-  this.stylesheet.insertRule(rule.join(''))
+  this.stylesheet.insertRule(rule.join(''), 0)
   a.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms forwards'
   return rule.slice(1, -1).join('')
 }

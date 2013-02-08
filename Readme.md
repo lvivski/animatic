@@ -28,7 +28,7 @@ var item = world.add(document.querySelector("div"))
 ```
 so the world is looping now, waiting for item transformations to animate
 
-In `CSS` mode the API remains the same, but you have to call the `.css()` method explicitly at the end of desired `.animate()`'s
+API remains the same in `CSS` mode, but you have to call the `.css()` method explicitly at the end of desired `.animate()`'s
 ```js
 item.animate(…).css()
 ```
