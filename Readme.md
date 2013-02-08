@@ -1,7 +1,7 @@
 # Anima
 CSS animations with a soul
 
-With Anima it's easy to animate over a hundred object at a time.
+With Anima it's easy to animate over a hundred objects at a time.
 And it's only **3.5k** when gzipped.
 
 ## Motivation
