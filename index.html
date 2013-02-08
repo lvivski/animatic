@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Anima by lvivski</title>
+    <title>Anima — CSS animations with a soul</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,20 +15,12 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Anima</h1>
-        <p>CSS animations with a soul</p>
+        <h1>Anima.js</h1>
 
-        <p class="view"><a href="https://github.com/lvivski/anima">View the Project on GitHub <small>lvivski/anima</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/lvivski/anima/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/lvivski/anima/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/lvivski/anima">View On <strong>GitHub</strong></a></li>
-        </ul>
+        <p class="view"><a href="https://github.com/lvivski/anima">Project on GitHub</a></p>
       </header>
       <section>
-<p>With Anima it's easy to animate over a hundred object at a time (see <a href="#examples">examples</a>)</p>.
+<p>With Anima it's easy to animate over a hundred object at a time (see <a href="#examples">examples</a>).</p>
 <p>And it's only <strong>3.5k</strong> when gzipped.</p>
 
 <h2>Motivation</h2>
@@ -68,10 +60,13 @@
 <h3>Single animation</h3>
 
 <p>Arguments:
-1. The map of transformations to apply. Only <code>translate</code>, <code>rotate</code> and <code>scale</code> are currently supported, but the list will expand.
-2. Animation duration
-3. Easing function
-4. Animation delay</p>
+  <ol>
+<li>The map of transformations to apply. Only <code>translate</code>, <code>rotate</code> and <code>scale</code> are currently supported, but the list will expand.
+<li>Animation duration
+<li>Easing function
+<li>Animation delay
+</ol>
+</p>
 
 <div class="highlight"><pre><span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span><span class="nx">translate</span><span class="o">:</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span><span class="p">]},</span> <span class="mi">500</span><span class="p">,</span> <span class="s1">'ease-in-out-quad'</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 </pre></div>
@@ -153,12 +148,7 @@
 <a href="example/parallel_css.html">parallel animations</a> (do not support custom <code>timing-functions</code> for now)</li>
 </ul>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/lvivski">lvivski</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
