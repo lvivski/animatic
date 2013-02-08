@@ -155,7 +155,7 @@
     if (handler) {
       handlers.splice(handlers.indexOf(handler), 1);
     } else {
-      handlers = [];
+      this.handlers[event] = [];
     }
     return this;
   };
