@@ -170,9 +170,9 @@ Item.prototype.zero = function zero(type) {
 }
 
 /**
- * Resets all Item animations
+ * Stops all Item animations
  */
-Item.prototype.reset = function reset() {
+Item.prototype.stop = function stop() {
   if (this.animations.length === 0) return
   for (var i = 0, len = this.animations.length; i < len; i++) {
     var a = this.animations[i]

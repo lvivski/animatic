@@ -519,7 +519,7 @@
     this[type].rotate = [ 0, 0, 0 ];
     this[type].scale = [ 0, 0, 0 ];
   };
-  Item.prototype.reset = function reset() {
+  Item.prototype.stop = function stop() {
     if (this.animations.length === 0) return;
     for (var i = 0, len = this.animations.length; i < len; i++) {
       var a = this.animations[i];
