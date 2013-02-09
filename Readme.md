@@ -28,7 +28,7 @@ var item = world.add(document.querySelector("div"))
 ```
 so the world is looping now, waiting for item transformations to animate
 
-API remains the same in `CSS` mode, but you have to call the `.css()` method explicitly at the end of desired `.animate()`'s
+API remains the same in `CSS` mode, but you have to call the `.css()` method explicitly at the end of desired `.animate`'s
 ```js
 item.animate(...).css()
 ```
@@ -75,6 +75,17 @@ item.animate([{
 }])
 ```
 So you basically pass an array of transformations to create parallel animation.
+
+### Taking control
+#### `JS` mode
+Animations start automatically as soon as you call `.animate()` on the item.
+You can stop them with
+```js
+item.stop()
+```
+#### `CSS` mode
+To start your animations you have to call `.css()` after all you desired `.animate`'s
+`CSS` mode doesn't support `.stop` for now.
 
 ### Animation events
 Every animation has it's own `start` and `end` events.
