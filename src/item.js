@@ -86,6 +86,15 @@ Item.prototype.add = function add(type, a) {
 }
 
 /**
+ * Sets values to state params
+ * @param {string} type
+ * @param {Array} a
+ */
+Item.prototype.set = function set(type, a) {
+  this.state[type] = a
+}
+
+/**
  * Translates item in XYZ axis
  * @param {Array} t Coordinates
  */

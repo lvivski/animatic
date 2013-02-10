@@ -478,6 +478,9 @@
     this.state[type][1] += a[1];
     this.state[type][2] += a[2];
   };
+  Item.prototype.set = function set(type, a) {
+    this.state[type] = a;
+  };
   Item.prototype.translate = function translate(t) {
     this.add("translate", t);
   };
