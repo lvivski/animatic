@@ -5,7 +5,7 @@
  */
 function World(start) {
   this.items = []
-  this._nextTick = null
+  this._frame = null
   start && this.init()
 }
 
@@ -17,17 +17,17 @@ World.prototype.init = function init() {
 
   function update(tick) {
     self.update(tick)
-    self._nextTick = requestAnimationFrame(update)
+    self._frame = requestAnimationFrame(update)
   }
 
-  this._nextTick = requestAnimationFrame(update)
+  this._frame = requestAnimationFrame(update)
 }
 
 /**
  * Stops the world
  */
 World.prototype.stop = function stop() {
-  this._nextTick && cancelAnimationFrame(this._nextTick)
+  this._frame && cancelAnimationFrame(this._nextTick)
 }
 
 /**
