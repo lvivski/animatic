@@ -65,12 +65,12 @@ Sometimes you need to transform something in parallel
 item.animate([{
 	translate : [x,y,z],
 	duration: 500,
-	easing: 'ease-in-out-quad',
+	ease: 'ease-in-out-quad',
 	delay: 100
 },{
 	rotate : [angleX,angleY,angleZ],
 	duration: 1000,
-	easing: 'ease-in-expo',
+	ease: 'ease-in-expo',
 	delay: 400
 }])
 ```
