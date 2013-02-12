@@ -31,26 +31,34 @@
     var el = document.createElement('div')
     el.className = 'block'
     var item = world.add(el)
-  
-    !function(i){
-      item.update = function(timestamp){
-        var time = timestamp / 1000;
-        this.state.translate[2] = Math.cos(2 * (i*i + time)) * 50
-        this.style()
-      }
-    }(i)
     
+    !function(item, i){
+      setTimeout(function(){
+        item.animate({
+          translate: [0,0,-25]
+        }, 500)
+        .animate({
+          translate: [0,0,50]
+        }, 1000)
+        .animate({
+          translate: [0,0,-25]
+        }, 500)
+        .infinite()
+      }, i*i*10 + Math.floor(Math.random()* 200))
+    }(item, i)
+    
+
     container.dom.appendChild(el)
   }
-  
+
   world.on('keydown', onKeyDown)
-  world.on('keyup', function(){ container.reset() })  
+  world.on('keyup', function(){ container.stop() })
 
   function onKeyDown(e) {
     var rotate = [0, 0, 0],
         translate = [0, 0, 0],
         scale = [0, 0, 0]
-        
+
     switch(e.keyCode) {
       case keys.UP:
         rotate[0] = 50
@@ -77,7 +85,7 @@
         translate[0] = 200
         break
     }
-    
+
     container.emit('transform', translate, rotate, scale)
   }
 </script>
