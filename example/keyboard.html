@@ -30,23 +30,21 @@
   for (var i = 0; i < 50; i++) {
     var el = document.createElement('div')
     el.className = 'block'
-    var item = world.add(el)
-    
-    !function(item, i){
-      setTimeout(function(){
-        item.animate({
-          translate: [0,0,-25]
-        }, 500)
-        .animate({
-          translate: [0,0,50]
-        }, 1000)
-        .animate({
-          translate: [0,0,-25]
-        }, 500)
-        .infinite()
-      }, i*i*10 + Math.floor(Math.random()* 200))
-    }(item, i)
-    
+    var item = world.add(el),
+        d = Math.floor(Math.random()*50)
+        t = Math.floor(Math.random()*(700-300))+300
+        m = d > 25 ? -1 : 1
+
+    item.animate({
+      translate: [0,0,-d*m]
+    }, t)
+    .animate({
+      translate: [0,0,d*2*m]
+    }, t*2)
+    .animate({
+      translate: [0,0,-d*m]
+    }, t)
+    .infinite()
 
     container.dom.appendChild(el)
   }
