@@ -3,8 +3,10 @@
  * @param {Array} animations
  * @constructor
  */
-function CSS(animations) {
+function CSS(item, animations) {
   this.stylesheet = document.styleSheets[0]
+  
+  this.item = item
 
   this.animations = animations
 
@@ -86,6 +88,6 @@ CSS.prototype.toString = function toString() {
 
   rule.push('}')
   this.stylesheet.insertRule(rule.join(''), 0)
-  a.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms forwards'
+  this.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
   return rule.slice(1, -1).join('')
 }

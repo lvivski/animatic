@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Matrix</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <style>
+    .block {
+      border-radius: 50%;
+    }
+  </style>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="block"></div>
+</body>
+<script src="../anima.js"></script>
+<script>
+  var world = anima.css(),
+      item = world.add(document.querySelector('.block'))
+  
+  item
+    .animate({
+      translate: [0, 300, 0]
+    }, 500, 'ease-in-quad')
+    .animate({
+      translate: [0, -300, 0]
+    }, 500, 'ease-out-quad')
+    .infinite()
+    .css()
+</script>
+</html>

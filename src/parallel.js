@@ -59,6 +59,11 @@ Parallel.prototype.css = function css() {
   return this.item.css()
 }
 
+Parallel.prototype.infinite = function infinite() {
+  this.item.infinite = true
+  return this
+}
+
 /**
  * Runs one tick of animations
  * @param {number} tick

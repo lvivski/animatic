@@ -76,6 +76,9 @@ item.animate([{
 ```
 So you basically pass an array of transformations to create parallel animation.
 
+### Infinite animations
+You can call `.infinite()` at the end of you `.animate`'s chain, to make the animation infinite.
+
 ### Taking control
 #### `JS` mode
 Animations start automatically as soon as you call `.animate()` on the item.
@@ -110,9 +113,11 @@ You can learn more about them at [easings.net](http://easings.net)
 - [keyboard control](example/keyboard.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
 - [animation chain](example/bounce.html)
 - [parallel animations](example/parallel.html)
+- [infinite animation](example/infinite.html)
 - [delayed animation](example/delay.html)
 
 ### pure CSS
 - [animation chain](example/bounce_css.html)
+- [infinite animation](example/infinite_css.html)
 - [delayed animation](example/delay_css.html)
 - [parallel animations](example/parallel_css.html) (do not support custom `timing-functions` for now)

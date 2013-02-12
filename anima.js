@@ -99,8 +99,9 @@
     };
     return easings;
   }();
-  function CSS(animations) {
+  function CSS(item, animations) {
     this.stylesheet = document.styleSheets[0];
+    this.item = item;
     this.animations = animations;
     this.total = this.animations.map(function(a) {
       return a.delay + a.duration;
@@ -140,7 +141,7 @@
     }
     rule.push("}");
     this.stylesheet.insertRule(rule.join(""), 0);
-    a.item.dom.style[animationProperty] = animation + " " + this.total + "ms forwards";
+    this.item.dom.style[animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
     return rule.slice(1, -1).join("");
   };
   function EventEmitter() {
@@ -200,6 +201,10 @@
   Animation.prototype.css = function css() {
     return this.item.css();
   };
+  Animation.prototype.infinite = function infinite() {
+    this.item.infinite = true;
+    return this;
+  };
   Animation.prototype.run = function run(tick) {
     if (tick - this.start < this.delay) return;
     var percent = (tick - this.delay - this.start) / this.duration;
@@ -228,6 +233,7 @@
   };
   Animation.prototype.end = function end(abort) {
     !abort && this.transform(1);
+    this.start = null;
     this.emit("end");
   };
   function Parallel(item, animations, duration, ease, delay) {
@@ -261,6 +267,10 @@
   };
   Parallel.prototype.css = function css() {
     return this.item.css();
+  };
+  Parallel.prototype.infinite = function infinite() {
+    this.item.infinite = true;
+    return this;
   };
   Parallel.prototype.run = function run(tick) {
     for (var i = 0; i < this.animations.length; ++i) {
@@ -440,21 +450,21 @@
   function Item(node) {
     EventEmitter.call(this);
     this.dom = node;
-    this.animations = [];
-    this.state = {};
-    this.transform = {};
-    this._dirty = false;
     this.init();
   }
   Item.prototype = new EventEmitter();
   Item.prototype.constructor = Item;
   Item.prototype.init = function init() {
+    this.animations = [];
+    this.infinite = false;
     this.state = {
       translate: [ 0, 0, 0 ],
       rotate: [ 0, 0, 0 ],
       scale: [ 1, 1, 1 ]
     };
+    this.transform = {};
     this.zero("transform");
+    this._dirty = false;
     this.on("transform", function onTransform(translate, rotate, scale) {
       this.transform.translate = translate;
       this.transform.rotate = rotate;
@@ -509,6 +519,7 @@
       var first = this.animations[0];
       first.init(tick);
       if (first.start + first.delay + first.duration <= tick) {
+        this.infinite && this.animations.push(first);
         this.animations.shift();
         first.end();
         continue;
@@ -532,6 +543,6 @@
     this.zero("transform");
   };
   Item.prototype.css = function css() {
-    return new CSS(this.animations).toString();
+    return new CSS(this, this.animations).toString();
   };
 })();

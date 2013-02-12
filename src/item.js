@@ -8,14 +8,6 @@ function Item(node) {
 
   this.dom = node
 
-  this.animations = []
-
-  this.state = {}
-
-  this.transform = {}
-
-  this._dirty = false
-
   this.init()
 }
 
@@ -27,13 +19,21 @@ Item.prototype.constructor = Item
  * adds "transform" handler
  */
 Item.prototype.init = function init() {
+  this.animations = []
+
+  this.infinite = false
+
   this.state = {
     translate: [0, 0, 0],
     rotate: [0, 0, 0],
     scale: [1, 1, 1]
   }
 
+  this.transform = {}
+
   this.zero('transform')
+
+  this._dirty = false
 
   this.on('transform', function onTransform(translate, rotate, scale) {
     this.transform.translate = translate
@@ -159,6 +159,7 @@ Item.prototype.animation = function animation(tick) {
     var first = this.animations[0]
     first.init(tick)
     if (first.start + first.delay + first.duration <= tick) {
+      this.infinite && this.animations.push(first)
       this.animations.shift()
       first.end()
       continue
@@ -193,5 +194,5 @@ Item.prototype.stop = function stop() {
 }
 
 Item.prototype.css = function css() {
-  return new CSS(this.animations).toString()
+  return new CSS(this, this.animations).toString()
 }

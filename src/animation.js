@@ -56,6 +56,11 @@ Animation.prototype.css = function css() {
   return this.item.css()
 }
 
+Animation.prototype.infinite = function infinite() {
+  this.item.infinite = true
+  return this
+}
+
 /**
  * Runs one tick of animation
  * @param {number} tick
@@ -111,5 +116,6 @@ Animation.prototype.transform = function transform(percent) {
  */
 Animation.prototype.end = function end(abort) {
   !abort && this.transform(1)
+  this.start = null
   this.emit('end')
 }
