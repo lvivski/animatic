@@ -17,7 +17,7 @@ _**Note**: `CSS` mode is experimental for now, not everything works as expected.
 
 ## API
 
-[Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#tacking-control) | [Events](#animation-events) | [Easings](#timing-functions)
+[Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#taking-control) | [Events](#animation-events) | [Easings](#timing-functions)
 
 At first you cave to initialize the World, so the frame loop will start (so called `JS` mode)
 ```js
