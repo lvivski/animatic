@@ -24,13 +24,6 @@ World.prototype.init = function init() {
 }
 
 /**
- * Stops the world
- */
-World.prototype.stop = function stop() {
-  this._frame && cancelAnimationFrame(this._nextTick)
-}
-
-/**
  * Adds node to the animated world
  * @param {HTMLElement} node
  * @return {Item}
@@ -42,11 +35,48 @@ World.prototype.add = function add(node) {
 }
 
 /**
+ * Cancels next frame
+ */
+World.prototype.cancel = function cancel() {
+  this._frame && cancelAnimationFrame(this._frame)
+}
+
+/**
+ * Stops the World
+ */
+World.prototype.stop = function stop() {
+  this.cancel()
+  for (var i = 0; i < this.items.length; ++i) {
+    this.items[i].stop()
+  }
+}
+
+/**
+ * Pauses all animations
+ */
+World.prototype.pause = function pause() {
+  this.cancel()
+  for (var i = 0; i < this.items.length; ++i) {
+    this.items[i].pause()
+  }
+}
+
+/**
+ * Resumes all animations
+ */
+World.prototype.resume = function resume() {
+  for (var i = 0; i < this.items.length; ++i) {
+    this.items[i].resume()
+  }
+  this.init()
+}
+
+/**
  * Update the World on frame
  * @param {number} tick
  */
 World.prototype.update = function update(tick) {
-  for (var i = 0, len = this.items.length; i < len; i++) {
+  for (var i = 0; i < this.items.length; ++i) {
     this.items[i].update(tick)
   }
 }

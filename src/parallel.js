@@ -26,9 +26,7 @@ function Parallel(item, animations, duration, ease, delay) {
   })
 
   this.start = null
-
   this.delay = 0
-
   this.duration = Math.max.apply(null, this.animations.map(function(a){
     return a.duration + a.delay
   }))
@@ -45,7 +43,7 @@ Parallel.prototype.constructor = Parallel
 Parallel.prototype.init = function init(tick) {
   if (this.start !== null) return
   this.start = tick
-  for (var i = 0, len = this.animations.length; i < len; ++i) {
+  for (var i = 0; i < this.animations.length; ++i) {
     this.animations[i].init(tick)
   }
   this.emit('start')
@@ -81,12 +79,30 @@ Parallel.prototype.run = function run(tick) {
 }
 
 /**
+ * Pauses animations
+ */
+Parallel.prototype.pause = function pause() {
+  for (var i = 0; i < this.animations.length; ++i) {
+    this.animations[i].pause()
+  }
+}
+
+/**
+ * Resumes animations
+ */
+Parallel.prototype.resume = function resume() {
+  for (var i = 0; i < this.animations.length; ++i) {
+    this.animations[i].resume()
+  }
+}
+
+/**
  * Ends all animations in a set
  * @param {boolean} abort
  * @fires Parallel#end
  */
 Parallel.prototype.end = function end(abort) {
-  for (var i = 0, len = this.animations.length; i < len; ++i) {
+  for (var i = 0; i < this.animations.length; ++i) {
     this.animations[i].end(abort)
   }
   this.emit('end')

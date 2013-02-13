@@ -17,11 +17,10 @@ function Animation(item, transform, duration, ease, delay) {
   this.scale = transform.scale
 
   this.start = null
+  this.diff = null
 
   this.duration = duration || transform.duration || 500
-
   this.delay = delay || transform.delay || 0
-
   this.ease = easings[ease] || easings[transform.ease] || easings.linear
 
   this.easeName = ease || 'linear'
@@ -73,6 +72,20 @@ Animation.prototype.run = function run(tick) {
   percent = this.ease(percent)
 
   this.transform(percent)
+}
+
+/**
+ * Pauses animation
+ */
+Animation.prototype.pause = function pause() {
+  this.diff = Date.now() - this.start
+}
+
+/**
+ * Resumes animation
+ */
+Animation.prototype.resume = function resume() {
+  this.start = Date.now() - this.diff
 }
 
 /**

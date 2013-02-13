@@ -112,9 +112,15 @@
   CSS.prototype.percent = function percent(time) {
     return (time * 100 / this.total).toFixed(3);
   };
-  CSS.prototype.toString = function toString() {
+  CSS.prototype.pause = function pause() {
+    this.item.dom.style[animationProperty + "PlayState"] = "paused";
+  };
+  CSS.prototype.resume = function pause() {
+    this.item.dom.style[animationProperty + "PlayState"] = "running";
+  };
+  CSS.prototype.apply = function apply() {
     var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), time = 0, rule = [ "@" + vendor + "keyframes " + animation + "{" ];
-    for (var i = 0, len = this.animations.length; i < len; i++) {
+    for (var i = 0; i < this.animations.length; i++) {
       var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
       if (a instanceof Animation) {
@@ -128,9 +134,9 @@
           a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay);
           a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration);
         });
-        for (var k = 0, m = frames.length; k < m; ++k) {
+        for (var k = 0; k < frames.length; ++k) {
           var frame = frames[k];
-          for (var j = 0, l = a.animations.length; j < l; ++j) {
+          for (var j = 0; j < a.animations.length; ++j) {
             var pa = a.animations[j];
             if (pa.delay >= frame || pa.delay + pa.duration < frame) continue;
             pa.transform((frame - pa.delay) / pa.duration);
@@ -142,7 +148,7 @@
     rule.push("}");
     this.stylesheet.insertRule(rule.join(""), 0);
     this.item.dom.style[animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
-    return rule.slice(1, -1).join("");
+    return this;
   };
   function EventEmitter() {
     this.handlers = {};
@@ -163,8 +169,7 @@
   EventEmitter.prototype.emit = function(event) {
     var args = Array.prototype.slice.call(arguments, 1), handlers = this.handlers[event];
     if (handlers) {
-      var len = handlers.length;
-      for (var i = 0; i < len; ++i) {
+      for (var i = 0; i < handlers.length; ++i) {
         handlers[i].apply(this, args);
       }
     }
@@ -177,6 +182,7 @@
     this.rotate = transform.rotate && transform.rotate.map(parseFloat);
     this.scale = transform.scale;
     this.start = null;
+    this.diff = null;
     this.duration = duration || transform.duration || 500;
     this.delay = delay || transform.delay || 0;
     this.ease = easings[ease] || easings[transform.ease] || easings.linear;
@@ -211,6 +217,12 @@
     if (percent < 0) percent = 0;
     percent = this.ease(percent);
     this.transform(percent);
+  };
+  Animation.prototype.pause = function pause() {
+    this.diff = Date.now() - this.start;
+  };
+  Animation.prototype.resume = function resume() {
+    this.start = Date.now() - this.diff;
   };
   Animation.prototype.set = function set(type, state, initial, percent) {
     if (this[type] && this[type].length) {
@@ -257,7 +269,7 @@
   Parallel.prototype.init = function init(tick) {
     if (this.start !== null) return;
     this.start = tick;
-    for (var i = 0, len = this.animations.length; i < len; ++i) {
+    for (var i = 0; i < this.animations.length; ++i) {
       this.animations[i].init(tick);
     }
     this.emit("start");
@@ -283,8 +295,18 @@
       a.run(tick);
     }
   };
+  Parallel.prototype.pause = function pause() {
+    for (var i = 0; i < this.animations.length; ++i) {
+      this.animations[i].pause();
+    }
+  };
+  Parallel.prototype.resume = function resume() {
+    for (var i = 0; i < this.animations.length; ++i) {
+      this.animations[i].resume();
+    }
+  };
   Parallel.prototype.end = function end(abort) {
-    for (var i = 0, len = this.animations.length; i < len; ++i) {
+    for (var i = 0; i < this.animations.length; ++i) {
       this.animations[i].end(abort);
     }
     this.emit("end");
@@ -302,16 +324,34 @@
     }
     this._frame = requestAnimationFrame(update);
   };
-  World.prototype.stop = function stop() {
-    this._frame && cancelAnimationFrame(this._nextTick);
-  };
   World.prototype.add = function add(node) {
     var item = new Item(node);
     this.items.push(item);
     return item;
   };
+  World.prototype.cancel = function cancel() {
+    this._frame && cancelAnimationFrame(this._frame);
+  };
+  World.prototype.stop = function stop() {
+    this.cancel();
+    for (var i = 0; i < this.items.length; ++i) {
+      this.items[i].stop();
+    }
+  };
+  World.prototype.pause = function pause() {
+    this.cancel();
+    for (var i = 0; i < this.items.length; ++i) {
+      this.items[i].pause();
+    }
+  };
+  World.prototype.resume = function resume() {
+    for (var i = 0; i < this.items.length; ++i) {
+      this.items[i].resume();
+    }
+    this.init();
+  };
   World.prototype.update = function update(tick) {
-    for (var i = 0, len = this.items.length; i < len; i++) {
+    for (var i = 0; i < this.items.length; ++i) {
       this.items[i].update(tick);
     }
   };
@@ -428,7 +468,7 @@
       return [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, p, 0, 0, 0, 1 ];
     },
     toString: function toString(m) {
-      for (var i = 0, l = m.length; i < l; ++i) if (Math.abs(m[i]) < 1e-6) m[i] = 0;
+      for (var i = 0; i < m.length; ++i) if (Math.abs(m[i]) < 1e-6) m[i] = 0;
       return "matrix3d(" + m.join() + ")";
     },
     toTestString: function toTestString(m) {
@@ -450,13 +490,14 @@
   function Item(node) {
     EventEmitter.call(this);
     this.dom = node;
+    this.animations = [];
     this.init();
   }
   Item.prototype = new EventEmitter();
   Item.prototype.constructor = Item;
   Item.prototype.init = function init() {
-    this.animations = [];
     this.infinite = false;
+    this.running = true;
     this.state = {
       translate: [ 0, 0, 0 ],
       rotate: [ 0, 0, 0 ],
@@ -475,6 +516,16 @@
   Item.prototype.update = function update(tick) {
     this.animation(tick);
     this.style();
+  };
+  Item.prototype.pause = function pause() {
+    if (!this.running) return;
+    this.animations.length && this.animations[0].pause();
+    this.running = false;
+  };
+  Item.prototype.resume = function resume() {
+    if (this.running) return;
+    this.animations.length && this.animations[0].resume();
+    this.running = true;
   };
   Item.prototype.style = function() {
     this.dom.style[transformProperty] = this.matrix();
@@ -510,6 +561,7 @@
     return animation;
   };
   Item.prototype.animation = function animation(tick) {
+    if (!this.running) return;
     if (this.animations.length === 0 && this._dirty) {
       this.animate(this.transform);
       this._dirty = false;
@@ -543,6 +595,6 @@
     this.zero("transform");
   };
   Item.prototype.css = function css() {
-    return new CSS(this, this.animations).toString();
+    return new CSS(this, this.animations).apply();
   };
 })();

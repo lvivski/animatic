@@ -5,7 +5,7 @@
  */
 function CSS(item, animations) {
   this.stylesheet = document.styleSheets[0]
-  
+
   this.item = item
 
   this.animations = animations
@@ -27,14 +27,28 @@ CSS.prototype.percent = function percent(time) {
 }
 
 /**
- * Stringifies Animations and sets item style
+ * Pauses CSS animation
  */
-CSS.prototype.toString = function toString() {
+CSS.prototype.pause = function pause() {
+  this.item.dom.style[animationProperty + 'PlayState'] = 'paused'
+}
+
+/**
+ * Resumes CSS animation
+ */
+CSS.prototype.resume = function pause() {
+  this.item.dom.style[animationProperty + 'PlayState'] = 'running'
+}
+
+/**
+ * Applies animations and sets item style
+ */
+CSS.prototype.apply = function apply() {
   var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100)),
       time = 0,
       rule = ['@' + vendor + 'keyframes ' + animation + '{']
 
-  for (var i = 0, len = this.animations.length; i < len; i++) {
+  for (var i = 0; i < this.animations.length; i++) {
     var a = this.animations[i],
         aNext = this.animations[i+1]
 
@@ -68,9 +82,9 @@ CSS.prototype.toString = function toString() {
         a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration)
       })
 
-      for (var k = 0, m = frames.length; k < m; ++k) {
+      for (var k = 0; k < frames.length; ++k) {
         var frame = frames[k]
-        for (var j = 0, l = a.animations.length; j < l; ++j) {
+        for (var j = 0; j < a.animations.length; ++j) {
           var pa = a.animations[j]
           if (pa.delay >= frame || pa.delay + pa.duration < frame) // it's animation start or it's already ended
             continue
@@ -89,5 +103,5 @@ CSS.prototype.toString = function toString() {
   rule.push('}')
   this.stylesheet.insertRule(rule.join(''), 0)
   this.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
-  return rule.slice(1, -1).join('')
+  return this
 }

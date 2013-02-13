@@ -7,6 +7,7 @@ function Item(node) {
   EventEmitter.call(this)
 
   this.dom = node
+  this.animations = []
 
   this.init()
 }
@@ -19,9 +20,10 @@ Item.prototype.constructor = Item
  * adds "transform" handler
  */
 Item.prototype.init = function init() {
-  this.animations = []
 
   this.infinite = false
+  
+  this.running = true
 
   this.state = {
     translate: [0, 0, 0],
@@ -50,6 +52,24 @@ Item.prototype.init = function init() {
 Item.prototype.update = function update(tick) {
   this.animation(tick)
   this.style()
+}
+
+/**
+ * Pauses item animation
+ */
+Item.prototype.pause = function pause() {
+  if (!this.running) return
+  this.animations.length && this.animations[0].pause()
+  this.running = false
+}
+
+/**
+ * Resumes item animation
+ */
+Item.prototype.resume = function resume() {
+  if (this.running) return
+  this.animations.length && this.animations[0].resume()
+  this.running = true
 }
 
 /**
@@ -149,6 +169,7 @@ Item.prototype.animate = function animate(transform, duration, ease, delay) {
  * @param {number} tick
  */
 Item.prototype.animation = function animation(tick) {
+  if (!this.running) return
   if (this.animations.length === 0 && this._dirty) {
     this.animate(this.transform)
     this._dirty = false
@@ -194,5 +215,5 @@ Item.prototype.stop = function stop() {
 }
 
 Item.prototype.css = function css() {
-  return new CSS(this, this.animations).toString()
+  return new CSS(this, this.animations).apply()
 }

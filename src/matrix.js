@@ -180,7 +180,7 @@ var Matrix = {
       0, 0, 0, 1]
   },
   toString: function toString(m) {
-    for (var i = 0, l = m.length; i < l; ++i)
+    for (var i = 0; i < m.length; ++i)
       if (Math.abs(m[i]) < 1e-6) m[i] = 0
     return 'matrix3d(' + m.join() + ')'
   },

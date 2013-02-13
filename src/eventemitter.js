@@ -46,8 +46,7 @@ EventEmitter.prototype.emit = function(event){
       handlers = this.handlers[event]
 
   if (handlers) {
-    var len = handlers.length
-    for (var i = 0; i < len; ++i) {
+    for (var i = 0; i < handlers.length; ++i) {
       handlers[i].apply(this, args)
     }
   }
