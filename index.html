@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Anima — CSS animations with a soul</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="css/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -26,141 +25,149 @@
         </p>
       </header>
       <section>
-<h3>With Anima it's easy to animate over a hundred objects at a time (<a href="#examples">examples</a>)</h3>
-<p>And it's only <strong>3.5k</strong> when gzipped.</p>
+<p>With Anima it&#8217;s easy to animate over a hundred objects at a time.<br/>
+And it&#8217;s only <strong>3.7k</strong> when gzipped. </p>
 
-<h2>Motivation</h2>
+<p><strong><a href="#examples" style="font-size:150%">Examples</a></strong> </p>
 
-<p>CSS animations have some limits, the main is that you can't really have full control over them. And it's near impossible to stop transitions without dirty hacks.</p>
+<h2 id="motivation">Motivation</h2>
 
-<p>Another problem is calculating percents for keyframes. People create animations with time in mind, not percents. You always think of <em>"it should fly and rotate for a half of a second, then stand still for another second and continue flying"</em>, and not <code>0% start 50% fly 70% stop 90% fly</code>.</p>
+<p>CSS animations have some limits, the main is that you can&#8217;t really have full control over them. And it&#8217;s near impossible to stop transitions without dirty hacks. </p>
 
-<p>Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: <code>JS</code> and <code>CSS</code>. The first one doesn't really use CSS transitions or <code>@keyframes</code>. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. <code>CSS</code> mode allows you to generate pure CSS animations, but it has less control features for now.</p>
+<p>Another problem is calculating percents for keyframes. People create animations with time in mind, not percents. You always think of <em>&#8220;it should fly and rotate for a half of a second, then stand still for another second and continue flying&#8221;</em>, and not <code>0% start 50% fly 70% stop 90% fly</code>. </p>
 
-<p><em><strong>Note</strong>: <code>CSS</code> mode is experimental for now, not everything works as expected.</em></p>
+<p>Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: <code>JS</code> and <code>CSS</code>. The first one doesn&#8217;t really use CSS transitions or <code>@keyframes</code>. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. <code>CSS</code> mode allows you to generate pure CSS animations, but it has less control features for now. </p>
 
-<h2>API</h2>
+<p><em><strong>Note</strong>: <code>CSS</code> mode is experimental for now, not everything works as expected.</em> </p>
 
-<p>At first you cave to initialize the World, so the frame loop will start (so called <code>JS</code> mode)</p>
+<h2 id="api">API</h2>
 
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">world</span> <span class="o">=</span> <span class="nx">anima</span><span class="p">.</span><span class="nx">js</span><span class="p">()</span>
-</pre></div>
+<p><a href="#singleanimation">Single</a> | <a href="#sequentialanimations">Sequence</a> | <a href="#parallelanimations">Parallel</a> | <a href="#infiniteanimations">Infinite</a> | <a href="#takingcontrol">Control methods</a> | <a href="#animationevents">Events</a> | <a href="#timingfunctions">Easings</a> </p>
 
-<p>You may also get the world without frame loop for pure css animations (<code>CSS</code> mode)</p>
+<p>At first you cave to initialize the World, so the frame loop will start (so called <code>JS</code> mode) </p>
 
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">world</span> <span class="o">=</span> <span class="nx">anima</span><span class="p">.</span><span class="nx">css</span><span class="p">()</span>
-</pre></div>
+<pre><code class="js">var world = anima.js()</code></pre>
 
-<p>then you have to add items, you want to animate later</p>
+<p>You may also get the world without frame loop for pure css animations (<code>CSS</code> mode) </p>
 
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">world</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"div"</span><span class="p">))</span>
-</pre></div>
+<pre><code class="js">var world = anima.css()</code></pre>
 
-<p>so the world is looping now, waiting for item transformations to animate</p>
+<p>then you have to add items, you want to animate later </p>
 
-<p>API remains the same in <code>CSS</code> mode, but you have to call the <code>.css()</code> method explicitly at the end of desired <code>.animate()</code>'s</p>
+<pre><code class="js">var item = world.add(document.querySelector(&quot;div&quot;))</code></pre>
 
-<div class="highlight"><pre><span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">(...).</span><span class="nx">css</span><span class="p">()</span>
-</pre></div>
+<p>so the world is looping now, waiting for item transformations to animate </p>
 
-<h3>Single animation</h3>
+<p>API remains the same in <code>CSS</code> mode, but you have to call the <code>.css()</code> method explicitly at the end of desired <code>.animate</code>&#8217;s </p>
 
-<p>Arguments:
-  <ol>
-<li>The map of transformations to apply. Only <code>translate</code>, <code>rotate</code> and <code>scale</code> are currently supported, but the list will expand.
-<li>Animation duration
-<li>Easing function
-<li>Animation delay
-</ol>
-</p>
+<pre><code class="js">item.animate(...).css()</code></pre>
 
-<div class="highlight"><pre><span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span><span class="nx">translate</span><span class="o">:</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span><span class="p">]},</span> <span class="mi">500</span><span class="p">,</span> <span class="s1">'ease-in-out-quad'</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-</pre></div>
+<h3 id="singleanimation">Single animation</h3>
 
-<p>It's also possible to pass everything in a single object</p>
+<p>Arguments:<br/>
+1. The map of transformations to apply. Only <code>translate</code>, <code>rotate</code> and <code>scale</code> are currently supported, but the list will expand.<br/>
+2. Animation duration<br/>
+3. Easing function<br/>
+4. Animation delay </p>
 
-<div class="highlight"><pre><span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
-  <span class="nx">translate</span><span class="o">:</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span><span class="p">],</span>
-  <span class="nx">duration</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
-  <span class="nx">ease</span><span class="o">:</span> <span class="s1">'ease-in-out-quad'</span><span class="p">,</span>
-  <span class="nx">delay</span><span class="o">:</span> <span class="mi">100</span>
-<span class="p">})</span>
-</pre></div>
+<pre><code class="js">item.animate({translate: [x, y, z]}, 500, &apos;ease-in-out-quad&apos;, 100)</code></pre>
 
-<p><em><strong>Note</strong>: transformations' values are relative to the last known <code>Item</code> state, it's initial state or the state after previous animation. Angles for <code>rotate</code> should be in degrees.</em></p>
+<p>It&#8217;s also possible to pass everything in a single object </p>
 
-<h3>Sequential animations</h3>
+<pre><code class="js">item.animate({  
+  translate: [x, y, z],  
+  duration: 500,  
+  ease: &apos;ease-in-out-quad&apos;,  
+  delay: 100  
+})</code></pre>
 
-<p>You can create sequential animations with ease :)</p>
+<p><em><strong>Note</strong>: transformations&#8217; values are relative to the last known <code>Item</code> state, it&#8217;s initial state or the state after previous animation. Angles for <code>rotate</code> should be in degrees.</em> </p>
 
-<div class="highlight"><pre><span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">(...).</span><span class="nx">animate</span><span class="p">(...).</span><span class="nx">animate</span><span class="p">(...)</span>
-</pre></div>
+<h3 id="sequentialanimations">Sequential animations</h3>
 
-<h3>Parallel animations</h3>
+<p>You can create sequential animations with ease :) </p>
 
-<p>Sometimes you need to transform something in parallel</p>
+<pre><code class="js">item.animate(...).animate(...).animate(...)</code></pre>
 
-<div class="highlight"><pre><span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">([{</span>
-    <span class="nx">translate</span> <span class="o">:</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">,</span><span class="nx">z</span><span class="p">],</span>
-    <span class="nx">duration</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
-    <span class="nx">ease</span><span class="o">:</span> <span class="s1">'ease-in-out-quad'</span><span class="p">,</span>
-    <span class="nx">delay</span><span class="o">:</span> <span class="mi">100</span>
-<span class="p">},{</span>
-    <span class="nx">rotate</span> <span class="o">:</span> <span class="p">[</span><span class="nx">angleX</span><span class="p">,</span><span class="nx">angleY</span><span class="p">,</span><span class="nx">angleZ</span><span class="p">],</span>
-    <span class="nx">duration</span><span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="nx">ease</span><span class="o">:</span> <span class="s1">'ease-in-expo'</span><span class="p">,</span>
-    <span class="nx">delay</span><span class="o">:</span> <span class="mi">400</span>
-<span class="p">}])</span>
-</pre></div>
+<h3 id="parallelanimations">Parallel animations</h3>
 
-<p>So you basically pass an array of transformations to create parallel animation.</p>
+<p>Sometimes you need to transform something in parallel </p>
 
-<h3>Infinite animations</h3>
+<pre><code class="js">item.animate([{  
+    translate : [x,y,z],  
+    duration: 500,  
+    ease: &apos;ease-in-out-quad&apos;,  
+    delay: 100  
+},{  
+    rotate : [angleX,angleY,angleZ],  
+    duration: 1000,  
+    ease: &apos;ease-in-expo&apos;,  
+    delay: 400  
+}])</code></pre>
 
-<p>You can call <code>.infinite()</code> at the end of you <code>.animate</code>'s chain, to make the animation infinite.</p>
+<p>So you basically pass an array of transformations to create parallel animation. </p>
 
-<h3>Animation events</h3>
+<h3 id="infiniteanimations">Infinite animations</h3>
 
-<p>Every animation has it's own <code>start</code> and <code>end</code> events.</p>
+<p>You can call <code>.infinite()</code> at the end of you <code>.animate</code>&#8217;s chain, to make the animation infinite. </p>
 
-<div class="highlight"><pre><span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">(...).</span><span class="nx">on</span><span class="p">(</span><span class="s1">'start'</span><span class="p">,</span> <span class="nx">callback</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">'end'</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span>
-</pre></div>
+<h3 id="takingcontrol">Taking control</h3>
 
-<h3>Timing functions</h3>
+<h4 id="jsmode"><code>JS</code> mode</h4>
 
-<p>Here's the list of al supported timing functions
-<code>linear</code></p>
+<p>Animations start automatically as soon as you call <code>.animate()</code> on the item.<br/>
+there are three control methods available<br/>
+<code>pause</code>, <code>resume</code> and <code>stop</code><br/>
+they can be called on an item, or on the whole world </p>
+
+<pre><code class="js">item.pause()  
+world.stop()</code></pre>
+
+<h4 id="cssmode"><code>CSS</code> mode</h4>
+
+<p>To start your animations you have to call <code>.css()</code> after all you desired <code>.animate</code>&#8217;s, it will return a custom CSS object, that has <code>pause</code> and <code>resume</code> methods.<br/>
+<em><strong>Note</strong>: <code>CSS</code> mode doesn&#8217;t support <code>stop</code> for now.</em> </p>
+
+<h3 id="animationevents">Animation events</h3>
+
+<p>Every animation has it&#8217;s own <code>start</code> and <code>end</code> events. </p>
+
+<pre><code class="js">item.animate(...).on(&apos;start&apos;, callback).on(&apos;end&apos;, callback)</code></pre>
+
+<h3 id="timingfunctions">Timing functions</h3>
+
+<p>Here&#8217;s the list of al supported timing functions<br/>
+<code>linear</code> </p>
 
 <p><code>ease-in-quad</code> <code>ease-in-cubic</code> <code>ease-in-quart</code> <code>ease-in-quint</code> <code>ease-in-sine</code> <code>ease-in-expo</code> <code>ease-in-circ</code> <code>ease-in-back</code> </p>
 
-<p><code>ease-out-quad</code> <code>ease-out-cubic</code> <code>ease-out-quart</code> <code>ease-out-quint</code> <code>ease-out-sine</code> <code>ease-out-expo</code> <code>ease-out-circ</code> <code>ease-out-back</code></p>
+<p><code>ease-out-quad</code> <code>ease-out-cubic</code> <code>ease-out-quart</code> <code>ease-out-quint</code> <code>ease-out-sine</code> <code>ease-out-expo</code> <code>ease-out-circ</code> <code>ease-out-back</code> </p>
 
-<p><code>ease-in-out-quad</code> <code>ease-in-out-cubic</code> <code>ease-in-out-quart</code> <code>ease-in-out-quint</code> <code>ease-in-out-sine</code> <code>ease-in-out-expo</code> <code>ease-in-out-circ</code> <code>ease-in-out-back</code></p>
+<p><code>ease-in-out-quad</code> <code>ease-in-out-cubic</code> <code>ease-in-out-quart</code> <code>ease-in-out-quint</code> <code>ease-in-out-sine</code> <code>ease-in-out-expo</code> <code>ease-in-out-circ</code> <code>ease-in-out-back</code> </p>
 
-<p>You can learn more about them at <a href="http://easings.net">easings.net</a></p>
+<p>You can learn more about them at <a href="http://easings.net">easings.net</a> </p>
 
 <h2 id="examples">Examples</h2>
 
-<h3>requestAnimationFrame</h3>
+<h3 id="requestanimationframe">requestAnimationFrame</h3>
 
 <ul>
-<li>
-<a href="example/keyboard.html">keyboard control</a> (use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> and <code>W</code> <code>A</code> <code>S</code> <code>D</code> to transform)</li>
+<li><a href="example/keyboard.html">keyboard control</a> (use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> and <code>W</code> <code>A</code> <code>S</code> <code>D</code> to transform)</li>
 <li><a href="example/bounce.html">animation chain</a></li>
 <li><a href="example/parallel.html">parallel animations</a></li>
 <li><a href="example/infinite.html">infinite animation</a></li>
 <li><a href="example/delay.html">delayed animation</a></li>
-</ul><h3>pure CSS</h3>
+</ul>
+
+<h3 id="purecss">pure CSS</h3>
 
 <ul>
 <li><a href="example/bounce_css.html">animation chain</a></li>
 <li><a href="example/infinite_css.html">infinite animation</a></li>
 <li><a href="example/delay_css.html">delayed animation</a></li>
-<li>
-<a href="example/parallel_css.html">parallel animations</a> (do not support custom <code>timing-functions</code> for now)</li>
+<li><a href="example/parallel_css.html">parallel animations</a> (do not support custom <code>timing-functions</code> for now)</li>
 </ul>
       </section>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
   </body>
 </html>
