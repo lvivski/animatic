@@ -2,7 +2,9 @@
 CSS animations with a soul
 
 With Anima it's easy to animate over a hundred objects at a time.
-And it's only **3.5k** when gzipped.
+And it's only **3.7k** when gzipped.
+
+**[Examples](#examples)**
 
 ## Motivation
 CSS animations have some limits, the main is that you can't really have full control over them. And it's near impossible to stop transitions without dirty hacks.
@@ -14,6 +16,9 @@ Anima gives you the ability to use delays and durations normally, even for pure 
 _**Note**: `CSS` mode is experimental for now, not everything works as expected._
 
 ## API
+
+[Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#tacking-control) | [Events](#animation-events) | [Easings](#timing-functions)
+
 At first you cave to initialize the World, so the frame loop will start (so called `JS` mode)
 ```js
 var world = anima.js()
@@ -82,13 +87,17 @@ You can call `.infinite()` at the end of you `.animate`'s chain, to make the ani
 ### Taking control
 #### `JS` mode
 Animations start automatically as soon as you call `.animate()` on the item.
-You can stop them with
+there are three control methods available
+`pause`, `resume` and `stop`
+they can be called on an item, or on the whole world
 ```js
-item.stop()
+item.pause()
+world.stop()
 ```
+
 #### `CSS` mode
-To start your animations you have to call `.css()` after all you desired `.animate`'s
-`CSS` mode doesn't support `.stop` for now.
+To start your animations you have to call `.css()` after all you desired `.animate`'s, it will return a custom CSS object, that has `pause` and `resume` methods.
+_**Note**: `CSS` mode doesn't support `stop` for now._
 
 ### Animation events
 Every animation has it's own `start` and `end` events.

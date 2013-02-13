@@ -1,20 +1,9 @@
 {
   "name": "anima",
-  "repo": "lvivski/anima",
-  "description": "CSS animations with a soul",
-  "version": "0.1.1",
-  "keywords": [
-    "css",
-    "animation",
-    "js",
-    "transform"
-  ],
-  "scripts": [
-    "anima.js",
+  "version": "0.1.2",
+  "main": [
     "anima.min.js",
     "anima.min.js.map"
   ],
-  "main": "anima.min.js",
-  "dependencies": {},
-  "license": "MIT"
+  "dependencies": {}
 }
