@@ -19,7 +19,7 @@ _**Note**: `CSS` mode is experimental for now, not everything works as expected.
 
 [Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#taking-control) | [Events](#animation-events) | [Easings](#timing-functions)
 
-At first you cave to initialize the World, so the frame loop will start (so called `JS` mode)
+At first you have to initialize the World, so the frame loop will start (so called `JS` mode)
 ```js
 var world = anima.js()
 ```
