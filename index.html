@@ -125,8 +125,11 @@ world.stop()</code></pre>
 
 <h4 id="cssmode"><code>CSS</code> mode</h4>
 
-<p>To start your animations you have to call <code>.css()</code> after all you desired <code>.animate</code>&#8217;s, it will return a custom CSS object, that has <code>pause</code> and <code>resume</code> methods.<br/>
-<em><strong>Note</strong>: <code>CSS</code> mode doesn&#8217;t support <code>stop</code> for now.</em> </p>
+<p>To start your animations you have to call <code>.css()</code> after all you desired <code>.animate</code>&#8217;s, it will return a custom CSS object, that has <code>pause</code>, <code>resume</code> and <code>stop</code> methods. </p>
+
+<pre><code class="js">var animation = item.animate(...).animate(...).css()  
+animation.pause()  
+animation.stop()</code></pre>
 
 <h3 id="animationevents">Animation events</h3>
 
@@ -166,6 +169,14 @@ world.stop()</code></pre>
 <li><a href="example/infinite_css.html">infinite animation</a></li>
 <li><a href="example/delay_css.html">delayed animation</a></li>
 <li><a href="example/parallel_css.html">parallel animations</a> (do not support custom <code>timing-functions</code> for now)</li>
+</ul>
+
+<h3 id="mixed">mixed</h3>
+
+<p>uses both <code>JS</code> and <code>CSS</code> world at the same time</p>
+
+<ul>
+<li><a href="example/keyboard_mixed.html">keyboard control</a> (use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> and <code>W</code> <code>A</code> <code>S</code> <code>D</code> to transform)</li>
 </ul>
       </section>
     </div>
