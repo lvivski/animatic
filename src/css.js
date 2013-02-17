@@ -7,7 +7,6 @@ function CSS(item, animations) {
   this.stylesheet = document.styleSheets[0]
 
   this.item = item
-
   this.animations = animations
 
   this.total = this.animations.map(function(a){
@@ -15,15 +14,8 @@ function CSS(item, animations) {
   }).reduce(function(a, b){
     return a + b
   })
-}
 
-/**
- * Calcuates percent for keyframes
- * @param {number} time
- * @return {String}
- */
-CSS.prototype.percent = function percent(time) {
-  return (time * 100 / this.total).toFixed(3)
+  this.style()
 }
 
 /**
@@ -55,13 +47,39 @@ CSS.prototype.stop = function stop() {
   return this
 }
 
+
 /**
  * Applies animations and sets item style
  */
-CSS.prototype.apply = function apply() {
-  var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100)),
-      time = 0,
-      rule = ['@' + vendor + 'keyframes ' + animation + '{']
+CSS.prototype.style = function style() {
+  var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100))
+  this.stylesheet.insertRule(this.keyframes(animation), 0)
+  this.item.animations = []
+  var onEnd = function end() {
+    this.stop()
+    this.item.dom.removeEventListener('webkitAnimationEnd', onEnd, false)
+  }.bind(this)
+  this.item.dom.addEventListener('webkitAnimationEnd', onEnd, false)
+  this.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
+}
+
+/**
+ * Calcuates percent for keyframes
+ * @param {number} time
+ * @return {String}
+ */
+CSS.prototype.percent = function percent(time) {
+  return (time * 100 / this.total).toFixed(3)
+}
+
+/**
+ * Generates @keyframes based on animations
+ * @param {String} name Animation name
+ * @return {String}
+ */
+CSS.prototype.keyframes = function keyframes(name) {
+  var time = 0,
+      rule = ['@' + vendor + 'keyframes ' + name + '{']
 
   for (var i = 0; i < this.animations.length; i++) {
     var a = this.animations[i],
@@ -101,7 +119,8 @@ CSS.prototype.apply = function apply() {
         var frame = frames[k]
         for (var j = 0; j < a.animations.length; ++j) {
           var pa = a.animations[j]
-          if (pa.delay >= frame || pa.delay + pa.duration < frame) // it's animation start or it's already ended
+          // it's animation start or it's already ended
+          if (pa.delay >= frame || pa.delay + pa.duration < frame)
             continue
           pa.transform((frame - pa.delay) / pa.duration)
         }
@@ -114,9 +133,6 @@ CSS.prototype.apply = function apply() {
       }
     }
   }
-
   rule.push('}')
-  this.stylesheet.insertRule(rule.join(''), 0)
-  this.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
-  return this
+  return rule.join('')
 }

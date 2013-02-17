@@ -215,5 +215,5 @@ Item.prototype.stop = function stop() {
 }
 
 Item.prototype.css = function css() {
-  return new CSS(this, this.animations).apply()
+  return new CSS(this, this.animations)
 }

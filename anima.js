@@ -108,10 +108,8 @@
     }).reduce(function(a, b) {
       return a + b;
     });
+    this.style();
   }
-  CSS.prototype.percent = function percent(time) {
-    return (time * 100 / this.total).toFixed(3);
-  };
   CSS.prototype.pause = function pause() {
     this.item.dom.style[animationProperty + "PlayState"] = "paused";
     return this;
@@ -127,8 +125,22 @@
     this.item.state = Matrix.extract(Matrix.parse(transform));
     return this;
   };
-  CSS.prototype.apply = function apply() {
-    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), time = 0, rule = [ "@" + vendor + "keyframes " + animation + "{" ];
+  CSS.prototype.style = function style() {
+    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100));
+    this.stylesheet.insertRule(this.keyframes(animation), 0);
+    this.item.animations = [];
+    var onEnd = function end() {
+      this.stop();
+      this.item.dom.removeEventListener("webkitAnimationEnd", onEnd, false);
+    }.bind(this);
+    this.item.dom.addEventListener("webkitAnimationEnd", onEnd, false);
+    this.item.dom.style[animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
+  };
+  CSS.prototype.percent = function percent(time) {
+    return (time * 100 / this.total).toFixed(3);
+  };
+  CSS.prototype.keyframes = function keyframes(name) {
+    var time = 0, rule = [ "@" + vendor + "keyframes " + name + "{" ];
     for (var i = 0; i < this.animations.length; i++) {
       var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
@@ -155,9 +167,7 @@
       }
     }
     rule.push("}");
-    this.stylesheet.insertRule(rule.join(""), 0);
-    this.item.dom.style[animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
-    return this;
+    return rule.join("");
   };
   function EventEmitter() {
     this.handlers = {};
@@ -629,6 +639,6 @@
     this.zero("transform");
   };
   Item.prototype.css = function css() {
-    return new CSS(this, this.animations).apply();
+    return new CSS(this, this.animations);
   };
 })();
