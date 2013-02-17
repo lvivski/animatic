@@ -87,9 +87,9 @@ Item.prototype.matrix = function() {
   var state = this.state
   return Matrix.toString(
     Matrix.multiply(
-      Matrix.translate.apply(null, state.translate),
+      Matrix.scale.apply(null, state.scale),
       Matrix.rotate.apply(null, state.rotate),
-      Matrix.scale.apply(null, state.scale)
+      Matrix.translate.apply(null, state.translate)
     )
   )
 }

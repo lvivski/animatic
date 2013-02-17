@@ -179,6 +179,41 @@ var Matrix = {
       0, 0, 1, p,
       0, 0, 0, 1]
   },
+  parse: function parse(s) {
+    var m = s.match(/\((.+)\)/)[1].split(/,\s?/)
+    if (m.length === 6) {
+      m.splice(2, 0, '0', '0')
+      m.splice(6, 0, '0', '0')
+      m.splice(8, 0, '0', '0', '1', '0')
+      m.push('0', '1')
+    }
+    return m
+  },
+  extract: function extract(m) { // supports only scale*rotate*translate matrix
+    var sX = Math.sqrt(m[0]*m[0] + m[1]*m[1] + m[2]*m[2]),
+        sY = Math.sqrt(m[4]*m[4] + m[5]*m[5] + m[6]*m[6]),
+        sZ = Math.sqrt(m[8]*m[8] + m[9]*m[9] + m[10]*m[10])
+        
+    var rX = Math.atan2(-m[9]/sZ, m[10]/sZ) / radians,
+        rY = Math.asin(m[8]/sZ) / radians,
+        rZ = Math.atan2(-m[4]/sY, m[0]/sX) / radians
+        
+    if (m[4] === 1 || m[4] === -1) {
+      rX = 0
+      rY = m[4] * -Math.PI/2
+      rZ = m[4] * Math.atan2(m[6]/sY, m[5]/sY) / radians
+    }
+        
+    var tX = m[12]/sX,
+        tY = m[13]/sX,
+        tZ = m[14]/sX
+        
+    return {
+      translate: [tX, tY, tZ],
+      rotate: [rX, rY, rZ],
+      scale: [sX, sY, sZ]
+    }
+  },
   toString: function toString(m) {
     for (var i = 0; i < m.length; ++i)
       if (Math.abs(m[i]) < 1e-6) m[i] = 0

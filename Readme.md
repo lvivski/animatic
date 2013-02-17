@@ -11,7 +11,7 @@ CSS animations have some limits, the main is that you can't really have full con
 
 Another problem is calculating percents for keyframes. People create animations with time in mind, not percents. You always think of _"it should fly and rotate for a half of a second, then stand still for another second and continue flying"_, and not `0% start 50% fly 70% stop 90% fly`.
 
-Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: `JS` and `CSS`. The first one doesn't really use CSS transitions or `@keyframes`. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. `CSS` mode allows you to generate pure CSS animations, but it has less control features for now.
+Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: `JS` and `CSS`. The first one doesn't really use CSS transitions or `@keyframes`. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. `CSS` mode allows you to generate pure CSS animations, but it has limitations for parallel animations.
 
 _**Note**: `CSS` mode is experimental for now, not everything works as expected._
 
@@ -96,8 +96,12 @@ world.stop()
 ```
 
 #### `CSS` mode
-To start your animations you have to call `.css()` after all you desired `.animate`'s, it will return a custom CSS object, that has `pause` and `resume` methods.
-_**Note**: `CSS` mode doesn't support `stop` for now._
+To start your animations you have to call `.css()` after all you desired `.animate`'s, it will return a custom CSS object, that has `pause`, `resume` and `stop` methods.
+```js
+var animation = item.animate(...).animate(...).css()
+animation.pause()
+animation.stop()
+```
 
 ### Animation events
 Every animation has it's own `start` and `end` events.
@@ -130,3 +134,8 @@ You can learn more about them at [easings.net](http://easings.net)
 - [infinite animation](example/infinite_css.html)
 - [delayed animation](example/delay_css.html)
 - [parallel animations](example/parallel_css.html) (do not support custom `timing-functions` for now)
+
+### mixed
+uses both `JS` and `CSS` world at the same time
+
+- [keyboard control](example/keyboard_mixed.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)

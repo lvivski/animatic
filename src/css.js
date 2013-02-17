@@ -31,13 +31,28 @@ CSS.prototype.percent = function percent(time) {
  */
 CSS.prototype.pause = function pause() {
   this.item.dom.style[animationProperty + 'PlayState'] = 'paused'
+  return this
 }
 
 /**
  * Resumes CSS animation
  */
-CSS.prototype.resume = function pause() {
+CSS.prototype.resume = function resume() {
   this.item.dom.style[animationProperty + 'PlayState'] = 'running'
+  return this
+}
+
+/**
+ * Stops CSS animation
+ * parses current transformation matrix
+ * extracts values and sets item state
+ */
+CSS.prototype.stop = function stop() {
+  var transform = getComputedStyle(this.item.dom)[vendor + 'transform']
+  this.item.dom.style[animationProperty] = ''
+  this.item.dom.style[transformProperty] = transform
+  this.item.state = Matrix.extract(Matrix.parse(transform))
+  return this
 }
 
 /**
