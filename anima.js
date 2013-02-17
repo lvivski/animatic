@@ -126,14 +126,14 @@
     return this;
   };
   CSS.prototype.style = function style() {
-    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100));
+    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), vendor = vendor.replace(/\-/g);
     this.stylesheet.insertRule(this.keyframes(animation), 0);
     this.item.animations = [];
     var onEnd = function end() {
       this.stop();
-      this.item.dom.removeEventListener("webkitAnimationEnd", onEnd, false);
+      this.item.dom.removeEventListener(vendor + "AnimationEnd", onEnd, false);
     }.bind(this);
-    this.item.dom.addEventListener("webkitAnimationEnd", onEnd, false);
+    this.item.dom.addEventListener(vendor + "AnimationEnd", onEnd, false);
     this.item.dom.style[animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
   };
   CSS.prototype.percent = function percent(time) {
