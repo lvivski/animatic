@@ -53,7 +53,7 @@ CSS.prototype.stop = function stop() {
  */
 CSS.prototype.style = function style() {
   var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100)),
-      vendor = vendor.replace(/\-/g, '')
+      vendor = window.vendor.replace(/\-/g, '')
   this.stylesheet.insertRule(this.keyframes(animation), 0)
   this.item.animations = []
   var onEnd = function end() {
