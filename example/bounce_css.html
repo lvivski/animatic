@@ -6,25 +6,26 @@
   <title>Matrix</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
-  <style>
-    .block {
-      border-radius: 50%;
-    }
-  </style>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="block"></div>
+  <div class="ball" style="left: 100px; -webkit-transform-origin: 50% 100%"></div>
 </body>
 <script src="../anima.js"></script>
 <script>
   var world = anima.css(),
-      item = world.add(document.querySelector('.block'))
+      item = world.add(document.querySelector('.ball'))
   
   item
     .animate({
       translate: [0, 300, 0]
     }, 500, 'ease-in-quad')
+    .animate({
+      scale: [.1, -.2, 0]
+    }, 50)
+    .animate({
+      scale: [-.1, .2, 0]
+    }, 50)
     .animate({
       translate: [0, -200, 0]
     }, 450, 'ease-out-quad')
@@ -32,11 +33,23 @@
       translate: [0, 200, 0]
     }, 400, 'ease-in-quad')
     .animate({
+      scale: [.05, -.15, 0]
+    }, 40)
+    .animate({
+      scale: [-.05, .15, 0]
+    }, 40)
+    .animate({
       translate: [0, -100, 0]
     }, 350, 'ease-out-quad')
     .animate({
       translate: [0, 100, 0]
     }, 300, 'ease-in-quad')
+    .animate({
+      scale: [.02, -.1, 0]
+    }, 25)
+    .animate({
+      scale: [-.02, .1, 0]
+    }, 25)
     .animate({
       translate: [0, -50, 0]
     }, 200, 'ease-out-quad')

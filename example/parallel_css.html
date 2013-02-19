@@ -6,78 +6,91 @@
   <title>Matrix</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
-  <style>
-    .block {
-      border-radius: 50%;
-    }
-  </style>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="block"></div>
+  <div class="ball"></div>
 </body>
 <script src="../anima.js"></script>
 <script>
   var world = anima.css(),
-      item = world.add(document.querySelector('.block'))
+      item = world.add(document.querySelector('.ball'))
 
-    item
-      .animate([
-        {
-          translate: [0, 300, 0],
-          ease: 'ease-in-quad'
-        },{
-          translate: [100, 0, 0]
-        }
-      ], 500)
-      .animate([
-        {
-          translate: [0, -200, 0],
-          ease: 'ease-out-quad'
-        },{
-          translate: [70, 0, 0]
-        }
-      ], 450)
-      .animate([
-        {
-          translate: [0, 200, 0],
-          ease: 'ease-in-quad'
-        },{
-          translate: [70, 0, 0]
-        }
-      ], 400)
-      .animate([
-        {
-          translate: [0, -100, 0],
-          ease: 'ease-out-quad'
-        },{
-          translate: [50, 0, 0]
-        }
-      ], 350)
-      .animate([
-        {
-          translate: [0, 100, 0],
-          ease: 'ease-in-quad'
-        },{
-          translate: [50, 0, 0]
-        }
-      ], 300)
-      .animate([
-        {
-          translate: [0, -50, 0],
-          ease: 'ease-out-quad'
-        },{
-          translate: [20, 0, 0]
-        }
-      ], 200)
-      .animate([
-        {
-          translate: [0, 50, 0],
-          ease: 'ease-in-quad'
-        },{
-          translate: [20, 0, 0]
-        }
-      ], 150)
-      .css()
+      item
+        .animate([
+          {
+            translate: [0, 300, 0],
+            ease: 'ease-in-quad'
+          },{
+            translate: [250, 0, 0]
+          }
+        ], 500)
+        .animate({
+          scale: [.1, -.2, 0]
+        }, 50)
+        .animate({
+          scale: [-.1, .2, 0]
+        }, 50)
+        .animate([
+          {
+            translate: [0, -200, 0],
+            ease: 'ease-out-quad'
+          },{
+            translate: [150, 0, 0]
+          }
+        ], 450)
+        .animate([
+          {
+            translate: [0, 200, 0],
+            ease: 'ease-in-quad'
+          },{
+            translate: [150, 0, 0]
+          }
+        ], 400)
+        .animate({
+          scale: [.05, -.15, 0]
+        }, 40)
+        .animate({
+          scale: [-.05, .15, 0]
+        }, 40)
+        .animate([
+          {
+            translate: [0, -100, 0],
+            ease: 'ease-out-quad'
+          },{
+            translate: [100, 0, 0]
+          }
+        ], 350)
+        .animate([
+          {
+            translate: [0, 100, 0],
+            ease: 'ease-in-quad'
+          },{
+            translate: [100, 0, 0]
+          }
+        ], 300)
+        .animate({
+          scale: [.02, -.1, 0]
+        }, 25)
+        .animate({
+          scale: [-.02, .1, 0]
+        }, 25)
+        .animate([
+          {
+            translate: [0, -50, 0],
+            ease: 'ease-out-quad'
+          },{
+            translate: [50, 0, 0]
+          }
+        ], 200)
+        .animate([
+          {
+            translate: [0, 50, 0],
+            ease: 'ease-in-quad'
+          },{
+            translate: [50, 0, 0]
+          }
+        ], 150)
+        .css()
 </script>
 </html>

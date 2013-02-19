@@ -3,28 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Matrix</title>
+  <title>Infinite animation</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
-  <style>
-    .block {
-      border-radius: 50%;
-    }
-  </style>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="block"></div>
+  <div class="ball" style="left: 100px; -webkit-transform-origin: 50% 100%"></div>
 </body>
 <script src="../anima.js"></script>
 <script>
   var world = anima.js(),
-      item = world.add(document.querySelector('.block'))
+      item = world.add(document.querySelector('.ball'))
   
   item
     .animate({
       translate: [0, 300, 0]
     }, 500, 'ease-in-quad')
+    .animate({
+      scale: [.1, -.2, 0]
+    }, 50)
+    .animate({
+      scale: [-.1, .2, 0]
+    }, 50)
     .animate({
       translate: [0, -300, 0]
     }, 500, 'ease-out-quad')
