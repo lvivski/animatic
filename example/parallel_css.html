@@ -11,7 +11,7 @@
 <body>
   <div class="ball"></div>
 </body>
-<script src="../anima.min.js"></script>
+<script src="../anima.js"></script>
 <script>
   var world = anima.css(),
       item = world.add(document.querySelector('.ball'))
@@ -24,7 +24,7 @@
           },{
             translate: [250, 0, 0]
           }
-        ], 500)
+        ], 500, 'ease-in-quad')
         .animate({
           scale: [.1, -.2, 0]
         }, 50)
@@ -38,7 +38,7 @@
           },{
             translate: [150, 0, 0]
           }
-        ], 450)
+        ], 450, 'ease-out-quad')
         .animate([
           {
             translate: [0, 200, 0],
@@ -46,7 +46,7 @@
           },{
             translate: [150, 0, 0]
           }
-        ], 400)
+        ], 400, 'ease-in-quad')
         .animate({
           scale: [.05, -.15, 0]
         }, 40)
@@ -60,7 +60,7 @@
           },{
             translate: [100, 0, 0]
           }
-        ], 350)
+        ], 350, 'ease-out-quad')
         .animate([
           {
             translate: [0, 100, 0],
@@ -68,7 +68,7 @@
           },{
             translate: [100, 0, 0]
           }
-        ], 300)
+        ], 300, 'ease-in-quad')
         .animate({
           scale: [.02, -.1, 0]
         }, 25)
@@ -82,7 +82,7 @@
           },{
             translate: [50, 0, 0]
           }
-        ], 200)
+        ], 200, 'ease-out-quad')
         .animate([
           {
             translate: [0, 50, 0],
@@ -90,16 +90,7 @@
           },{
             translate: [50, 0, 0]
           }
-        ], 150)
+        ], 150, 'ease-in-quad')
         .css()
-</script>
-<script>
-  var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
-  !function() {
-    var ga = document.createElement('script')
-    ga.type = 'text/javascript';ga.async = true
-    ga.src = '//www.google-analytics.com/ga.js'
-    document.getElementsByTagName('head')[0].appendChild(ga)
-  }()
 </script>
 </html>
