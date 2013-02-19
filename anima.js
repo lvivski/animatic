@@ -160,7 +160,7 @@
           for (var j = 0; j < a.animations.length; ++j) {
             var pa = a.animations[j];
             if (pa.delay >= frame || pa.delay + pa.duration < frame) continue;
-            pa.transform((frame - pa.delay) / pa.duration);
+            pa.transform(pa.ease((frame - pa.delay) / pa.duration));
           }
           rule.push(this.percent(time += frame) + "% {", vendor + "transform:" + a.item.matrix() + ";", "}");
         }
@@ -279,6 +279,7 @@
     });
     this.start = null;
     this.delay = 0;
+    this.easeName = ease || "linear";
     this.duration = Math.max.apply(null, this.animations.map(function(a) {
       return a.duration + a.delay;
     }));

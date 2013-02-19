@@ -123,7 +123,7 @@ CSS.prototype.keyframes = function keyframes(name) {
           // it's animation start or it's already ended
           if (pa.delay >= frame || pa.delay + pa.duration < frame)
             continue
-          pa.transform((frame - pa.delay) / pa.duration)
+          pa.transform(pa.ease((frame - pa.delay) / pa.duration))
         }
 
         rule.push(
