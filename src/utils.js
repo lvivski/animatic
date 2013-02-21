@@ -19,6 +19,8 @@
 
   window.animationProperty = getProperty('animation')
 
+  window.transitionProperty = getProperty('transition')
+
   function getProperty(property) {
     var style = document.createElement('div').style,
         Property = property[0].toUpperCase() + property.slice(1)

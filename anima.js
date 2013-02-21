@@ -17,6 +17,7 @@
     window.vendor = vendor ? "-" + vendor + "-" : "";
     window.transformProperty = getProperty("transform");
     window.animationProperty = getProperty("animation");
+    window.transitionProperty = getProperty("transition");
     function getProperty(property) {
       var style = document.createElement("div").style, Property = property[0].toUpperCase() + property.slice(1);
       if (typeof style.transform === "undefined") {
@@ -121,20 +122,33 @@
   CSS.prototype.stop = function stop() {
     var transform = getComputedStyle(this.item.dom)[vendor + "transform"];
     this.item.dom.style[animationProperty] = "";
+    this.item.dom.style[transitionProperty] = "";
     this.item.dom.style[transformProperty] = transform;
     this.item.state = Matrix.extract(Matrix.parse(transform));
     return this;
   };
-  CSS.prototype.style = function style() {
-    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100)), vendor = window.vendor.replace(/\-/g, "");
-    this.stylesheet.insertRule(this.keyframes(animation), 0);
-    this.item.animations = [];
-    var onEnd = function end() {
+  CSS.prototype.handle = function handle(event) {
+    var vendor = window.vendor.replace(/\-/g, ""), onEnd = function end() {
       this.stop();
-      this.item.dom.removeEventListener(vendor + "AnimationEnd", onEnd, false);
+      this.item.dom.removeEventListener(vendor + event, onEnd, false);
     }.bind(this);
-    this.item.dom.addEventListener(vendor + "AnimationEnd", onEnd, false);
-    this.item.dom.style[animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
+    this.item.dom.addEventListener(vendor + event, onEnd, false);
+  };
+  CSS.prototype.style = function style() {
+    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100));
+    if (this.item.animations[0] instanceof Animation && this.item.animations.length == 1) {
+      var a = this.item.animations[0];
+      a.init();
+      this.item.dom.style[transitionProperty] = vendor + "transform " + a.duration + "ms " + easings.css[a.easeName] + " " + a.delay + "ms";
+      a.transform(1);
+      this.handle("TransitionEnd");
+      a.item.style();
+    } else {
+      this.stylesheet.insertRule(this.keyframes(animation), 0);
+      this.handle("AnimationEnd");
+      this.item.dom.style[animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
+    }
+    this.item.animations = [];
   };
   CSS.prototype.percent = function percent(time) {
     return (time * 100 / this.total).toFixed(3);

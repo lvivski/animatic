@@ -42,26 +42,43 @@ CSS.prototype.resume = function resume() {
 CSS.prototype.stop = function stop() {
   var transform = getComputedStyle(this.item.dom)[vendor + 'transform']
   this.item.dom.style[animationProperty] = ''
+  this.item.dom.style[transitionProperty] = ''
   this.item.dom.style[transformProperty] = transform
   this.item.state = Matrix.extract(Matrix.parse(transform))
   return this
 }
 
 
+CSS.prototype.handle = function handle(event) {
+  var vendor = window.vendor.replace(/\-/g, ''),
+      onEnd = function end() {
+        this.stop()
+        this.item.dom.removeEventListener(vendor + event, onEnd, false)
+      }.bind(this)
+  this.item.dom.addEventListener(vendor + event, onEnd, false)
+}
+
 /**
  * Applies animations and sets item style
  */
 CSS.prototype.style = function style() {
-  var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100)),
-      vendor = window.vendor.replace(/\-/g, '')
-  this.stylesheet.insertRule(this.keyframes(animation), 0)
+  var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100))
+
+  if (this.item.animations[0] instanceof Animation &&
+    this.item.animations.length == 1) { // transition
+    var a = this.item.animations[0]
+    a.init()
+    this.item.dom.style[transitionProperty] = vendor + 'transform ' + a.duration + 'ms ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
+    a.transform(1)
+    this.handle('TransitionEnd')
+    a.item.style()
+  } else { // animation
+    this.stylesheet.insertRule(this.keyframes(animation), 0)
+    this.handle('AnimationEnd')
+    this.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
+  }
+
   this.item.animations = []
-  var onEnd = function end() {
-    this.stop()
-    this.item.dom.removeEventListener(vendor + 'AnimationEnd', onEnd, false)
-  }.bind(this)
-  this.item.dom.addEventListener(vendor + 'AnimationEnd', onEnd, false)
-  this.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
 }
 
 /**
