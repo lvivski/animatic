@@ -646,16 +646,19 @@
     this[type].rotate = [ 0, 0, 0 ];
     this[type].scale = [ 0, 0, 0 ];
   };
-  Item.prototype.stop = function stop() {
+  Item.prototype.finish = function finish(abort) {
     if (this.animations.length === 0) return this;
-    for (var i = 0, len = this.animations.length; i < len; i++) {
+    for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i];
-      a.end(true);
+      a.end(abort);
     }
     this.animations = [];
     this.infinite = false;
     this.zero("transform");
     return this;
+  };
+  Item.prototype.stop = function stop() {
+    return this.finish(true);
   };
   Item.prototype.css = function css() {
     return new CSS(this, this.animations);

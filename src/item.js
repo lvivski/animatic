@@ -203,13 +203,14 @@ Item.prototype.zero = function zero(type) {
 }
 
 /**
- * Stops all Item animations
+ * Finishes all Item animations
+ * @param {boolean} abort
  */
-Item.prototype.stop = function stop() {
+Item.prototype.finish = function finish(abort) {
   if (this.animations.length === 0) return this
-  for (var i = 0, len = this.animations.length; i < len; i++) {
+  for (var i = 0; i < this.animations.length; ++i) {
     var a = this.animations[i]
-    a.end(true)
+    a.end(abort)
   }
   this.animations = []
   
@@ -217,6 +218,13 @@ Item.prototype.stop = function stop() {
 
   this.zero('transform')
   return this
+}
+
+/**
+ * Stops all Item animations
+ */
+Item.prototype.stop = function stop() {
+  return this.finish(true)
 }
 
 Item.prototype.css = function css() {
