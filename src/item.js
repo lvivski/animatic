@@ -103,6 +103,7 @@ Item.prototype.add = function add(type, a) {
   this.state[type][0] += a[0]
   this.state[type][1] += a[1]
   this.state[type][2] += a[2]
+  return this
 }
 
 /**
@@ -112,6 +113,7 @@ Item.prototype.add = function add(type, a) {
  */
 Item.prototype.set = function set(type, a) {
   this.state[type] = a
+  return this
 }
 
 /**
@@ -119,7 +121,7 @@ Item.prototype.set = function set(type, a) {
  * @param {Array} t Coordinates
  */
 Item.prototype.translate = function translate(t) {
-  this.add('translate', t)
+  return this.add('translate', t)
 }
 
 /**
@@ -127,7 +129,7 @@ Item.prototype.translate = function translate(t) {
  * @param {Array} r Angles in radians
  */
 Item.prototype.rotate = function rotate(r) {
-  this.add('rotate', r)
+  return this.add('rotate', r)
 }
 
 /**
@@ -135,7 +137,7 @@ Item.prototype.rotate = function rotate(r) {
  * @param {Array} s Scale values
  */
 Item.prototype.scale = function scale(s) {
-  this.add('scale', s)
+  return this.add('scale', s)
 }
 
 /**
@@ -204,14 +206,17 @@ Item.prototype.zero = function zero(type) {
  * Stops all Item animations
  */
 Item.prototype.stop = function stop() {
-  if (this.animations.length === 0) return
+  if (this.animations.length === 0) return this
   for (var i = 0, len = this.animations.length; i < len; i++) {
     var a = this.animations[i]
     a.end(true)
   }
   this.animations = []
+  
+  this.infinite = false
 
   this.zero('transform')
+  return this
 }
 
 Item.prototype.css = function css() {

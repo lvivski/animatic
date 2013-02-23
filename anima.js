@@ -597,18 +597,20 @@
     this.state[type][0] += a[0];
     this.state[type][1] += a[1];
     this.state[type][2] += a[2];
+    return this;
   };
   Item.prototype.set = function set(type, a) {
     this.state[type] = a;
+    return this;
   };
   Item.prototype.translate = function translate(t) {
-    this.add("translate", t);
+    return this.add("translate", t);
   };
   Item.prototype.rotate = function rotate(r) {
-    this.add("rotate", r);
+    return this.add("rotate", r);
   };
   Item.prototype.scale = function scale(s) {
-    this.add("scale", s);
+    return this.add("scale", s);
   };
   Item.prototype.clear = function clear() {
     this.zero("state");
@@ -645,13 +647,15 @@
     this[type].scale = [ 0, 0, 0 ];
   };
   Item.prototype.stop = function stop() {
-    if (this.animations.length === 0) return;
+    if (this.animations.length === 0) return this;
     for (var i = 0, len = this.animations.length; i < len; i++) {
       var a = this.animations[i];
       a.end(true);
     }
     this.animations = [];
+    this.infinite = false;
     this.zero("transform");
+    return this;
   };
   Item.prototype.css = function css() {
     return new CSS(this, this.animations);
