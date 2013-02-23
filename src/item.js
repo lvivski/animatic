@@ -30,19 +30,6 @@ Item.prototype.init = function init() {
     rotate: [0, 0, 0],
     scale: [1, 1, 1]
   }
-
-  this.transform = {}
-
-  this.zero('transform')
-
-  this._dirty = false
-
-  this.on('transform', function onTransform(translate, rotate, scale) {
-    this.transform.translate = translate
-    this.transform.rotate = rotate
-    this.transform.scale = scale
-    this._dirty = true
-  })
 }
 
 /**
@@ -144,7 +131,9 @@ Item.prototype.scale = function scale(s) {
  * Clears item transform
  */
 Item.prototype.clear = function clear() {
-  this.zero('state')
+  this.state.translate = [0, 0, 0]
+  this.state.rotate = [0, 0, 0]
+  this.state.scale = [1, 1, 1]
 }
 
 /**
@@ -161,8 +150,6 @@ Item.prototype.animate = function animate(transform, duration, ease, delay) {
 
   this.animations.push(animation)
 
-  this.zero('transform')
-
   return animation
 }
 
@@ -171,12 +158,7 @@ Item.prototype.animate = function animate(transform, duration, ease, delay) {
  * @param {number} tick
  */
 Item.prototype.animation = function animation(tick) {
-  if (!this.running) return
-  if (this.animations.length === 0 && this._dirty) {
-    this.animate(this.transform)
-    this._dirty = false
-  }
-  if (this.animations.length === 0) return
+  if (!this.running || this.animations.length === 0) return
 
   while (this.animations.length !== 0) {
     var first = this.animations[0]
@@ -193,16 +175,6 @@ Item.prototype.animation = function animation(tick) {
 }
 
 /**
- * Clears Item's state or transform
- * @param {string} type
- */
-Item.prototype.zero = function zero(type) {
-  this[type].translate = [0, 0, 0]
-  this[type].rotate = [0, 0, 0]
-  this[type].scale = [0, 0, 0]
-}
-
-/**
  * Finishes all Item animations
  * @param {boolean} abort
  */
@@ -216,7 +188,6 @@ Item.prototype.finish = function finish(abort) {
 
   this.infinite = false
 
-  this.zero('transform')
   return this
 }
 

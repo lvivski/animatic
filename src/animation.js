@@ -34,8 +34,8 @@ Animation.prototype.constructor = Animation
  * @param {number} tick Timestamp
  * @fires Animation#start
  */
-Animation.prototype.init = function init(tick) {
-  if (this.start !== null) return
+Animation.prototype.init = function init(tick, force) {
+  if (this.start !== null && !force) return
   this.start = tick
 
   var state = this.item.state

@@ -89,8 +89,7 @@
 
   function onKeyDown(e) {
     var rotate = [0, 0, 0],
-        translate = [0, 0, 0],
-        scale = [0, 0, 0]
+        translate = [0, 0, 0]
 
     switch(e.keyCode) {
       case keys.UP:
@@ -118,8 +117,21 @@
         translate[0] = 200
         break
     }
-
-    container.emit('transform', translate, rotate, scale)
+    if (container.animations.length) {
+      var a = container.animations[0]
+      a.translate = translate.map(function(t, i) {
+        return t || a.translate[i]
+      })
+      a.rotate = rotate.map(function(r, i) {
+        return r || a.rotate[i]
+      })
+      a.init(Date.now(), true)
+    } else {
+      container.animate({
+        translate: translate,
+        rotate: rotate
+      }, 500)
+    }
   }
   
   [].slice.call(document.querySelectorAll('.controls input')).forEach(function(el) {

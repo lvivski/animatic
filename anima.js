@@ -223,8 +223,8 @@
   }
   Animation.prototype = new EventEmitter();
   Animation.prototype.constructor = Animation;
-  Animation.prototype.init = function init(tick) {
-    if (this.start !== null) return;
+  Animation.prototype.init = function init(tick, force) {
+    if (this.start !== null && !force) return;
     this.start = tick;
     var state = this.item.state;
     this.initial = {
@@ -562,15 +562,6 @@
       rotate: [ 0, 0, 0 ],
       scale: [ 1, 1, 1 ]
     };
-    this.transform = {};
-    this.zero("transform");
-    this._dirty = false;
-    this.on("transform", function onTransform(translate, rotate, scale) {
-      this.transform.translate = translate;
-      this.transform.rotate = rotate;
-      this.transform.scale = scale;
-      this._dirty = true;
-    });
   };
   Item.prototype.update = function update(tick) {
     this.animation(tick);
@@ -613,21 +604,17 @@
     return this.add("scale", s);
   };
   Item.prototype.clear = function clear() {
-    this.zero("state");
+    this.state.translate = [ 0, 0, 0 ];
+    this.state.rotate = [ 0, 0, 0 ];
+    this.state.scale = [ 1, 1, 1 ];
   };
   Item.prototype.animate = function animate(transform, duration, ease, delay) {
     var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, ease, delay);
     this.animations.push(animation);
-    this.zero("transform");
     return animation;
   };
   Item.prototype.animation = function animation(tick) {
-    if (!this.running) return;
-    if (this.animations.length === 0 && this._dirty) {
-      this.animate(this.transform);
-      this._dirty = false;
-    }
-    if (this.animations.length === 0) return;
+    if (!this.running || this.animations.length === 0) return;
     while (this.animations.length !== 0) {
       var first = this.animations[0];
       first.init(tick);
@@ -641,11 +628,6 @@
       break;
     }
   };
-  Item.prototype.zero = function zero(type) {
-    this[type].translate = [ 0, 0, 0 ];
-    this[type].rotate = [ 0, 0, 0 ];
-    this[type].scale = [ 0, 0, 0 ];
-  };
   Item.prototype.finish = function finish(abort) {
     if (this.animations.length === 0) return this;
     for (var i = 0; i < this.animations.length; ++i) {
@@ -654,7 +636,6 @@
     }
     this.animations = [];
     this.infinite = false;
-    this.zero("transform");
     return this;
   };
   Item.prototype.stop = function stop() {
