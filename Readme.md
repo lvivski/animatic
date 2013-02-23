@@ -2,7 +2,7 @@
 CSS animations with a soul
 
 With Anima it's easy to animate over a hundred objects at a time.
-And it's only **3.7k** when gzipped.
+And it's only **4k** when gzipped.
 
 **[Examples](#examples)**
 
@@ -56,7 +56,7 @@ item.animate({
   delay: 100
 })
 ```
-_**Note**: transformations' values are relative to the last known `Item` state, it's initial state or the state after previous animation. Angles for `rotate` should be in degrees._
+_**Note**: transformations' values are relative to the last known `Item` state, its initial state or the state after previous animation. Angles for `rotate` should be in degrees._
 
 ### Sequential animations
 You can create sequential animations with ease :)
@@ -82,7 +82,7 @@ item.animate([{
 So you basically pass an array of transformations to create parallel animation.
 
 ### Infinite animations
-You can call `.infinite()` at the end of you `.animate`'s chain, to make the animation infinite.
+You can call `.infinite()` at the end of `.animate`'s chain, to make the animation infinite.
 
 ### Taking control
 #### `JS` mode
