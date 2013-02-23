@@ -213,7 +213,7 @@ Item.prototype.finish = function finish(abort) {
     a.end(abort)
   }
   this.animations = []
-  
+
   this.infinite = false
 
   this.zero('transform')
