@@ -40,11 +40,18 @@ CSS.prototype.resume = function resume() {
  * extracts values and sets item state
  */
 CSS.prototype.stop = function stop() {
-  var transform = getComputedStyle(this.item.dom)[vendor + 'transform']
+  var style = getComputedStyle(this.item.dom),
+      transform = style[vendor + 'transform'],
+      opacity = style.opacity
+
   this.item.dom.style[animationProperty] = ''
   this.item.dom.style[transitionProperty] = ''
+
   this.item.dom.style[transformProperty] = transform
+  this.item.dom.style.opacity = opacity
+
   this.item.state = Matrix.extract(Matrix.parse(transform))
+  this.item.state.opacity = opacity
   return this
 }
 
@@ -68,7 +75,7 @@ CSS.prototype.style = function style() {
     this.item.animations.length == 1) { // transition
     var a = this.item.animations[0]
     a.init()
-    this.item.dom.style[transitionProperty] = vendor + 'transform ' + a.duration + 'ms ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
+    this.item.dom.style[transitionProperty] = 'all ' + a.duration + 'ms ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
     a.transform(1)
     this.handle('TransitionEnd')
     a.item.style()
@@ -115,6 +122,7 @@ CSS.prototype.keyframes = function keyframes(name) {
       a.delay && rule.push(
         this.percent(time += a.delay) + '% {',
         vendor +'transform:' + a.item.matrix() + ';',
+        'opacity:' + a.item.opacity() + ';',
         '}'
       )
 
@@ -123,6 +131,7 @@ CSS.prototype.keyframes = function keyframes(name) {
       rule.push(
         this.percent(time += a.duration) + '% {',
         vendor + 'transform:' + a.item.matrix() + ';',
+        'opacity:' + a.item.opacity() + ';',
         aNext && aNext.easeName && vendor + 'animation-timing-function:' + easings.css[aNext.easeName] + ';',
         '}'
       )
@@ -146,6 +155,7 @@ CSS.prototype.keyframes = function keyframes(name) {
         rule.push(
           this.percent(time += frame) + '% {',
           vendor + 'transform:' + a.item.matrix() + ';',
+          'opacity:' + a.item.opacity() + ';',
           '}'
         )
       }

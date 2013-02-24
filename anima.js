@@ -120,11 +120,13 @@
     return this;
   };
   CSS.prototype.stop = function stop() {
-    var transform = getComputedStyle(this.item.dom)[vendor + "transform"];
+    var style = getComputedStyle(this.item.dom), transform = style[vendor + "transform"], opacity = style.opacity;
     this.item.dom.style[animationProperty] = "";
     this.item.dom.style[transitionProperty] = "";
     this.item.dom.style[transformProperty] = transform;
+    this.item.dom.style.opacity = opacity;
     this.item.state = Matrix.extract(Matrix.parse(transform));
+    this.item.state.opacity = opacity;
     return this;
   };
   CSS.prototype.handle = function handle(event) {
@@ -139,7 +141,7 @@
     if (this.item.animations[0] instanceof Animation && this.item.animations.length == 1) {
       var a = this.item.animations[0];
       a.init();
-      this.item.dom.style[transitionProperty] = vendor + "transform " + a.duration + "ms " + easings.css[a.easeName] + " " + a.delay + "ms";
+      this.item.dom.style[transitionProperty] = "all " + a.duration + "ms " + easings.css[a.easeName] + " " + a.delay + "ms";
       a.transform(1);
       this.handle("TransitionEnd");
       a.item.style();
@@ -160,9 +162,9 @@
       a.init();
       if (a instanceof Animation) {
         i === 0 && rule.push("0% {", vendor + "animation-timing-function:" + easings.css[a.easeName] + ";", "}");
-        a.delay && rule.push(this.percent(time += a.delay) + "% {", vendor + "transform:" + a.item.matrix() + ";", "}");
+        a.delay && rule.push(this.percent(time += a.delay) + "% {", vendor + "transform:" + a.item.matrix() + ";", "opacity:" + a.item.opacity() + ";", "}");
         a.transform(1);
-        rule.push(this.percent(time += a.duration) + "% {", vendor + "transform:" + a.item.matrix() + ";", aNext && aNext.easeName && vendor + "animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
+        rule.push(this.percent(time += a.duration) + "% {", vendor + "transform:" + a.item.matrix() + ";", "opacity:" + a.item.opacity() + ";", aNext && aNext.easeName && vendor + "animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
       } else {
         var frames = [];
         a.animations.forEach(function(a) {
@@ -176,7 +178,7 @@
             if (pa.delay >= frame || pa.delay + pa.duration < frame) continue;
             pa.transform(pa.ease((frame - pa.delay) / pa.duration));
           }
-          rule.push(this.percent(time += frame) + "% {", vendor + "transform:" + a.item.matrix() + ";", "}");
+          rule.push(this.percent(time += frame) + "% {", vendor + "transform:" + a.item.matrix() + ";", "opacity:" + a.item.opacity() + ";", "}");
         }
       }
     }
@@ -214,6 +216,7 @@
     this.translate = transform.translate && transform.translate.map(parseFloat);
     this.rotate = transform.rotate && transform.rotate.map(parseFloat);
     this.scale = transform.scale;
+    this.opacity = transform.opacity;
     this.start = null;
     this.diff = null;
     this.duration = parseInt(duration || transform.duration, 10) || 500;
@@ -230,7 +233,8 @@
     this.initial = {
       translate: state.translate.slice(),
       rotate: state.rotate.slice(),
-      scale: state.scale.slice()
+      scale: state.scale.slice(),
+      opacity: state.opacity
     };
     this.emit("start");
   };
@@ -257,7 +261,8 @@
   Animation.prototype.resume = function resume() {
     this.start = Date.now() - this.diff;
   };
-  Animation.prototype.set = function set(type, state, initial, percent) {
+  Animation.prototype.set = function set(type, percent) {
+    var state = this.item.state, initial = this.initial;
     if (this[type] && this[type].length) {
       if (this[type][0]) {
         state[type][0] = initial[type][0] + this[type][0] * percent;
@@ -268,13 +273,15 @@
       if (this[type][2]) {
         state[type][2] = initial[type][2] + this[type][2] * percent;
       }
+    } else if (this[type]) {
+      state[type] = initial[type] + (this[type] - initial[type]) * percent;
     }
   };
   Animation.prototype.transform = function transform(percent) {
-    var state = this.item.state, initial = this.initial;
-    this.set("translate", state, initial, percent);
-    this.set("rotate", state, initial, percent);
-    this.set("scale", state, initial, percent);
+    this.set("translate", percent);
+    this.set("rotate", percent);
+    this.set("scale", percent);
+    this.set("opacity", percent);
   };
   Animation.prototype.end = function end(abort) {
     !abort && this.transform(1);
@@ -560,7 +567,8 @@
     this.state = {
       translate: [ 0, 0, 0 ],
       rotate: [ 0, 0, 0 ],
-      scale: [ 1, 1, 1 ]
+      scale: [ 1, 1, 1 ],
+      opacity: 1
     };
   };
   Item.prototype.update = function update(tick) {
@@ -577,12 +585,16 @@
     this.animations.length && this.animations[0].resume();
     this.running = true;
   };
-  Item.prototype.style = function() {
+  Item.prototype.style = function style() {
     this.dom.style[transformProperty] = this.matrix();
+    this.dom.style.opacity = this.opacity();
   };
-  Item.prototype.matrix = function() {
+  Item.prototype.matrix = function matrix() {
     var state = this.state;
     return Matrix.toString(Matrix.multiply(Matrix.scale.apply(null, state.scale), Matrix.rotate.apply(null, state.rotate), Matrix.translate.apply(null, state.translate)));
+  };
+  Item.prototype.opacity = function opacity() {
+    return this.state.opacity;
   };
   Item.prototype.add = function add(type, a) {
     this.state[type][0] += a[0];
@@ -607,6 +619,7 @@
     this.state.translate = [ 0, 0, 0 ];
     this.state.rotate = [ 0, 0, 0 ];
     this.state.scale = [ 1, 1, 1 ];
+    this.state.opacity = 1;
   };
   Item.prototype.animate = function animate(transform, duration, ease, delay) {
     var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, ease, delay);

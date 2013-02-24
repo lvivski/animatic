@@ -28,7 +28,8 @@ Item.prototype.init = function init() {
   this.state = {
     translate: [0, 0, 0],
     rotate: [0, 0, 0],
-    scale: [1, 1, 1]
+    scale: [1, 1, 1],
+    opacity: 1
   }
 }
 
@@ -62,15 +63,16 @@ Item.prototype.resume = function resume() {
 /**
  * Sets style to the dom node
  */
-Item.prototype.style = function() {
+Item.prototype.style = function style() {
   this.dom.style[transformProperty] = this.matrix()
+  this.dom.style.opacity = this.opacity()
 }
 
 /**
  * Calculates CSS transform matrix for state
- * @return {String}
+ * @return {string}
  */
-Item.prototype.matrix = function() {
+Item.prototype.matrix = function matrix() {
   var state = this.state
   return Matrix.toString(
     Matrix.multiply(
@@ -79,6 +81,14 @@ Item.prototype.matrix = function() {
       Matrix.translate.apply(null, state.translate)
     )
   )
+}
+
+/**
+ * Returns item opacity
+ * @return {string|number}
+ */
+Item.prototype.opacity = function opacity() {
+  return this.state.opacity
 }
 
 /**
@@ -134,6 +144,7 @@ Item.prototype.clear = function clear() {
   this.state.translate = [0, 0, 0]
   this.state.rotate = [0, 0, 0]
   this.state.scale = [1, 1, 1]
+  this.state.opacity = 1
 }
 
 /**
@@ -198,6 +209,10 @@ Item.prototype.stop = function stop() {
   return this.finish(true)
 }
 
+/**
+ * Generates CSS animation or transition
+ * @return {CSS}
+ */
 Item.prototype.css = function css() {
   return new CSS(this, this.animations)
 }

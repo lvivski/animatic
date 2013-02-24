@@ -1,6 +1,6 @@
 {
   "name": "anima",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": [
     "anima.min.js",
     "anima.min.js.map"

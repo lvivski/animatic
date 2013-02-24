@@ -15,6 +15,7 @@ function Animation(item, transform, duration, ease, delay) {
   this.translate = transform.translate && transform.translate.map(parseFloat)
   this.rotate = transform.rotate && transform.rotate.map(parseFloat)
   this.scale = transform.scale
+  this.opacity = transform.opacity
 
   this.start = null
   this.diff = null
@@ -42,7 +43,8 @@ Animation.prototype.init = function init(tick, force) {
   this.initial = {
     translate: state.translate.slice(),
     rotate: state.rotate.slice(),
-    scale: state.scale.slice()
+    scale: state.scale.slice(),
+    opacity: state.opacity
   }
   this.emit('start')
 }
@@ -91,11 +93,12 @@ Animation.prototype.resume = function resume() {
 /**
  * Sets new item state
  * @param {string} type
- * @param {Object} state
- * @param {Object} initial
  * @param {number} percent
  */
-Animation.prototype.set = function set(type, state, initial, percent) {
+Animation.prototype.set = function set(type, percent) {
+  var state = this.item.state,
+      initial = this.initial
+
   if (this[type] && this[type].length) {
     if (this[type][0]) {
       state[type][0] = initial[type][0] + this[type][0] * percent
@@ -106,6 +109,8 @@ Animation.prototype.set = function set(type, state, initial, percent) {
     if (this[type][2]) {
       state[type][2] = initial[type][2] + this[type][2] * percent
     }
+  } else if (this[type]) {
+    state[type] = initial[type] + (this[type] - initial[type]) * percent
   }
 }
 
@@ -114,12 +119,10 @@ Animation.prototype.set = function set(type, state, initial, percent) {
  * @param {number} percent
  */
 Animation.prototype.transform = function transform(percent) {
-  var state = this.item.state,
-      initial = this.initial
-
-  this.set('translate', state, initial, percent)
-  this.set('rotate', state, initial, percent)
-  this.set('scale', state, initial, percent)
+  this.set('translate', percent)
+  this.set('rotate', percent)
+  this.set('scale', percent)
+  this.set('opacity', percent)
 }
 
 /**

@@ -40,7 +40,7 @@ item.animate(...).css()
 
 ### Single animation
 Arguments:
-1. The map of transformations to apply. Only `translate`, `rotate` and `scale` are currently supported, but the list will expand.
+1. The map of transformations to apply. Only `translate`, `rotate`, `scale` and `opacity` are currently supported, but the list will expand.
 2. Animation duration
 3. Easing function
 4. Animation delay
@@ -51,6 +51,7 @@ It's also possible to pass everything in a single object
 ```js
 item.animate({
   translate: [x, y, z],
+  opacity: .5,
   duration: 500,
   ease: 'ease-in-out-quad',
   delay: 100
