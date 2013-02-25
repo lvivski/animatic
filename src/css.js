@@ -89,15 +89,6 @@ CSS.prototype.style = function style() {
 }
 
 /**
- * Calcuates percent for keyframes
- * @param {number} time
- * @return {String}
- */
-CSS.prototype.percent = function percent(time) {
-  return (time * 100 / this.total).toFixed(3)
-}
-
-/**
  * Generates @keyframes based on animations
  * @param {String} name Animation name
  * @return {String}
@@ -113,28 +104,13 @@ CSS.prototype.keyframes = function keyframes(name) {
     a.init()
 
     if (a instanceof Animation) { // Single
-      i === 0 && rule.push(
-        '0% {',
-        vendor + 'animation-timing-function:' + easings.css[a.easeName] + ';',
-        '}'
-      )
+      i === 0 && rule.push(this.frame(0, easings.css[a.easeName]))
 
-      a.delay && rule.push(
-        this.percent(time += a.delay) + '% {',
-        vendor +'transform:' + a.item.matrix() + ';',
-        'opacity:' + a.item.opacity() + ';',
-        '}'
-      )
+      a.delay && rule.push(this.frame(time += a.delay))
 
       a.transform(1)
 
-      rule.push(
-        this.percent(time += a.duration) + '% {',
-        vendor + 'transform:' + a.item.matrix() + ';',
-        'opacity:' + a.item.opacity() + ';',
-        aNext && aNext.easeName && vendor + 'animation-timing-function:' + easings.css[aNext.easeName] + ';',
-        '}'
-      )
+      rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
     } else { // Parallel (it doesn't work with custom easings for now)
       var frames = []
       a.animations.forEach(function(a){
@@ -152,15 +128,34 @@ CSS.prototype.keyframes = function keyframes(name) {
           pa.transform(pa.ease((frame - pa.delay) / pa.duration))
         }
 
-        rule.push(
-          this.percent(time += frame) + '% {',
-          vendor + 'transform:' + a.item.matrix() + ';',
-          'opacity:' + a.item.opacity() + ';',
-          '}'
-        )
+        rule.push(this.frame(time += frame))
       }
     }
   }
   rule.push('}')
   return rule.join('')
+}
+
+/**
+ * Calcuates percent for keyframes
+ * @param {number} time
+ * @return {String}
+ */
+CSS.prototype.percent = function percent(time) {
+  return (time * 100 / this.total).toFixed(3)
+}
+
+/**
+ * Generates one frame for @keyframes
+ * @param {number} time
+ * @param {number} ease
+ * @return {String}
+ */
+CSS.prototype.frame = function frame(time, ease) {
+  var percent = this.percent(time)
+  return percent + '% {' +
+    (percent ? vendor + 'transform:' + this.item.matrix() + ';' : '') +
+    (percent ? 'opacity:' + this.item.opacity() + ';' : '') +
+    (ease ? vendor + 'animation-timing-function:' + ease + ';' : '') +
+    '}'
 }

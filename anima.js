@@ -152,19 +152,16 @@
     }
     this.item.animations = [];
   };
-  CSS.prototype.percent = function percent(time) {
-    return (time * 100 / this.total).toFixed(3);
-  };
   CSS.prototype.keyframes = function keyframes(name) {
     var time = 0, rule = [ "@" + vendor + "keyframes " + name + "{" ];
     for (var i = 0; i < this.animations.length; i++) {
       var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
       if (a instanceof Animation) {
-        i === 0 && rule.push("0% {", vendor + "animation-timing-function:" + easings.css[a.easeName] + ";", "}");
-        a.delay && rule.push(this.percent(time += a.delay) + "% {", vendor + "transform:" + a.item.matrix() + ";", "opacity:" + a.item.opacity() + ";", "}");
+        i === 0 && rule.push(this.frame(0, easings.css[a.easeName]));
+        a.delay && rule.push(this.frame(time += a.delay));
         a.transform(1);
-        rule.push(this.percent(time += a.duration) + "% {", vendor + "transform:" + a.item.matrix() + ";", "opacity:" + a.item.opacity() + ";", aNext && aNext.easeName && vendor + "animation-timing-function:" + easings.css[aNext.easeName] + ";", "}");
+        rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]));
       } else {
         var frames = [];
         a.animations.forEach(function(a) {
@@ -178,12 +175,19 @@
             if (pa.delay >= frame || pa.delay + pa.duration < frame) continue;
             pa.transform(pa.ease((frame - pa.delay) / pa.duration));
           }
-          rule.push(this.percent(time += frame) + "% {", vendor + "transform:" + a.item.matrix() + ";", "opacity:" + a.item.opacity() + ";", "}");
+          rule.push(this.frame(time += frame));
         }
       }
     }
     rule.push("}");
     return rule.join("");
+  };
+  CSS.prototype.percent = function percent(time) {
+    return (time * 100 / this.total).toFixed(3);
+  };
+  CSS.prototype.frame = function frame(time, ease) {
+    var percent = this.percent(time);
+    return percent + "% {" + (percent ? vendor + "transform:" + this.item.matrix() + ";" : "") + (percent ? "opacity:" + this.item.opacity() + ";" : "") + (ease ? vendor + "animation-timing-function:" + ease + ";" : "") + "}";
   };
   function EventEmitter() {
     this.handlers = {};
