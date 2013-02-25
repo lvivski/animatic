@@ -12,6 +12,7 @@
     <![endif]-->
   </head>
   <body>
+    <div id="fb-root"></div>
     <div class="wrapper">
       <header>
         <h1>Anima.js</h1>
@@ -22,6 +23,10 @@
             allowtransparency="true" frameborder="0" scrolling="0" width="150" height="50"></iframe>
           <iframe src="http://ghbtns.com/github-btn.html?user=lvivski&repo=anima&type=fork&count=true&size=large"
               allowtransparency="true" frameborder="0" scrolling="0" width="150" height="50"></iframe>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lvivski.github.com/anima" data-via="lvivski" data-size="large">Tweet</a>
+            <div class="fb-like" data-href="http://lvivksi.github.com/anima" data-send="false" data-layout="button_count" data-width="200" data-show-faces="false" data-font="arial"></div>
+            <div class="g-plusone" data-href="http://lvivski.github.com/anima"></div>
+            
         </p>
       </header>
       <section>
@@ -182,12 +187,28 @@ animation.stop()</code></pre>
     </div>
   </body>
   <script>
-    var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
-    !function() {
-      var ga = document.createElement('script')
-      ga.type = 'text/javascript';ga.async = true
-      ga.src = '//www.google-analytics.com/ga.js'
-      document.getElementsByTagName('head')[0].appendChild(ga)
-    }()
+    var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']],
+        d = document,
+        head = document.getElementsByTagName('head')[0],
+        s = 'script'
+        
+    g('//www.google-analytics.com/ga.js')
+    g('https://apis.google.com/js/plusone.js')
+    b('//connect.facebook.net/en_US/all.js#xfbml=1', 'facebook-jssdk')
+    b('//platform.twitter.com/widgets.js', 'twitter-wjs')
+        
+    function g(url) {
+      var js = d.createElement(s)
+      js.type = 'text/javascript';js.async = true
+      js.src = url
+      head.appendChild(js)
+    }
+        
+    function b(url, id) {
+      if (d.getElementById(id)) return      
+      var js = d.createElement(s);js.id = id
+      js.src = url
+      head.appendChild(js)
+    }
   </script>
 </html>
