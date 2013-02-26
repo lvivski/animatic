@@ -22,7 +22,7 @@ function CSS(item, animations) {
  * Pauses CSS animation
  */
 CSS.prototype.pause = function pause() {
-  this.item.dom.style[animationProperty + 'PlayState'] = 'paused'
+  this.item.dom.style[_animationProperty + 'PlayState'] = 'paused'
   return this
 }
 
@@ -30,7 +30,7 @@ CSS.prototype.pause = function pause() {
  * Resumes CSS animation
  */
 CSS.prototype.resume = function resume() {
-  this.item.dom.style[animationProperty + 'PlayState'] = 'running'
+  this.item.dom.style[_animationProperty + 'PlayState'] = 'running'
   return this
 }
 
@@ -41,13 +41,13 @@ CSS.prototype.resume = function resume() {
  */
 CSS.prototype.stop = function stop() {
   var style = getComputedStyle(this.item.dom),
-      transform = style[vendor + 'transform'],
+      transform = style[_vendor + 'transform'],
       opacity = style.opacity
 
-  this.item.dom.style[animationProperty] = ''
-  this.item.dom.style[transitionProperty] = ''
+  this.item.dom.style[_animationProperty] = ''
+  this.item.dom.style[_transitionProperty] = ''
 
-  this.item.dom.style[transformProperty] = transform
+  this.item.dom.style[_transformProperty] = transform
   this.item.dom.style.opacity = opacity
 
   this.item.state = Matrix.extract(Matrix.parse(transform))
@@ -57,8 +57,7 @@ CSS.prototype.stop = function stop() {
 
 
 CSS.prototype.handle = function handle(event) {
-  var vendor = window.vendor.replace(/\-/g, ''),
-      onEnd = function end() {
+  var onEnd = function end() {
         this.stop()
         this.item.dom.removeEventListener(vendor + event, onEnd, false)
       }.bind(this)
@@ -75,14 +74,14 @@ CSS.prototype.style = function style() {
     this.item.animations.length == 1) { // transition
     var a = this.item.animations[0]
     a.init()
-    this.item.dom.style[transitionProperty] = 'all ' + a.duration + 'ms ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
+    this.item.dom.style[_transitionProperty] = 'all ' + a.duration + 'ms ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
     a.transform(1)
     this.handle('TransitionEnd')
     a.item.style()
   } else { // animation
     this.stylesheet.insertRule(this.keyframes(animation), 0)
     this.handle('AnimationEnd')
-    this.item.dom.style[animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
+    this.item.dom.style[_animationProperty] = animation + ' ' + this.total + 'ms' + (this.item.infinite ? ' infinite ' : ' ') + 'forwards'
   }
 
   this.item.animations = []
@@ -95,7 +94,7 @@ CSS.prototype.style = function style() {
  */
 CSS.prototype.keyframes = function keyframes(name) {
   var time = 0,
-      rule = ['@' + vendor + 'keyframes ' + name + '{']
+      rule = ['@' + _vendor + 'keyframes ' + name + '{']
 
   for (var i = 0; i < this.animations.length; i++) {
     var a = this.animations[i],
@@ -154,8 +153,8 @@ CSS.prototype.percent = function percent(time) {
 CSS.prototype.frame = function frame(time, ease) {
   var percent = this.percent(time)
   return percent + '% {' +
-    (percent ? vendor + 'transform:' + this.item.matrix() + ';' : '') +
+    (percent ? _vendor + 'transform:' + this.item.matrix() + ';' : '') +
     (percent ? 'opacity:' + this.item.opacity() + ';' : '') +
-    (ease ? vendor + 'animation-timing-function:' + ease + ';' : '') +
+    (ease ? _vendor + 'animation-timing-function:' + ease + ';' : '') +
     '}'
 }

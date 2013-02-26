@@ -2,13 +2,13 @@
  * Anima
  * @type {Object}
  */
-var anima = window.anima = {}
+var a = window.anima = window.a = {}
 
 /**
  * Creates and initializes world with frame loop
  * @return {World}
  */
-anima.js = function () {
+a.js = function () {
   return new World(true)
 }
 
@@ -16,7 +16,7 @@ anima.js = function () {
  * Creates and initializes world without frame loop
  * @return {World}
  */
-anima.css = function () {
+a.css = function () {
   return new World()
 }
 

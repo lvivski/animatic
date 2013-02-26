@@ -17,10 +17,10 @@ World.prototype.init = function init() {
 
   function update(tick) {
     self.update(tick)
-    self._frame = requestAnimationFrame(update)
+    self._frame = _requestAnimationFrame(update)
   }
 
-  this._frame = requestAnimationFrame(update)
+  this._frame = _requestAnimationFrame(update)
 }
 
 /**
@@ -38,7 +38,7 @@ World.prototype.add = function add(node) {
  * Cancels next frame
  */
 World.prototype.cancel = function cancel() {
-  this._frame && cancelAnimationFrame(this._frame)
+  this._frame && _cancelAnimationFrame(this._frame)
 }
 
 /**
@@ -87,5 +87,5 @@ World.prototype.update = function update(tick) {
  * @param {Function} handler
  */
 World.prototype.on = function on(event, handler) {
-  window.addEventListener(event, handler, true)
+  addEventListener(event, handler, true)
 }

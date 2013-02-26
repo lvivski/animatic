@@ -22,7 +22,7 @@ Item.prototype.constructor = Item
 Item.prototype.init = function init() {
 
   this.infinite = false
-  
+
   this.running = true
 
   this.state = {
@@ -64,7 +64,7 @@ Item.prototype.resume = function resume() {
  * Sets style to the dom node
  */
 Item.prototype.style = function style() {
-  this.dom.style[transformProperty] = this.matrix()
+  this.dom.style[_transformProperty] = this.matrix()
   this.dom.style.opacity = this.opacity()
 }
 
