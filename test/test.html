@@ -58,6 +58,10 @@
 
     // multiply
     check('multiply', Matrix.toTestString(Matrix.multiply(Matrix.translate(10, 20), Matrix.rotate(90))), transform('rotateX(90deg) translate(10px, 20px)')),
+    
+    check('inverse', Matrix.multiply(Matrix.translate(10,15,20), Matrix.inverse(Matrix.translate(10,15,20))).toString(), Matrix.id().toString()),
+    
+    check('extract', JSON.stringify(Matrix.extract(Matrix.multiply(Matrix.scale(1, 2, 3), Matrix.rotate(90, 45, 3), Matrix.translate(10, 20, 50)))), '{"translate":[10.000000000000002,20.000000000000004,50.00000000000001],"rotate":[90,44.99999999999999,3.0000000000000004],"scale":[0.9999999999999999,1.9999999999999998,3]}')
   ]
   
   var failed = tests.filter(function(t) { return !t }).length
@@ -66,8 +70,6 @@
   } else {
     console.log('OK')
   }
-  
-  console.log(Matrix.extract(Matrix.multiply(Matrix.scale(1, 2, 3), Matrix.rotate(90, 45, 3), Matrix.translate(10, 20, 50))))
   </script>
 </body>
 </html>
