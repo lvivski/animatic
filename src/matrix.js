@@ -42,7 +42,7 @@ var Matrix = {
       0, 0, 1, 0,
       tx, ty, tz, 1]
   },
-  translateX: function translateX(t) {
+  /* translateX: function translateX(t) {
     return this.translate(t, 0, 0)
   },
   translateY: function translateY(t) {
@@ -50,7 +50,7 @@ var Matrix = {
   },
   translateZ: function translateZ(t) {
     return this.translate(0, 0, t)
-  },
+  }, */
   scale: function scale(sx, sy, sz) {
     if (!(sx || sy || sz)) return Matrix.id()
 
@@ -63,7 +63,7 @@ var Matrix = {
       0, 0, sz, 0,
       0, 0, 0, 1]
   },
-  scaleX: function scaleX(s) {
+  /* scaleX: function scaleX(s) {
     return this.scale(s, 0, 0)
   },
   scaleY: function scaleY(s) {
@@ -71,7 +71,7 @@ var Matrix = {
   },
   scaleZ: function scaleZ(s) {
     return this.scale(0, 0, s)
-  },
+  }, */
   rotate: function rotate(ax, ay, az) {
     if (!(ax || ay || az)) return Matrix.id()
 
@@ -97,7 +97,7 @@ var Matrix = {
       sy, -sx*cy, cx*cy, 0,
       0, 0, 0, 1]
   },
-  rotateX: function rotateX(a) {
+  /* rotateX: function rotateX(a) {
     a *= radians
 
     var s = Math.sin(a),
@@ -129,8 +129,10 @@ var Matrix = {
       -s, c, 0, 0,
       0, 0, 1, 0,
       0, 0, 0, 1]
-  },
+  }, */
   rotate3d: function rotate3d(x, y, z, a) {
+    a || (a = 0)
+    
     a *= radians
 
     var s = Math.sin(a),
@@ -158,6 +160,11 @@ var Matrix = {
       0, 0, 0, 1]
   },
   skew: function skew(ax, ay) {
+    if (!(ax || ay)) return Matrix.id()
+
+    ax || (ax = 0)
+    ay || (ay = 0)
+    
     ax *= radians
     ay *= radians
 
@@ -166,12 +173,12 @@ var Matrix = {
       0, 0, 1, 0,
       0, 0, 0, 1]
   },
-  skewX: function skewX(a) {
+  /* skewX: function skewX(a) {
     return this.skew(a, 0)
   },
   skewY: function skewY(a) {
     return this.skew(0, a)
-  },
+  }, */
   perspective: function perspective(p) {
     p = -1/p
     return [1, 0, 0, 0,
@@ -189,25 +196,51 @@ var Matrix = {
     }
     return m
   },
+  inverse: function inverse(m) {
+    var a = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        inv0 = m[5] * m[10] - m[6] * m[9],
+        inv1 = m[1] * m[10] - m[2] * m[9],
+        inv2 = m[1] * m[6] - m[2] * m[5],
+        inv4 = m[4] * m[10] - m[6] * m[8],
+        inv5 = m[0] * m[10] - m[2] * m[8],
+        inv6 = m[0] * m[6] - m[2] * m[4],
+        inv8 = m[4] * m[9] - m[5] * m[8],
+        inv9 = m[0] * m[9] - m[1] * m[8],
+        inv10 = m[0] * m[5] - m[1] * m[4],
+        scale = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8)
+    a[0] = scale * inv0
+    a[1] = -scale * inv1
+    a[2] = scale * inv2
+    a[4] = -scale * inv4
+    a[5] = scale * inv5
+    a[6] = -scale * inv6
+    a[8] = scale * inv8
+    a[9] = -scale * inv9
+    a[10] = scale * inv10
+    a[12] = -m[12] * a[0] - m[13] * a[4] - m[14] * a[8]
+    a[13] = -m[12] * a[1] - m[13] * a[5] - m[14] * a[9]
+    a[14] = -m[12] * a[2] - m[13] * a[6] - m[14] * a[10]
+    return a
+  },
   extract: function extract(m) { // supports only scale*rotate*translate matrix
     var sX = Math.sqrt(m[0]*m[0] + m[1]*m[1] + m[2]*m[2]),
         sY = Math.sqrt(m[4]*m[4] + m[5]*m[5] + m[6]*m[6]),
         sZ = Math.sqrt(m[8]*m[8] + m[9]*m[9] + m[10]*m[10])
-        
+
     var rX = Math.atan2(-m[9]/sZ, m[10]/sZ) / radians,
         rY = Math.asin(m[8]/sZ) / radians,
         rZ = Math.atan2(-m[4]/sY, m[0]/sX) / radians
-        
+
     if (m[4] === 1 || m[4] === -1) {
       rX = 0
       rY = m[4] * -Math.PI/2
       rZ = m[4] * Math.atan2(m[6]/sY, m[5]/sY) / radians
     }
-        
+
     var tX = m[12]/sX,
         tY = m[13]/sX,
         tZ = m[14]/sX
-        
+
     return {
       translate: [tX, tY, tZ],
       rotate: [rX, rY, rZ],
