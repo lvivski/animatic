@@ -132,14 +132,14 @@
     this.item.dom.addEventListener(vendor + event, onEnd, false);
   };
   CSS.prototype.style = function style() {
-    var animation = "a" + (Date.now() + Math.floor(Math.random() * 100));
+    var animation = "a" + Date.now() + "r" + Math.floor(Math.random() * 1e3);
     if (this.item.animations[0] instanceof Animation && this.item.animations.length == 1) {
       var a = this.item.animations[0];
       a.init();
       this.item.dom.style[_transitionProperty] = "all " + a.duration + "ms " + easings.css[a.easeName] + " " + a.delay + "ms";
       a.transform(1);
       this.handle("TransitionEnd");
-      a.item.style();
+      this.item.style();
     } else {
       this.stylesheet.insertRule(this.keyframes(animation), 0);
       this.handle("AnimationEnd");

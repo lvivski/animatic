@@ -68,7 +68,7 @@ CSS.prototype.handle = function handle(event) {
  * Applies animations and sets item style
  */
 CSS.prototype.style = function style() {
-  var animation = 'a' + (Date.now() + Math.floor(Math.random() * 100))
+  var animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
 
   if (this.item.animations[0] instanceof Animation &&
     this.item.animations.length == 1) { // transition
@@ -77,7 +77,7 @@ CSS.prototype.style = function style() {
     this.item.dom.style[_transitionProperty] = 'all ' + a.duration + 'ms ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
     a.transform(1)
     this.handle('TransitionEnd')
-    a.item.style()
+    this.item.style()
   } else { // animation
     this.stylesheet.insertRule(this.keyframes(animation), 0)
     this.handle('AnimationEnd')
