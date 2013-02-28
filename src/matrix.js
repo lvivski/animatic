@@ -222,7 +222,18 @@ var Matrix = {
     a[14] = -m[12] * a[2] - m[13] * a[6] - m[14] * a[10]
     return a
   },
-  extract: function extract(m) { // supports only scale*rotate*translate matrix
+  compose: function compose(translate, rotate, scale) {
+    translate || (translate = [])
+    rotate || (rotate = [])
+    scale || (scale = [])
+    
+    var mTranslate = Matrix.translate(translate[0], translate[1], translate[2]),
+        mRotate = Matrix.rotate(rotate[0], rotate[1], rotate[2]),
+        mScale = Matrix.scale(scale[0], scale[1], scale[2])
+
+    return Matrix.multiply(mScale, mRotate, mTranslate)
+  },
+  decompose: function decompose(m) { // supports only scale*rotate*translate matrix
     var sX = Math.sqrt(m[0]*m[0] + m[1]*m[1] + m[2]*m[2]),
         sY = Math.sqrt(m[4]*m[4] + m[5]*m[5] + m[6]*m[6]),
         sZ = Math.sqrt(m[8]*m[8] + m[9]*m[9] + m[10]*m[10])
@@ -247,7 +258,7 @@ var Matrix = {
       scale: [sX, sY, sZ]
     }
   },
-  toString: function toString(m) {
+  stringify: function stringify(m) {
     for (var i = 0; i < m.length; ++i)
       if (Math.abs(m[i]) < 1e-6) m[i] = 0
     return 'matrix3d(' + m.join() + ')'

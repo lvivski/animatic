@@ -120,7 +120,7 @@
     this.item.dom.style[_transitionProperty] = "";
     this.item.dom.style[_transformProperty] = transform;
     this.item.dom.style.opacity = opacity;
-    this.item.state = Matrix.extract(Matrix.parse(transform));
+    this.item.state = Matrix.decompose(Matrix.parse(transform));
     this.item.state.opacity = opacity;
     return this;
   };
@@ -498,7 +498,14 @@
       a[14] = -m[12] * a[2] - m[13] * a[6] - m[14] * a[10];
       return a;
     },
-    extract: function extract(m) {
+    compose: function compose(translate, rotate, scale) {
+      translate || (translate = []);
+      rotate || (rotate = []);
+      scale || (scale = []);
+      var mTranslate = Matrix.translate(translate[0], translate[1], translate[2]), mRotate = Matrix.rotate(rotate[0], rotate[1], rotate[2]), mScale = Matrix.scale(scale[0], scale[1], scale[2]);
+      return Matrix.multiply(mScale, mRotate, mTranslate);
+    },
+    decompose: function decompose(m) {
       var sX = Math.sqrt(m[0] * m[0] + m[1] * m[1] + m[2] * m[2]), sY = Math.sqrt(m[4] * m[4] + m[5] * m[5] + m[6] * m[6]), sZ = Math.sqrt(m[8] * m[8] + m[9] * m[9] + m[10] * m[10]);
       var rX = Math.atan2(-m[9] / sZ, m[10] / sZ) / radians, rY = Math.asin(m[8] / sZ) / radians, rZ = Math.atan2(-m[4] / sY, m[0] / sX) / radians;
       if (m[4] === 1 || m[4] === -1) {
@@ -513,7 +520,7 @@
         scale: [ sX, sY, sZ ]
       };
     },
-    toString: function toString(m) {
+    stringify: function stringify(m) {
       for (var i = 0; i < m.length; ++i) if (Math.abs(m[i]) < 1e-6) m[i] = 0;
       return "matrix3d(" + m.join() + ")";
     },
@@ -571,7 +578,11 @@
   };
   Item.prototype.matrix = function matrix() {
     var state = this.state;
-    return Matrix.toString(Matrix.multiply(Matrix.scale.apply(null, state.scale), Matrix.rotate.apply(null, state.rotate), Matrix.translate.apply(null, state.translate)));
+    return Matrix.stringify(Matrix.compose(state.translate, state.rotate, state.scale));
+  };
+  Item.prototype.center = function center() {
+    var state = this.state;
+    return Matrix.decompose(Matrix.inverse(Matrix.compose(state.translate, state.rotate, state.scale)));
   };
   Item.prototype.opacity = function opacity() {
     return this.state.opacity;

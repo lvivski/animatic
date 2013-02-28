@@ -74,13 +74,16 @@ Item.prototype.style = function style() {
  */
 Item.prototype.matrix = function matrix() {
   var state = this.state
-  return Matrix.toString(
-    Matrix.multiply(
-      Matrix.scale.apply(null, state.scale),
-      Matrix.rotate.apply(null, state.rotate),
-      Matrix.translate.apply(null, state.translate)
-    )
-  )
+  return Matrix.stringify(Matrix.compose(
+    state.translate, state.rotate, state.scale
+  ))
+}
+
+Item.prototype.center = function center() {
+  var state = this.state
+  return Matrix.decompose(Matrix.inverse(Matrix.compose(
+    state.translate, state.rotate, state.scale
+  )))
 }
 
 /**

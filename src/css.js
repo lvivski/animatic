@@ -50,7 +50,7 @@ CSS.prototype.stop = function stop() {
   this.item.dom.style[_transformProperty] = transform
   this.item.dom.style.opacity = opacity
 
-  this.item.state = Matrix.extract(Matrix.parse(transform))
+  this.item.state = Matrix.decompose(Matrix.parse(transform))
   this.item.state.opacity = opacity
   return this
 }
