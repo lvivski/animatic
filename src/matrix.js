@@ -5,23 +5,27 @@ var radians = Math.PI / 180
  * @type {Object}
  */
 var Matrix = {
-  id: function id() {
+  identity: function identity() {
     return [1, 0, 0, 0,
       0, 1, 0, 0,
       0, 0, 1, 0,
       0, 0, 0, 1]
   },
   multiply: function multiply(a, b) { // doesn't work for perspective
-    var c = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    var c = Matrix.identity()
+
     c[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8]
     c[1] = a[0] * b[1] + a[1] * b[5] + a[2] * b[9]
     c[2] = a[0] * b[2] + a[1] * b[6] + a[2] * b[10]
+
     c[4] = a[4] * b[0] + a[5] * b[4] + a[6] * b[8]
     c[5] = a[4] * b[1] + a[5] * b[5] + a[6] * b[9]
     c[6] = a[4] * b[2] + a[5] * b[6] + a[6] * b[10]
+
     c[8] = a[8] * b[0] + a[9] * b[4] + a[10] * b[8]
     c[9] = a[8] * b[1] + a[9] * b[5] + a[10] * b[9]
     c[10] = a[8] * b[2] + a[9] * b[6] + a[10] * b[10]
+
     c[12] = a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + b[12]
     c[13] = a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + b[13]
     c[14] = a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + b[14]
@@ -31,7 +35,7 @@ var Matrix = {
       : multiply.apply(null, [c].concat(Array.prototype.slice.call(arguments, 2)))
   },
   translate: function translate(tx, ty, tz) {
-    if (!(tx || ty || tz)) return Matrix.id()
+    if (!(tx || ty || tz)) return Matrix.identity()
 
     tx || (tx = 0)
     ty || (ty = 0)
@@ -52,7 +56,7 @@ var Matrix = {
     return this.translate(0, 0, t)
   }, */
   scale: function scale(sx, sy, sz) {
-    if (!(sx || sy || sz)) return Matrix.id()
+    if (!(sx || sy || sz)) return Matrix.identity()
 
     sx || (sx = 1)
     sy || (sy = 1)
@@ -73,7 +77,7 @@ var Matrix = {
     return this.scale(0, 0, s)
   }, */
   rotate: function rotate(ax, ay, az) {
-    if (!(ax || ay || az)) return Matrix.id()
+    if (!(ax || ay || az)) return Matrix.identity()
 
     ax || (ax = 0)
     ay || (ay = 0)
@@ -137,17 +141,11 @@ var Matrix = {
 
     var s = Math.sin(a),
         c = Math.cos(a),
-        len = Math.sqrt(x*x + y*y + z*z)
+        norm = Vector.norm(x, y, z)
 
-    if (len === 0) {
-      x = 0
-      y = 0
-      z = 1
-    } else if (len !== 1) {
-      x /= len
-      y /= len
-      z /= len
-    }
+    x = norm[0]
+    y = norm[1]
+    z = norm[2]
 
     var xx = x*x,
         yy = y*y,
@@ -160,7 +158,7 @@ var Matrix = {
       0, 0, 0, 1]
   },
   skew: function skew(ax, ay) {
-    if (!(ax || ay)) return Matrix.id()
+    if (!(ax || ay)) return Matrix.identity()
 
     ax || (ax = 0)
     ay || (ay = 0)
@@ -197,46 +195,73 @@ var Matrix = {
     return m
   },
   inverse: function inverse(m) {
-    var a = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    var a = Matrix.identity(),
+
         inv0 = m[5] * m[10] - m[6] * m[9],
         inv1 = m[1] * m[10] - m[2] * m[9],
         inv2 = m[1] * m[6] - m[2] * m[5],
+
         inv4 = m[4] * m[10] - m[6] * m[8],
         inv5 = m[0] * m[10] - m[2] * m[8],
         inv6 = m[0] * m[6] - m[2] * m[4],
+
         inv8 = m[4] * m[9] - m[5] * m[8],
         inv9 = m[0] * m[9] - m[1] * m[8],
         inv10 = m[0] * m[5] - m[1] * m[4],
-        scale = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8)
-    a[0] = scale * inv0
-    a[1] = -scale * inv1
-    a[2] = scale * inv2
-    a[4] = -scale * inv4
-    a[5] = scale * inv5
-    a[6] = -scale * inv6
-    a[8] = scale * inv8
-    a[9] = -scale * inv9
-    a[10] = scale * inv10
+
+        det = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8)
+
+    a[0] = det * inv0
+    a[1] = -det * inv1
+    a[2] = det * inv2
+
+    a[4] = -det * inv4
+    a[5] = det * inv5
+    a[6] = -det * inv6
+
+    a[8] = det * inv8
+    a[9] = -det * inv9
+    a[10] = det * inv10
+
     a[12] = -m[12] * a[0] - m[13] * a[4] - m[14] * a[8]
     a[13] = -m[12] * a[1] - m[13] * a[5] - m[14] * a[9]
     a[14] = -m[12] * a[2] - m[13] * a[6] - m[14] * a[10]
+
     return a
   },
   compose: function compose(translate, rotate, scale) {
     translate || (translate = [])
     rotate || (rotate = [])
     scale || (scale = [])
-    
-    var mTranslate = Matrix.translate(translate[0], translate[1], translate[2]),
-        mRotate = Matrix.rotate(rotate[0], rotate[1], rotate[2]),
-        mScale = Matrix.scale(scale[0], scale[1], scale[2])
 
-    return Matrix.multiply(mScale, mRotate, mTranslate)
+    var a = Matrix.rotate(rotate[0], rotate[1], rotate[2])
+
+    if (scale.length) {
+      a[0] *= scale[0]
+      a[1] *= scale[0]
+      a[2] *= scale[0]
+
+      a[4] *= scale[1]
+      a[5] *= scale[1]
+      a[6] *= scale[1]
+
+      a[8] *= scale[2]
+      a[9] *= scale[2]
+      a[10] *= scale[2]
+    }
+
+    if (translate.length) {
+      a[12] = translate[0]
+      a[13] = translate[1]
+      a[14] = translate[2]
+    }
+
+    return a
   },
   decompose: function decompose(m) { // supports only scale*rotate*translate matrix
-    var sX = Math.sqrt(m[0]*m[0] + m[1]*m[1] + m[2]*m[2]),
-        sY = Math.sqrt(m[4]*m[4] + m[5]*m[5] + m[6]*m[6]),
-        sZ = Math.sqrt(m[8]*m[8] + m[9]*m[9] + m[10]*m[10])
+    var sX = Vector.length(m[0], m[1], m[2]),
+        sY = Vector.length(m[4], m[5], m[6]),
+        sZ = Vector.length(m[8], m[9], m[10])
 
     var rX = Math.atan2(-m[9]/sZ, m[10]/sZ) / radians,
         rY = Math.asin(m[8]/sZ) / radians,
@@ -248,9 +273,9 @@ var Matrix = {
       rZ = m[4] * Math.atan2(m[6]/sY, m[5]/sY) / radians
     }
 
-    var tX = m[12]/sX,
-        tY = m[13]/sX,
-        tZ = m[14]/sX
+    var tX = m[12],
+        tY = m[13],
+        tZ = m[14]
 
     return {
       translate: [tX, tY, tZ],
@@ -258,9 +283,68 @@ var Matrix = {
       scale: [sX, sY, sZ]
     }
   },
+  transpose: function transpose(m) {
+    var t
+    
+    t = m[1]
+    m[1] = m[4]
+    m[4] = t
+
+    t = m[2]
+    m[2] = m[8]
+    m[8] = t
+
+    t = m[6]
+    m[6] = m[9]
+    m[9] = t
+
+    t = m[3]
+    m[3] = m[12]
+    m[12] = t
+    
+    t = m[7]
+    m[7] = m[13]
+    m[13] = t
+    
+    t = m[11]
+    m[11] = m[14]
+    m[14] = t
+    
+    return m
+  },
+  lookAt: function lookAt(eye, target, up) {
+    var z = Vector.sub(eye, target)
+    z = Vector.norm(z)
+    if (Vector.length(z) === 0)
+      z[2] = 1
+
+    var x = Vector.cross(up, z)
+    if (Vector.length(x) === 0) {
+      z[0] += 0.0001
+      x = Vector.norm(Vector.cross(up, z))
+    }
+
+    var y = Vector.cross(z, x)
+    
+    var a = Matrix.identity()
+
+    a[0] = x[0]
+    a[1] = x[1]
+    a[2] = x[2]
+
+    a[4] = y[0]
+    a[5] = y[1]
+    a[6] = y[2]
+
+    a[8] = z[0]
+    a[9] = z[1]
+    a[10] = z[2]
+
+    return a
+  },
   stringify: function stringify(m) {
     for (var i = 0; i < m.length; ++i)
-      if (Math.abs(m[i]) < 1e-6) m[i] = 0
+      if (Math.abs(m[i]) < 0.000001) m[i] = 0
     return 'matrix3d(' + m.join() + ')'
   },
   toTestString: function toTestString(m) {

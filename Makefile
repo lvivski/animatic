@@ -8,6 +8,7 @@ FILES = \
 	src/animation.js \
 	src/parallel.js \
 	src/world.js \
+	src/vector.js \
 	src/matrix.js \
 	src/item.js
 
