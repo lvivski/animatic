@@ -86,6 +86,13 @@ Item.prototype.center = function center() {
   )))
 }
 
+Item.prototype.lookAt = function lookAt(vector) {
+  var transform = Matrix.decompose(Matrix.lookAt(
+    vector, this.state.translate, [0, 1, 0]
+  ))
+  this.state.rotate = transform.rotate
+}
+
 /**
  * Returns item opacity
  * @return {string|number}
