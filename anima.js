@@ -358,11 +358,11 @@
   }
   World.prototype.init = function init() {
     var self = this;
-    function update(tick) {
-      self.update(tick);
-      self._frame = _requestAnimationFrame(update);
-    }
     this._frame = _requestAnimationFrame(update);
+    function update(tick) {
+      self._frame = _requestAnimationFrame(update);
+      self.update(tick);
+    }
   };
   World.prototype.add = function add(node) {
     var item = new Item(node);

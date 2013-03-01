@@ -15,12 +15,12 @@ function World(start) {
 World.prototype.init = function init() {
   var self = this
 
+  this._frame = _requestAnimationFrame(update)
+
   function update(tick) {
     self.update(tick)
     self._frame = _requestAnimationFrame(update)
   }
-
-  this._frame = _requestAnimationFrame(update)
 }
 
 /**
@@ -39,6 +39,7 @@ World.prototype.add = function add(node) {
  */
 World.prototype.cancel = function cancel() {
   this._frame && _cancelAnimationFrame(this._frame)
+  this._frame = 0
 }
 
 /**
