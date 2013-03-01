@@ -360,8 +360,8 @@
     var self = this;
     this._frame = _requestAnimationFrame(update);
     function update(tick) {
-      self._frame = _requestAnimationFrame(update);
       self.update(tick);
+      self._frame = _requestAnimationFrame(update);
     }
   };
   World.prototype.add = function add(node) {
@@ -371,6 +371,7 @@
   };
   World.prototype.cancel = function cancel() {
     this._frame && _cancelAnimationFrame(this._frame);
+    this._frame = 0;
   };
   World.prototype.stop = function stop() {
     this.cancel();
@@ -398,13 +399,57 @@
   World.prototype.on = function on(event, handler) {
     addEventListener(event, handler, true);
   };
+  var Vector = {
+    set: function(x, y, z) {
+      return [ x, y, z ];
+    },
+    length: function length(x, y, z) {
+      if (Array.isArray(x)) {
+        y = x[1];
+        z = x[2];
+        x = x[0];
+      }
+      return Math.sqrt(x * x + y * y + z * z);
+    },
+    add: function add(a, b) {
+      return [ a[0] + b[0], a[1] + b[1], a[2] + b[2] ];
+    },
+    sub: function sub(a, b) {
+      return [ a[0] - b[0], a[1] - b[1], a[2] - b[2] ];
+    },
+    norm: function norm(x, y, z) {
+      if (Array.isArray(x)) {
+        y = x[1];
+        z = x[2];
+        x = x[0];
+      }
+      var len = Vector.length(x, y, z);
+      if (len !== 0) {
+        x /= len;
+        y /= len;
+        z /= len;
+      } else {
+        x = 0;
+        y = 0;
+        z = 0;
+      }
+      return [ x, y, z ];
+    },
+    cross: function cross(a, b) {
+      var x = a[1] * b[2] - a[2] * b[1], y = a[2] * b[0] - a[0] * b[2], z = a[1] * b[1] - a[1] * b[0];
+      return [ x, y, z ];
+    },
+    copy: function copy(v) {
+      reutn[v[0], v[1], v[2]];
+    }
+  };
   var radians = Math.PI / 180;
   var Matrix = {
-    id: function id() {
+    identity: function identity() {
       return [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
     },
     multiply: function multiply(a, b) {
-      var c = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ];
+      var c = Matrix.identity();
       c[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8];
       c[1] = a[0] * b[1] + a[1] * b[5] + a[2] * b[9];
       c[2] = a[0] * b[2] + a[1] * b[6] + a[2] * b[10];
@@ -420,21 +465,21 @@
       return 2 >= arguments.length ? c : multiply.apply(null, [ c ].concat(Array.prototype.slice.call(arguments, 2)));
     },
     translate: function translate(tx, ty, tz) {
-      if (!(tx || ty || tz)) return Matrix.id();
+      if (!(tx || ty || tz)) return Matrix.identity();
       tx || (tx = 0);
       ty || (ty = 0);
       tz || (tz = 0);
       return [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, tx, ty, tz, 1 ];
     },
     scale: function scale(sx, sy, sz) {
-      if (!(sx || sy || sz)) return Matrix.id();
+      if (!(sx || sy || sz)) return Matrix.identity();
       sx || (sx = 1);
       sy || (sy = 1);
       sz || (sz = 1);
       return [ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1 ];
     },
     rotate: function rotate(ax, ay, az) {
-      if (!(ax || ay || az)) return Matrix.id();
+      if (!(ax || ay || az)) return Matrix.identity();
       ax || (ax = 0);
       ay || (ay = 0);
       az || (az = 0);
@@ -447,21 +492,15 @@
     rotate3d: function rotate3d(x, y, z, a) {
       a || (a = 0);
       a *= radians;
-      var s = Math.sin(a), c = Math.cos(a), len = Math.sqrt(x * x + y * y + z * z);
-      if (len === 0) {
-        x = 0;
-        y = 0;
-        z = 1;
-      } else if (len !== 1) {
-        x /= len;
-        y /= len;
-        z /= len;
-      }
+      var s = Math.sin(a), c = Math.cos(a), norm = Vector.norm(x, y, z);
+      x = norm[0];
+      y = norm[1];
+      z = norm[2];
       var xx = x * x, yy = y * y, zz = z * z, _c = 1 - c;
       return [ xx + (1 - xx) * c, x * y * _c + z * s, x * z * _c - y * s, 0, x * y * _c - z * s, yy + (1 - yy) * c, y * z * _c + x * s, 0, x * z * _c + y * s, y * z * _c - x * s, zz + (1 - zz) * c, 0, 0, 0, 0, 1 ];
     },
     skew: function skew(ax, ay) {
-      if (!(ax || ay)) return Matrix.id();
+      if (!(ax || ay)) return Matrix.identity();
       ax || (ax = 0);
       ay || (ay = 0);
       ax *= radians;
@@ -483,16 +522,16 @@
       return m;
     },
     inverse: function inverse(m) {
-      var a = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ], inv0 = m[5] * m[10] - m[6] * m[9], inv1 = m[1] * m[10] - m[2] * m[9], inv2 = m[1] * m[6] - m[2] * m[5], inv4 = m[4] * m[10] - m[6] * m[8], inv5 = m[0] * m[10] - m[2] * m[8], inv6 = m[0] * m[6] - m[2] * m[4], inv8 = m[4] * m[9] - m[5] * m[8], inv9 = m[0] * m[9] - m[1] * m[8], inv10 = m[0] * m[5] - m[1] * m[4], scale = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8);
-      a[0] = scale * inv0;
-      a[1] = -scale * inv1;
-      a[2] = scale * inv2;
-      a[4] = -scale * inv4;
-      a[5] = scale * inv5;
-      a[6] = -scale * inv6;
-      a[8] = scale * inv8;
-      a[9] = -scale * inv9;
-      a[10] = scale * inv10;
+      var a = Matrix.identity(), inv0 = m[5] * m[10] - m[6] * m[9], inv1 = m[1] * m[10] - m[2] * m[9], inv2 = m[1] * m[6] - m[2] * m[5], inv4 = m[4] * m[10] - m[6] * m[8], inv5 = m[0] * m[10] - m[2] * m[8], inv6 = m[0] * m[6] - m[2] * m[4], inv8 = m[4] * m[9] - m[5] * m[8], inv9 = m[0] * m[9] - m[1] * m[8], inv10 = m[0] * m[5] - m[1] * m[4], det = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8);
+      a[0] = det * inv0;
+      a[1] = -det * inv1;
+      a[2] = det * inv2;
+      a[4] = -det * inv4;
+      a[5] = det * inv5;
+      a[6] = -det * inv6;
+      a[8] = det * inv8;
+      a[9] = -det * inv9;
+      a[10] = det * inv10;
       a[12] = -m[12] * a[0] - m[13] * a[4] - m[14] * a[8];
       a[13] = -m[12] * a[1] - m[13] * a[5] - m[14] * a[9];
       a[14] = -m[12] * a[2] - m[13] * a[6] - m[14] * a[10];
@@ -502,23 +541,83 @@
       translate || (translate = []);
       rotate || (rotate = []);
       scale || (scale = []);
-      var mTranslate = Matrix.translate(translate[0], translate[1], translate[2]), mRotate = Matrix.rotate(rotate[0], rotate[1], rotate[2]), mScale = Matrix.scale(scale[0], scale[1], scale[2]);
-      return Matrix.multiply(mScale, mRotate, mTranslate);
+      var a = Matrix.rotate(rotate[0], rotate[1], rotate[2]);
+      if (scale.length) {
+        a[0] *= scale[0];
+        a[1] *= scale[0];
+        a[2] *= scale[0];
+        a[4] *= scale[1];
+        a[5] *= scale[1];
+        a[6] *= scale[1];
+        a[8] *= scale[2];
+        a[9] *= scale[2];
+        a[10] *= scale[2];
+      }
+      if (translate.length) {
+        a[12] = translate[0];
+        a[13] = translate[1];
+        a[14] = translate[2];
+      }
+      return a;
     },
     decompose: function decompose(m) {
-      var sX = Math.sqrt(m[0] * m[0] + m[1] * m[1] + m[2] * m[2]), sY = Math.sqrt(m[4] * m[4] + m[5] * m[5] + m[6] * m[6]), sZ = Math.sqrt(m[8] * m[8] + m[9] * m[9] + m[10] * m[10]);
+      var sX = Vector.length(m[0], m[1], m[2]), sY = Vector.length(m[4], m[5], m[6]), sZ = Vector.length(m[8], m[9], m[10]);
       var rX = Math.atan2(-m[9] / sZ, m[10] / sZ) / radians, rY = Math.asin(m[8] / sZ) / radians, rZ = Math.atan2(-m[4] / sY, m[0] / sX) / radians;
       if (m[4] === 1 || m[4] === -1) {
         rX = 0;
         rY = m[4] * -Math.PI / 2;
         rZ = m[4] * Math.atan2(m[6] / sY, m[5] / sY) / radians;
       }
-      var tX = m[12] / sX, tY = m[13] / sX, tZ = m[14] / sX;
+      var tX = m[12], tY = m[13], tZ = m[14];
       return {
         translate: [ tX, tY, tZ ],
         rotate: [ rX, rY, rZ ],
         scale: [ sX, sY, sZ ]
       };
+    },
+    transpose: function transpose(m) {
+      var t;
+      t = m[1];
+      m[1] = m[4];
+      m[4] = t;
+      t = m[2];
+      m[2] = m[8];
+      m[8] = t;
+      t = m[6];
+      m[6] = m[9];
+      m[9] = t;
+      t = m[3];
+      m[3] = m[12];
+      m[12] = t;
+      t = m[7];
+      m[7] = m[13];
+      m[13] = t;
+      t = m[11];
+      m[11] = m[14];
+      m[14] = t;
+      return m;
+    },
+    lookAt: function lookAt(eye, target, up) {
+      var z = Vector.sub(eye, target);
+      z = Vector.norm(z);
+      if (Vector.length(z) === 0) z[2] = 1;
+      var x = Vector.cross(up, z);
+      if (Vector.length(x) === 0) {
+        z[0] += 1e-4;
+        x = Vector.norm(Vector.cross(up, z));
+      }
+      var y = Vector.cross(z, x);
+      var a = Matrix.identity();
+      a[0] = x[0];
+      a[1] = x[1];
+      a[2] = x[2];
+      a[4] = y[0];
+      a[5] = y[1];
+      a[6] = y[2];
+      a[8] = z[0];
+      a[9] = z[1];
+      a[10] = z[2];
+      return a;
     },
     stringify: function stringify(m) {
       for (var i = 0; i < m.length; ++i) if (Math.abs(m[i]) < 1e-6) m[i] = 0;
@@ -583,6 +682,10 @@
   Item.prototype.center = function center() {
     var state = this.state;
     return Matrix.decompose(Matrix.inverse(Matrix.compose(state.translate, state.rotate, state.scale)));
+  };
+  Item.prototype.lookAt = function lookAt(vector) {
+    var transform = Matrix.decompose(Matrix.lookAt(vector, this.state.translate, [ 0, 1, 0 ]));
+    this.state.rotate = transform.rotate;
   };
   Item.prototype.opacity = function opacity() {
     return this.state.opacity;
