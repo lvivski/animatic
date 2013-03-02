@@ -37,7 +37,7 @@ Animation.prototype.constructor = Animation
  */
 Animation.prototype.init = function init(tick, force) {
   if (this.start !== null && !force) return
-  this.start = tick
+  this.start = tick + this.delay
 
   var state = this.item.state
   this.initial = {
@@ -67,10 +67,9 @@ Animation.prototype.infinite = function infinite() {
  * @param {number} tick
  */
 Animation.prototype.run = function run(tick) {
-  if (tick - this.start < this.delay) return
+  if (tick < this.start) return
 
-  var percent = (tick - this.delay - this.start) / this.duration
-  if (percent < 0) percent = 0
+  var percent = (tick - this.start) / this.duration
   percent = this.ease(percent)
 
   this.transform(percent)

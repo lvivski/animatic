@@ -26,7 +26,6 @@ function Parallel(item, animations, duration, ease, delay) {
   })
 
   this.start = null
-  this.delay = 0
   this.easeName = ease || 'linear'
   this.duration = Math.max.apply(null, this.animations.map(function(a){
     return a.duration + a.delay
@@ -70,7 +69,7 @@ Parallel.prototype.infinite = function infinite() {
 Parallel.prototype.run = function run(tick) {
   for (var i = 0; i < this.animations.length; ++i) {
     var a = this.animations[i]
-    if (a.start + a.delay + a.duration <= tick) {
+    if (a.start + a.duration <= tick) {
       this.animations.splice(i--, 1)
       a.end()
       continue

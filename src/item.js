@@ -184,7 +184,7 @@ Item.prototype.animation = function animation(tick) {
   while (this.animations.length !== 0) {
     var first = this.animations[0]
     first.init(tick)
-    if (first.start + first.delay + first.duration <= tick) {
+    if (first.start + first.duration <= tick) {
       this.infinite && this.animations.push(first)
       this.animations.shift()
       first.end()

@@ -227,7 +227,7 @@
   Animation.prototype.constructor = Animation;
   Animation.prototype.init = function init(tick, force) {
     if (this.start !== null && !force) return;
-    this.start = tick;
+    this.start = tick + this.delay;
     var state = this.item.state;
     this.initial = {
       translate: state.translate.slice(),
@@ -248,9 +248,8 @@
     return this;
   };
   Animation.prototype.run = function run(tick) {
-    if (tick - this.start < this.delay) return;
-    var percent = (tick - this.delay - this.start) / this.duration;
-    if (percent < 0) percent = 0;
+    if (tick < this.start) return;
+    var percent = (tick - this.start) / this.duration;
     percent = this.ease(percent);
     this.transform(percent);
   };
@@ -298,7 +297,6 @@
       }, a.duration || duration, a.ease || ease, a.delay || delay);
     });
     this.start = null;
-    this.delay = 0;
     this.easeName = ease || "linear";
     this.duration = Math.max.apply(null, this.animations.map(function(a) {
       return a.duration + a.delay;
@@ -327,7 +325,7 @@
   Parallel.prototype.run = function run(tick) {
     for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i];
-      if (a.start + a.delay + a.duration <= tick) {
+      if (a.start + a.duration <= tick) {
         this.animations.splice(i--, 1);
         a.end();
         continue;
@@ -725,7 +723,7 @@
     while (this.animations.length !== 0) {
       var first = this.animations[0];
       first.init(tick);
-      if (first.start + first.delay + first.duration <= tick) {
+      if (first.start + first.duration <= tick) {
         this.infinite && this.animations.push(first);
         this.animations.shift();
         first.end();
