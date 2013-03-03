@@ -21,120 +21,120 @@
       (use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> to rotate and <code>W</code> <code>A</code> <code>S</code> <code>D</code> to move)
     </div>
   </div>
-</body>
-<script src="../anima.min.js"></script>
-<script>
-  var world = anima.js(),
-      container = world.add(document.querySelector('.container')),
-      keys = {
-        UP: 38,
-        DOWN: 40,
-        LEFT: 37,
-        RIGHT: 39,
-        w: 87,
-        s: 83,
-        d: 65,
-        a: 68
-      }
-      
-      var elements = 'H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Rv Fl Uup Lv Uus Ur'.split(' ')
-      var names = 'Hydrogen Helium Lithium Beryllium Boron Carbon Nitrogen Oxygen Fluorine Neon Sodium Magnesium Aluminium Silicon Phosphorus Sulfur Chlorine Argon Potassium Calcium Scandium Titanium Vanadium Chromium Manganese Iron Cobalt Nickel Copper Zinc Gallium Germanium Arsenic Selenium Bromine Krypton Rubidium Strontium Yttrium Zirconium Niobium Molybdenum Technetium Ruthenium Rhodium Palladium Silver Cadmium Indium Tin Antimony Tellurium Iodine Xenon Cesium Barium Lanthanum Cerium Praseodymium Neodymium Promethium Samarium Europium Gadolinium Terbium Dysprosium Holmium Erbium Thulium Ytterbium Lutetium Hafnium Tantalum Tungsten Rhenium Osmium Iridium Platinum Gold Mercury Thallium Lead Bismuth Polonium Astatine Radon Francium Radium Actinium Thorium Protactinium Uranium Neptunium Plutonium Americium Curium Berkelium Californium Einsteinium Fermium Mendelevium Nobelium Lawrencium Rutherfordium Dubnium Seaborgium Bohrium Hassium Meitnerium Darmstadtium Roentgenium Copernicium Ravikantium Flerovium Ununpentium Livermorium Ununseptium Urasium'.split(' ')
-
-  for (var i = 0; i < elements.length; i++) {
-    var card = document.createElement('div'),
-        el = document.createElement('div'),
-        title = document.createElement('div')
-        
-    card.className = 'card'
-
-    el.textContent = elements[i]
-    el.className = 'element'
-
-    title.textContent = names[i]
-    title.className = 'name'
-
-    card.appendChild(el)
-    card.appendChild(title)
-    
-    var item = world.add(card),
-        d = Math.floor(Math.random()*(50-25))+25
-        t = Math.floor(Math.random()*(700-300))+300
-        m = d < 37.5 ? -1 : 1
-
-    item.animate({
-      translate: [0,0,-d*m]
-    }, t)
-    .animate({
-      translate: [0,0,d*2*m]
-    }, t*2)
-    .animate({
-      translate: [0,0,-d*m]
-    }, t)
-    .infinite()
-    card.addEventListener('click', function(item){
-      return function(e) {
-        if (item.running) {
-          item.pause()
-        } else {
-          item.resume()
+  <script src="../anima.min.js"></script>
+  <script>
+    var world = anima.js(),
+        container = world.add(document.querySelector('.container')),
+        keys = {
+          UP: 38,
+          DOWN: 40,
+          LEFT: 37,
+          RIGHT: 39,
+          w: 87,
+          s: 83,
+          d: 65,
+          a: 68
         }
-      }
-    }(item), false)
+      
+        var elements = 'H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Rv Fl Uup Lv Uus Ur'.split(' ')
+        var names = 'Hydrogen Helium Lithium Beryllium Boron Carbon Nitrogen Oxygen Fluorine Neon Sodium Magnesium Aluminium Silicon Phosphorus Sulfur Chlorine Argon Potassium Calcium Scandium Titanium Vanadium Chromium Manganese Iron Cobalt Nickel Copper Zinc Gallium Germanium Arsenic Selenium Bromine Krypton Rubidium Strontium Yttrium Zirconium Niobium Molybdenum Technetium Ruthenium Rhodium Palladium Silver Cadmium Indium Tin Antimony Tellurium Iodine Xenon Cesium Barium Lanthanum Cerium Praseodymium Neodymium Promethium Samarium Europium Gadolinium Terbium Dysprosium Holmium Erbium Thulium Ytterbium Lutetium Hafnium Tantalum Tungsten Rhenium Osmium Iridium Platinum Gold Mercury Thallium Lead Bismuth Polonium Astatine Radon Francium Radium Actinium Thorium Protactinium Uranium Neptunium Plutonium Americium Curium Berkelium Californium Einsteinium Fermium Mendelevium Nobelium Lawrencium Rutherfordium Dubnium Seaborgium Bohrium Hassium Meitnerium Darmstadtium Roentgenium Copernicium Ravikantium Flerovium Ununpentium Livermorium Ununseptium Urasium'.split(' ')
+
+    for (var i = 0; i < elements.length; i++) {
+      var card = document.createElement('div'),
+          el = document.createElement('div'),
+          title = document.createElement('div')
+        
+      card.className = 'card'
+
+      el.textContent = elements[i]
+      el.className = 'element'
+
+      title.textContent = names[i]
+      title.className = 'name'
+
+      card.appendChild(el)
+      card.appendChild(title)
     
-    container.dom.appendChild(card)
-  }
+      var item = world.add(card),
+          d = Math.floor(Math.random()*(50-25))+25
+          t = Math.floor(Math.random()*(700-300))+300
+          m = d < 37.5 ? -1 : 1
 
-  world.on('keydown', onKeyDown)
-  world.on('keyup', function(){ container.stop() })
-
-  function onKeyDown(e) {
-    var rotate = [0, 0, 0],
-        translate = [0, 0, 0],
-        scale = [0, 0, 0]
-
-    switch(e.keyCode) {
-      case keys.UP:
-        rotate[0] = 50
-        break
-      case keys.DOWN:
-        rotate[0] = -50
-        break
-      case keys.LEFT:
-        rotate[1] = -50
-        break
-      case keys.RIGHT:
-        rotate[1] = 50
-        break
-      case keys.w:
-        translate[1] = 200
-        break
-      case keys.s:
-        translate[1] = -200
-        break
-      case keys.a:
-        translate[0] = -200
-        break
-      case keys.d:
-        translate[0] = 200
-        break
+      item.animate({
+        translate: [0,0,-d*m]
+      }, t)
+      .animate({
+        translate: [0,0,d*2*m]
+      }, t*2)
+      .animate({
+        translate: [0,0,-d*m]
+      }, t)
+      .infinite()
+      card.addEventListener('click', function(item){
+        return function(e) {
+          if (item.running) {
+            item.pause()
+          } else {
+            item.resume()
+          }
+        }
+      }(item), false)
+    
+      container.dom.appendChild(card)
     }
 
-    container.emit('transform', translate, rotate, scale)
-  }
+    world.on('keydown', onKeyDown)
+    world.on('keyup', function(){ container.stop() })
+
+    function onKeyDown(e) {
+      var rotate = [0, 0, 0],
+          translate = [0, 0, 0],
+          scale = [0, 0, 0]
+
+      switch(e.keyCode) {
+        case keys.UP:
+          rotate[0] = 50
+          break
+        case keys.DOWN:
+          rotate[0] = -50
+          break
+        case keys.LEFT:
+          rotate[1] = -50
+          break
+        case keys.RIGHT:
+          rotate[1] = 50
+          break
+        case keys.w:
+          translate[1] = 200
+          break
+        case keys.s:
+          translate[1] = -200
+          break
+        case keys.a:
+          translate[0] = -200
+          break
+        case keys.d:
+          translate[0] = 200
+          break
+      }
+
+      container.emit('transform', translate, rotate, scale)
+    }
   
-  [].slice.call(document.querySelectorAll('.controls input')).forEach(function(el) {
-    el.addEventListener('click', function(e){
-      world[this.getAttribute('rel')]()
-    }, false)
-  })
-</script>
-<script>
-  var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
-  !function() {
-    var ga = document.createElement('script')
-    ga.type = 'text/javascript';ga.async = true
-    ga.src = '//www.google-analytics.com/ga.js'
-    document.getElementsByTagName('head')[0].appendChild(ga)
-  }()
-</script>
+    [].slice.call(document.querySelectorAll('.controls input')).forEach(function(el) {
+      el.addEventListener('click', function(e){
+        world[this.getAttribute('rel')]()
+      }, false)
+    })
+  </script>
+  <script>
+    var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
+    !function() {
+      var ga = document.createElement('script')
+      ga.type = 'text/javascript';ga.async = true
+      ga.src = '//www.google-analytics.com/ga.js'
+      document.getElementsByTagName('head')[0].appendChild(ga)
+    }()
+  </script>
+</body>
 </html>
