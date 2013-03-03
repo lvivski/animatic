@@ -261,17 +261,11 @@
   };
   Animation.prototype.set = function set(type, percent) {
     var state = this.item.state, initial = this.initial;
-    if (this[type] && this[type].length) {
-      if (this[type][0]) {
-        state[type][0] = initial[type][0] + this[type][0] * percent;
+    if (Array.isArray(this[type])) {
+      for (var i = 0; i < 3; ++i) if (this[type][i]) {
+        state[type][i] = initial[type][i] + this[type][i] * percent;
       }
-      if (this[type][1]) {
-        state[type][1] = initial[type][1] + this[type][1] * percent;
-      }
-      if (this[type][2]) {
-        state[type][2] = initial[type][2] + this[type][2] * percent;
-      }
-    } else if (this[type]) {
+    } else if (typeof this[type] !== "undefined") {
       state[type] = initial[type] + (this[type] - initial[type]) * percent;
     }
   };
