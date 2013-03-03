@@ -18,6 +18,7 @@ code {
 input {
   -webkit-appearance: none;
   -moz-appearance: none;
+  -ms-appearance: none;
   -o-appearance: none;
   appearance: none;
   font-size: 1em;
@@ -30,6 +31,7 @@ input {
 input:hover {
   background: -webkit-linear-gradient(#fff, #dfdfdf);
   background: -moz-linear-gradient(#fff, #dfdfdf);
+  background: -ms-linear-gradient(#fff, #dfdfdf);
   background: -o-linear-gradient(#fff, #dfdfdf);
   background: linear-gradient(#fff, #dfdfdf);
 }
@@ -37,6 +39,7 @@ input:hover {
 input:active {
   background: -webkit-linear-gradient(#dfdfdf, #fff);
   background: -moz-linear-gradient(#dfdfdf, #fff);
+  background: -ms-linear-gradient(#dfdfdf, #fff);
   background: -o-linear-gradient(#dfdfdf, #fff);
   background: linear-gradient(#dfdfdf, #fff);
 }
@@ -48,8 +51,12 @@ input:active {
   overflow: hidden;
   -webkit-perspective: 400px;
   -moz-perspective: 400px;
+  -ms-perspective: 400px;
   -o-perspective: 400px;
   perspective: 400px;
+}
+
+.world {
   position: absolute;
   right: 0;
   top: 0;
@@ -61,6 +68,7 @@ input:active {
   height: 100%;
   -webkit-transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
   -o-transform-style: preserve-3d;
   transform-style: preserve-3d;
 }
@@ -81,6 +89,7 @@ input:active {
   opacity: .7;
   -webkit-user-select: none;
   -moz-user-select: none;
+  -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
   text-align: center;
@@ -125,6 +134,7 @@ input:active {
   transform-origin: 50% 100%;
   background: -webkit-radial-gradient(40px 40px, circle, #D7E7F1 0%, #AFD3EE 10%, #6DA9D5 20%, #238FE2 30%, #2081CB 50%, #0E5D99 70%);
   background: -moz-radial-gradient(40px 40px, circle, #D7E7F1 0%, #AFD3EE 10%, #6DA9D5 20%, #238FE2 30%, #2081CB 50%, #0E5D99 70%);
+  background: -ms-radial-gradient(40px 40px, circle, #D7E7F1 0%, #AFD3EE 10%, #6DA9D5 20%, #238FE2 30%, #2081CB 50%, #0E5D99 70%);
   background: -o-radial-gradient(40px 40px, circle, #D7E7F1 0%, #AFD3EE 10%, #6DA9D5 20%, #238FE2 30%, #2081CB 50%, #0E5D99 70%);
   background: radial-gradient(40px 40px, circle, #D7E7F1 0%, #AFD3EE 10%, #6DA9D5 20%, #238FE2 30%, #2081CB 50%, #0E5D99 70%);
   border: none;
