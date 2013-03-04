@@ -41,11 +41,11 @@ Parallel.prototype.constructor = Parallel
  * @param {number} tick
  * @fires Parallel#start
  */
-Parallel.prototype.init = function init(tick) {
-  if (this.start !== null) return
+Parallel.prototype.init = function init(tick, force) {
+  if (this.start !== null && !force) return
   this.start = tick
   for (var i = 0; i < this.animations.length; ++i) {
-    this.animations[i].init(tick)
+    this.animations[i].init(tick, force)
   }
   this.emit('start')
 }

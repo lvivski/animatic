@@ -42,6 +42,11 @@ Item.prototype.update = function update(tick) {
   this.style()
 }
 
+Item.prototype.timeline = function timeline(tick) {
+  this.seek(tick)
+  this.style()
+}
+
 /**
  * Pauses item animation
  */
@@ -79,6 +84,10 @@ Item.prototype.matrix = function matrix() {
   ))
 }
 
+/**
+ * Gets transformation needed to make Item in center
+ * @return {Object}
+ */
 Item.prototype.center = function center() {
   var state = this.state
   return Matrix.decompose(Matrix.inverse(Matrix.compose(
@@ -86,6 +95,10 @@ Item.prototype.center = function center() {
   )))
 }
 
+/**
+ * Rotates item to look at vector
+ * @param {Array} vector
+ */
 Item.prototype.lookAt = function lookAt(vector) {
   var transform = Matrix.decompose(Matrix.lookAt(
     vector, this.state.translate, [0, 1, 0]
@@ -191,6 +204,27 @@ Item.prototype.animation = function animation(tick) {
       continue
     }
     first.run(tick)
+    break
+  }
+}
+
+/**
+ * Seeks animations
+ * @param {number} tick
+ */
+Item.prototype.seek = function seek(tick) {
+  if (this.animations.length === 0) return
+  this.clear()
+  var time = 0
+  for (var i = 0; i < this.animations.length; ++i) {
+    var a = this.animations[i]
+    a.init(time, true)
+    if (a.start + a.duration <= tick) {
+      a.end()
+      time += a.delay + a.duration
+      continue
+    }
+    a.run(tick)
     break
   }
 }

@@ -1,10 +1,13 @@
 (function() {
   var a = window.anima = window.a = {};
-  a.js = function() {
+  a.js = function js() {
     return new World(true);
   };
-  a.css = function() {
+  a.css = function css() {
     return new World();
+  };
+  a.timeline = function timeline() {
+    return new Timeline();
   };
   var vendors = [ "webkit", "Moz", "O", "ms" ], i = 0, _requestAnimationFrame = window.requestAnimationFrame, _cancelAnimationFrame = window.cancelAnimationFrame;
   while (!_requestAnimationFrame && i < vendors.length) {
@@ -200,11 +203,11 @@
     }
     return this;
   };
-  EventEmitter.prototype.emit = function emit(event, ctx) {
+  EventEmitter.prototype.emit = function emit(event) {
     var args = Array.prototype.slice.call(arguments, 1), handlers = this.handlers[event];
     if (handlers) {
       for (var i = 0; i < handlers.length; ++i) {
-        handlers[i].apply(ctx || this, args);
+        handlers[i].apply(this, args);
       }
     }
     return this;
@@ -299,11 +302,11 @@
   }
   Parallel.prototype = new EventEmitter();
   Parallel.prototype.constructor = Parallel;
-  Parallel.prototype.init = function init(tick) {
-    if (this.start !== null) return;
+  Parallel.prototype.init = function init(tick, force) {
+    if (this.start !== null && !force) return;
     this.start = tick;
     for (var i = 0; i < this.animations.length; ++i) {
-      this.animations[i].init(tick);
+      this.animations[i].init(tick, force);
     }
     this.emit("start");
   };
@@ -345,16 +348,24 @@
     this.emit("end");
   };
   function World(start) {
+    EventEmitter.call(this);
     this.items = [];
     this._frame = null;
     start && this.init();
   }
+  World.prototype = new EventEmitter();
+  World.prototype.constructor = World;
   World.prototype.init = function init() {
     var self = this;
     this._frame = _requestAnimationFrame(update);
     function update(tick) {
       self.update(tick);
       self._frame = _requestAnimationFrame(update);
+    }
+  };
+  World.prototype.update = function update(tick) {
+    for (var i = 0; i < this.items.length; ++i) {
+      this.items[i].update(tick);
     }
   };
   World.prototype.add = function add(node) {
@@ -384,13 +395,43 @@
     }
     this.init();
   };
-  World.prototype.update = function update(tick) {
-    for (var i = 0; i < this.items.length; ++i) {
-      this.items[i].update(tick);
+  function Timeline() {
+    World.call(this, true);
+    this.currentTime = 0;
+    this.start = 0;
+  }
+  Timeline.prototype = new World();
+  Timeline.prototype.constructor = Timeline;
+  Timeline.prototype.init = function init() {
+    this._frame = _requestAnimationFrame(update);
+    var self = this;
+    function update(tick) {
+      if (self.running) {
+        self.currentTime = tick - self.start;
+      }
+      self.update(self.currentTime);
+      self._frame = _requestAnimationFrame(update);
     }
   };
-  World.prototype.on = function on(event, handler) {
-    addEventListener(event, handler, true);
+  Timeline.prototype.update = function time(tick) {
+    for (var i = 0; i < this.items.length; ++i) {
+      this.items[i].timeline(tick);
+    }
+    this.emit("update", tick);
+  };
+  Timeline.prototype.play = function play() {
+    this.running = true;
+    this.start = Date.now() - this.currentTime;
+  };
+  Timeline.prototype.pause = function pause() {
+    this.running = false;
+  };
+  Timeline.prototype.stop = function stop() {
+    this.currentTime = 0;
+    this.running = false;
+  };
+  Timeline.prototype.seek = function seek(time) {
+    this.currentTime = time;
   };
   var Vector = {
     set: function(x, y, z) {
@@ -654,6 +695,10 @@
     this.animation(tick);
     this.style();
   };
+  Item.prototype.timeline = function timeline(tick) {
+    this.seek(tick);
+    this.style();
+  };
   Item.prototype.pause = function pause() {
     if (!this.running) return;
     this.animations.length && this.animations[0].pause();
@@ -725,6 +770,22 @@
         continue;
       }
       first.run(tick);
+      break;
+    }
+  };
+  Item.prototype.seek = function seek(tick) {
+    if (this.animations.length === 0) return;
+    this.clear();
+    var time = 0;
+    for (var i = 0; i < this.animations.length; ++i) {
+      var a = this.animations[i];
+      a.init(time, true);
+      if (a.start + a.duration <= tick) {
+        a.end();
+        time += a.delay + a.duration;
+        continue;
+      }
+      a.run(tick);
       break;
     }
   };

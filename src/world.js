@@ -4,10 +4,14 @@
  * @constructor
  */
 function World(start) {
+  EventEmitter.call(this)
   this.items = []
   this._frame = null
   start && this.init()
 }
+
+World.prototype = new EventEmitter
+World.prototype.constructor = World
 
 /**
  * Starts new frame loop
@@ -20,6 +24,16 @@ World.prototype.init = function init() {
   function update(tick) {
     self.update(tick)
     self._frame = _requestAnimationFrame(update)
+  }
+}
+
+/**
+ * Update the World on frame
+ * @param {number} tick
+ */
+World.prototype.update = function update(tick) {
+  for (var i = 0; i < this.items.length; ++i) {
+    this.items[i].update(tick)
   }
 }
 
@@ -70,23 +84,4 @@ World.prototype.resume = function resume() {
     this.items[i].resume()
   }
   this.init()
-}
-
-/**
- * Update the World on frame
- * @param {number} tick
- */
-World.prototype.update = function update(tick) {
-  for (var i = 0; i < this.items.length; ++i) {
-    this.items[i].update(tick)
-  }
-}
-
-/**
- * Adds handler to window event
- * @param {string} event
- * @param {Function} handler
- */
-World.prototype.on = function on(event, handler) {
-  addEventListener(event, handler, true)
 }

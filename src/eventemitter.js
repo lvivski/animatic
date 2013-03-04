@@ -39,16 +39,15 @@ EventEmitter.prototype.off = function off(event, handler) {
 /**
  * Triggers event
  * @param {string} event
- * @param {Object} ctx
  * @return {EventEmitter}
  */
-EventEmitter.prototype.emit = function emit(event, ctx) {
+EventEmitter.prototype.emit = function emit(event) {
   var args = Array.prototype.slice.call(arguments, 1),
       handlers = this.handlers[event]
 
   if (handlers) {
     for (var i = 0; i < handlers.length; ++i) {
-      handlers[i].apply(ctx || this, args)
+      handlers[i].apply(this, args)
     }
   }
 
