@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Timeline</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="ball" style="-webkit-transform-origin: 0% 100%;-moz-transform-origin: 0% 100%;transform-origin: 0% 100%;"></div>
+  <div class="controls">
+    <div class="controls-bg"></div>
+    <div class="controls-content">
+      <input type="button" rel="pause" value="Pause" />
+      <input type="button" rel="play" value="Play" />
+      <input type="range" class="timeline" value="0" min="0" max="3000" step="16">
+      (seek when paused)
+    </div>
+  </div>
+</body>
+<script src="../anima.js"></script>
+<script>
+  var timeline = anima.timeline(),
+      item = timeline.add(document.querySelector('.ball'))
+
+  item
+    .animate([
+      {
+        translate: [0, 300, 0],
+        ease: 'ease-in-quad'
+      },{
+        translate: [250, 0, 0]
+      }
+    ], 500)
+    .animate({
+      scale: [.1, -.2, 0]
+    }, 50)
+    .animate({
+      scale: [-.1, .2, 0]
+    }, 50)
+    .animate([
+      {
+        translate: [0, -200, 0],
+        ease: 'ease-out-quad'
+      },{
+        translate: [150, 0, 0]
+      }
+    ], 450)
+    .animate([
+      {
+        translate: [0, 200, 0],
+        ease: 'ease-in-quad'
+      },{
+        translate: [150, 0, 0]
+      }
+    ], 400)
+    .animate({
+      scale: [.05, -.15, 0]
+    }, 40)
+    .animate({
+      scale: [-.05, .15, 0]
+    }, 40)
+    .animate([
+      {
+        translate: [0, -100, 0],
+        ease: 'ease-out-quad'
+      },{
+        translate: [100, 0, 0]
+      }
+    ], 350)
+    .animate([
+      {
+        translate: [0, 100, 0],
+        ease: 'ease-in-quad'
+      },{
+        translate: [100, 0, 0]
+      }
+    ], 300)
+    .animate({
+      scale: [.02, -.1, 0]
+    }, 25)
+    .animate({
+      scale: [-.02, .1, 0]
+    }, 25)
+    .animate([
+      {
+        translate: [0, -50, 0],
+        ease: 'ease-out-quad'
+      },{
+        translate: [50, 0, 0]
+      }
+    ], 200)
+    .animate([
+      {
+        translate: [0, 50, 0],
+        ease: 'ease-in-quad'
+      },{
+        translate: [50, 0, 0]
+      }
+    ], 150)
+    
+  timeline.on('update', function(time) {
+    document.querySelector('.timeline').value = time
+  })
+      
+  document.querySelector('.timeline').addEventListener('change', function(e) {
+    timeline.seek(this.value)
+  }, false)
+  
+  Array.prototype.slice.call(document.querySelectorAll('.controls input[type=button]')).forEach(function(el) {
+    el.addEventListener('click', function(e){
+      timeline[this.getAttribute('rel')]()
+    }, false)
+  })
+</script>
+</html>
