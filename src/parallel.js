@@ -26,6 +26,7 @@ function Parallel(item, animations, duration, ease, delay) {
   })
 
   this.start = null
+  this.delay = 0
   this.easeName = ease || 'linear'
   this.duration = Math.max.apply(null, this.animations.map(function(a){
     return a.duration + a.delay

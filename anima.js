@@ -12,7 +12,7 @@
     _requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
     _cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];
   }
-  vendor || (vendor = vendors[0]);
+  if (window.chrome && !vendor) vendor = vendors[0];
   var _vendor = vendor ? "-" + vendor + "-" : "", _transformProperty = getProperty("transform"), _animationProperty = getProperty("animation"), _transitionProperty = getProperty("transition");
   function getProperty(property) {
     var style = document.createElement("div").style, Property = property[0].toUpperCase() + property.slice(1);
@@ -291,6 +291,7 @@
       }, a.duration || duration, a.ease || ease, a.delay || delay);
     });
     this.start = null;
+    this.delay = 0;
     this.easeName = ease || "linear";
     this.duration = Math.max.apply(null, this.animations.map(function(a) {
       return a.duration + a.delay;

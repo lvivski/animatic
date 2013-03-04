@@ -14,7 +14,8 @@ while(!_requestAnimationFrame && i < vendors.length) {
                 || window[vendor + 'CancelRequestAnimationFrame']
 }
 
-vendor || (vendor = vendors[0]) // Chrome supports rAF without prefix, but css properties only with "-webkit"
+if (window.chrome && !vendor) // Chrome supports rAF without prefix, but css properties only with "-webkit-"
+  vendor = vendors[0]
 
 var _vendor = vendor ? '-' + vendor + '-' : '',
 
