@@ -6,6 +6,9 @@ And it's only **4k** when gzipped.
 
 **[Examples](#examples)**
 
+### Browser support
+Chrome, Safari, Firefox, Internet Explorer 10
+
 ## Motivation
 CSS animations have some limits, the main is that you can't really have full control over them. And it's near impossible to stop transitions without dirty hacks.
 
