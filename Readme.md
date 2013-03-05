@@ -117,7 +117,7 @@ item.animate(...).on('start', callback).on('end', callback)
 Here's the list of al supported timing functions
 `linear`
 
-`ease-in-quad` `ease-in-cubic` `ease-in-quart` `ease-in-quint` `ease-in-sine` `ease-in-expo` `ease-in-circ` `ease-in-back` 
+`ease-in-quad` `ease-in-cubic` `ease-in-quart` `ease-in-quint` `ease-in-sine` `ease-in-expo` `ease-in-circ` `ease-in-back`
 
 `ease-out-quad` `ease-out-cubic` `ease-out-quart` `ease-out-quint` `ease-out-sine` `ease-out-expo` `ease-out-circ` `ease-out-back`
 
@@ -126,29 +126,29 @@ Here's the list of al supported timing functions
 You can learn more about them at [easings.net](http://easings.net)
 
 ### Timeline
-Timeline is a separate `world` that is useful for debug and development. It has `play` `pause` and `stop` methods available like other worlds, but add `seek` method to seek animations. 
+Timeline is a separate `world` that is useful for debug and development. It has `play` `pause` and `stop` methods available like other worlds, but add `seek` method to seek animations.
 ```js
 var world = anima.timeline()
 world.add(...)
 world.seek(500) // seek to 500ms
 ```
-You can use [timeline example](example/timeline.html) as a reference
+You can use [timeline example](http://lvivski.github.com/anima/example/timeline.html) as a reference
 
 ## Examples
 ### requestAnimationFrame
-- [keyboard control](example/keyboard.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
-- [animation chain](example/bounce.html)
-- [parallel animations](example/parallel.html)
-- [infinite animation](example/infinite.html)
-- [delayed animation](example/delay.html)
+- [keyboard control](http://lvivski.github.com/anima/example/keyboard.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
+- [animation chain](http://lvivski.github.com/anima/example/bounce.html)
+- [parallel animations](http://lvivski.github.com/anima/example/parallel.html)
+- [infinite animation](http://lvivski.github.com/anima/example/infinite.html)
+- [delayed animation](http://lvivski.github.com/anima/example/delay.html)
 
 ### pure CSS
-- [animation chain](example/bounce_css.html)
-- [infinite animation](example/infinite_css.html)
-- [delayed animation](example/delay_css.html)
-- [parallel animations](example/parallel_css.html) (do not support custom `timing-functions` for now)
+- [animation chain](http://lvivski.github.com/anima/example/bounce_css.html)
+- [infinite animation](http://lvivski.github.com/anima/example/infinite_css.html)
+- [delayed animation](http://lvivski.github.com/anima/example/delay_css.html)
+- [parallel animations](http://lvivski.github.com/anima/example/parallel_css.html) (do not support custom `timing-functions` for now)
 
 ### mixed
 uses both `JS` and `CSS` world at the same time
 
-- [keyboard control](example/keyboard_mixed.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
+- [keyboard control](http://lvivski.github.com/anima/example/keyboard_mixed.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
