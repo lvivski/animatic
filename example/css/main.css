@@ -15,7 +15,7 @@ code {
   padding: .1em .3em;
 }
 
-input {
+input[type=button] {
   -webkit-appearance: none;
   -moz-appearance: none;
   -ms-appearance: none;
@@ -28,7 +28,7 @@ input {
   cursor: pointer;
 }
 
-input:hover {
+input[type=button]:hover {
   background: -webkit-linear-gradient(#fff, #dfdfdf);
   background: -moz-linear-gradient(#fff, #dfdfdf);
   background: -ms-linear-gradient(#fff, #dfdfdf);
@@ -36,12 +36,19 @@ input:hover {
   background: linear-gradient(#fff, #dfdfdf);
 }
 
-input:active {
+input[type=button]:active {
   background: -webkit-linear-gradient(#dfdfdf, #fff);
   background: -moz-linear-gradient(#dfdfdf, #fff);
   background: -ms-linear-gradient(#dfdfdf, #fff);
   background: -o-linear-gradient(#dfdfdf, #fff);
   background: linear-gradient(#dfdfdf, #fff);
+}
+
+
+input[type=range] {
+  width: 50%;
+  box-sizing: border-box;
+  margin: 15px;
 }
 
 
