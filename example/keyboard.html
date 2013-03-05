@@ -91,8 +91,8 @@
     container.dom.appendChild(card)
   }
 
-  world.on('keydown', onKeyDown)
-  world.on('keyup', function(){ container.stop() })
+  addEventListener('keydown', onKeyDown, true)
+  addEventListener('keyup', function(){ container.stop() }, true)
 
   function onKeyDown(e) {
     var rotate = [0, 0, 0],

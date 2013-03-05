@@ -82,8 +82,8 @@ for (var i = 0; i < elements.length; i++) {
   container.dom.appendChild(card)
 }
 
-js.on('keydown', onKeyDown)
-js.on('keyup', function(){ container.stop() })
+addEventListener('keydown', onKeyDown, true)
+addEventListener('keyup', function(){ container.stop() }, true)
 
 function onKeyDown(e) {
   var rotate = [0, 0, 0],
