@@ -49,7 +49,7 @@ And it&#8217;s only <strong>4k</strong> when gzipped. </p>
 
 <h2 id="api">API</h2>
 
-<p><a href="#singleanimation">Single</a> | <a href="#sequentialanimations">Sequence</a> | <a href="#parallelanimations">Parallel</a> | <a href="#infiniteanimations">Infinite</a> | <a href="#takingcontrol">Control methods</a> | <a href="#animationevents">Events</a> | <a href="#timingfunctions">Easings</a> </p>
+<p><a href="#singleanimation">Single</a> | <a href="#sequentialanimations">Sequence</a> | <a href="#parallelanimations">Parallel</a> | <a href="#infiniteanimations">Infinite</a> | <a href="#takingcontrol">Control methods</a> | <a href="#animationevents">Events</a> | <a href="#timingfunctions">Easings</a> </p> | <a href="#timeline">Timeline</a>
 
 <p>At first you have to initialize the World, so the frame loop will start (so called <code>JS</code> mode) </p>
 
@@ -156,6 +156,17 @@ animation.stop()</code></pre>
 <p><code>ease-in-out-quad</code> <code>ease-in-out-cubic</code> <code>ease-in-out-quart</code> <code>ease-in-out-quint</code> <code>ease-in-out-sine</code> <code>ease-in-out-expo</code> <code>ease-in-out-circ</code> <code>ease-in-out-back</code> </p>
 
 <p>You can learn more about them at <a href="http://easings.net">easings.net</a> </p>
+
+<h3 id="timeline">Timeline</h3>
+
+<p>Timeline is a separate <code>world</code> that is useful for debug and development. It has <code>play</code> <code>pause</code> and <code>stop</code> methods available like other worlds, but add <code>seek</code> method to seek animations. </p>
+
+<pre><code class="js">var world = anima.timeline()
+world.add(...)
+world.seek(500) // seek to 500ms
+</code></pre>
+
+<p>You can use <a href="example/timeline.html">timeline example</a> as a reference</p>
 
 <h2 id="examples">Examples</h2>
 
