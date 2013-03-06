@@ -117,6 +117,8 @@ CSS.prototype.keyframes = function keyframes(name) {
         a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration)
       })
 
+      frames = frames.sort(function (a, b) { return a - b })
+
       for (var k = 0; k < frames.length; ++k) {
         var frame = frames[k]
         for (var j = 0; j < a.animations.length; ++j) {
