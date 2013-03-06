@@ -31,7 +31,7 @@ var Vector = {
       x = x[0]
     }
     var len = Vector.length(x, y, z)
-    
+
     if (len !== 0) {
       x /= len
       y /= len
@@ -52,6 +52,6 @@ var Vector = {
     return [x, y, z]
   },
   copy: function (v) {
-    reutn [v[0], v[1], v[2]]
+    return [v[0], v[1], v[2]]
   }
 }

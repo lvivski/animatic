@@ -477,7 +477,7 @@
       return [ x, y, z ];
     },
     copy: function(v) {
-      reutn[v[0], v[1], v[2]];
+      return [ v[0], v[1], v[2] ];
     }
   };
   var radians = Math.PI / 180;
