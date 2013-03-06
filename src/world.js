@@ -16,7 +16,7 @@ World.prototype.constructor = World
 /**
  * Starts new frame loop
  */
-World.prototype.init = function init() {
+World.prototype.init = function () {
   var self = this
 
   this._frame = _requestAnimationFrame(update)
@@ -31,7 +31,7 @@ World.prototype.init = function init() {
  * Update the World on frame
  * @param {number} tick
  */
-World.prototype.update = function update(tick) {
+World.prototype.update = function (tick) {
   for (var i = 0; i < this.items.length; ++i) {
     this.items[i].update(tick)
   }
@@ -42,7 +42,7 @@ World.prototype.update = function update(tick) {
  * @param {HTMLElement} node
  * @return {Item}
  */
-World.prototype.add = function add(node) {
+World.prototype.add = function (node) {
   var item = new Item(node)
   this.items.push(item)
   return item
@@ -51,7 +51,7 @@ World.prototype.add = function add(node) {
 /**
  * Cancels next frame
  */
-World.prototype.cancel = function cancel() {
+World.prototype.cancel = function () {
   this._frame && _cancelAnimationFrame(this._frame)
   this._frame = 0
 }
@@ -59,7 +59,7 @@ World.prototype.cancel = function cancel() {
 /**
  * Stops the World
  */
-World.prototype.stop = function stop() {
+World.prototype.stop = function () {
   this.cancel()
   for (var i = 0; i < this.items.length; ++i) {
     this.items[i].stop()
@@ -69,7 +69,7 @@ World.prototype.stop = function stop() {
 /**
  * Pauses all animations
  */
-World.prototype.pause = function pause() {
+World.prototype.pause = function () {
   this.cancel()
   for (var i = 0; i < this.items.length; ++i) {
     this.items[i].pause()
@@ -79,7 +79,7 @@ World.prototype.pause = function pause() {
 /**
  * Resumes all animations
  */
-World.prototype.resume = function resume() {
+World.prototype.resume = function () {
   for (var i = 0; i < this.items.length; ++i) {
     this.items[i].resume()
   }

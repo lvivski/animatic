@@ -15,7 +15,7 @@ Timeline.prototype.constructor = Timeline
 /**
  * Starts new frame loop
  */
-Timeline.prototype.init = function init() {
+Timeline.prototype.init = function () {
   this._frame = _requestAnimationFrame(update)
 
   var self = this
@@ -32,7 +32,7 @@ Timeline.prototype.init = function init() {
  * Updates Items in Timeline
  * @param {number} tick
  */
-Timeline.prototype.update = function time(tick) {
+Timeline.prototype.update = function (tick) {
   for (var i = 0; i < this.items.length; ++i) {
     this.items[i].timeline(tick)
   }
@@ -42,7 +42,7 @@ Timeline.prototype.update = function time(tick) {
 /**
  * Plays timeline
  */
-Timeline.prototype.play = function play() {
+Timeline.prototype.play = function () {
   this.running = true
   this.start = Date.now() - this.currentTime
 }
@@ -50,14 +50,14 @@ Timeline.prototype.play = function play() {
 /**
  * Pauses timeline
  */
-Timeline.prototype.pause = function pause() {
+Timeline.prototype.pause = function () {
   this.running = false
 }
 
 /**
  * Stops the World
  */
-Timeline.prototype.stop = function stop() {
+Timeline.prototype.stop = function () {
   this.currentTime = 0
   this.running = false
 }
@@ -66,6 +66,6 @@ Timeline.prototype.stop = function stop() {
  * Sets Timeline time
  * @param {number} time
  */
-Timeline.prototype.seek = function seek(time) {
+Timeline.prototype.seek = function (time) {
   this.currentTime = time
 }

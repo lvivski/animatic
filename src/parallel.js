@@ -41,7 +41,7 @@ Parallel.prototype.constructor = Parallel
  * @param {number} tick
  * @fires Parallel#start
  */
-Parallel.prototype.init = function init(tick, force) {
+Parallel.prototype.init = function (tick, force) {
   if (this.start !== null && !force) return
   this.start = tick
   for (var i = 0; i < this.animations.length; ++i) {
@@ -50,15 +50,15 @@ Parallel.prototype.init = function init(tick, force) {
   this.emit('start')
 }
 
-Parallel.prototype.animate = function animate() {
+Parallel.prototype.animate = function () {
   return this.item.animate.apply(this.item, arguments)
 }
 
-Parallel.prototype.css = function css() {
+Parallel.prototype.css = function () {
   return this.item.css()
 }
 
-Parallel.prototype.infinite = function infinite() {
+Parallel.prototype.infinite = function () {
   this.item.infinite = true
   return this
 }
@@ -67,7 +67,7 @@ Parallel.prototype.infinite = function infinite() {
  * Runs one tick of animations
  * @param {number} tick
  */
-Parallel.prototype.run = function run(tick) {
+Parallel.prototype.run = function (tick) {
   for (var i = 0; i < this.animations.length; ++i) {
     var a = this.animations[i]
     if (a.start + a.duration <= tick) {
@@ -82,7 +82,7 @@ Parallel.prototype.run = function run(tick) {
 /**
  * Pauses animations
  */
-Parallel.prototype.pause = function pause() {
+Parallel.prototype.pause = function () {
   for (var i = 0; i < this.animations.length; ++i) {
     this.animations[i].pause()
   }
@@ -91,7 +91,7 @@ Parallel.prototype.pause = function pause() {
 /**
  * Resumes animations
  */
-Parallel.prototype.resume = function resume() {
+Parallel.prototype.resume = function () {
   for (var i = 0; i < this.animations.length; ++i) {
     this.animations[i].resume()
   }
@@ -102,7 +102,7 @@ Parallel.prototype.resume = function resume() {
  * @param {boolean} abort
  * @fires Parallel#end
  */
-Parallel.prototype.end = function end(abort) {
+Parallel.prototype.end = function (abort) {
   for (var i = 0; i < this.animations.length; ++i) {
     this.animations[i].end(abort)
   }

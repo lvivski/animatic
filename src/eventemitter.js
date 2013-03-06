@@ -12,7 +12,7 @@ function EventEmitter() {
  * @param {Function} handler
  * @return {EventEmitter}
  */
-EventEmitter.prototype.on = function on(event, handler) {
+EventEmitter.prototype.on = function (event, handler) {
   (this.handlers[event] = this.handlers[event] || [])
     .push(handler)
   return this
@@ -24,7 +24,7 @@ EventEmitter.prototype.on = function on(event, handler) {
  * @param {Function} handler
  * @return {EventEmitter}
  */
-EventEmitter.prototype.off = function off(event, handler) {
+EventEmitter.prototype.off = function (event, handler) {
   var handlers = this.handlers[event]
 
   if (handler) {
@@ -41,7 +41,7 @@ EventEmitter.prototype.off = function off(event, handler) {
  * @param {string} event
  * @return {EventEmitter}
  */
-EventEmitter.prototype.emit = function emit(event) {
+EventEmitter.prototype.emit = function (event) {
   var args = Array.prototype.slice.call(arguments, 1),
       handlers = this.handlers[event]
 

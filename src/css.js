@@ -9,9 +9,9 @@ function CSS(item, animations) {
   this.item = item
   this.animations = animations
 
-  this.total = this.animations.map(function(a){
+  this.total = this.animations.map(function (a) {
     return a.delay + a.duration
-  }).reduce(function(a, b){
+  }).reduce(function (a, b) {
     return a + b
   })
 
@@ -21,7 +21,7 @@ function CSS(item, animations) {
 /**
  * Pauses CSS animation
  */
-CSS.prototype.pause = function pause() {
+CSS.prototype.pause = function () {
   this.item.dom.style[_animationProperty + 'PlayState'] = 'paused'
   return this
 }
@@ -29,7 +29,7 @@ CSS.prototype.pause = function pause() {
 /**
  * Resumes CSS animation
  */
-CSS.prototype.resume = function resume() {
+CSS.prototype.resume = function () {
   this.item.dom.style[_animationProperty + 'PlayState'] = 'running'
   return this
 }
@@ -39,7 +39,7 @@ CSS.prototype.resume = function resume() {
  * parses current transformation matrix
  * extracts values and sets item state
  */
-CSS.prototype.stop = function stop() {
+CSS.prototype.stop = function () {
   var style = getComputedStyle(this.item.dom),
       transform = style[_vendor + 'transform'],
       opacity = style.opacity
@@ -56,7 +56,7 @@ CSS.prototype.stop = function stop() {
 }
 
 
-CSS.prototype.handle = function handle(event) {
+CSS.prototype.handle = function (event) {
   var onEnd = function end() {
         this.stop()
         this.item.dom.removeEventListener(vendor + event, onEnd, false)
@@ -67,7 +67,7 @@ CSS.prototype.handle = function handle(event) {
 /**
  * Applies animations and sets item style
  */
-CSS.prototype.style = function style() {
+CSS.prototype.style = function () {
   var animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
 
   if (this.item.animations[0] instanceof Animation &&
@@ -92,7 +92,7 @@ CSS.prototype.style = function style() {
  * @param {String} name Animation name
  * @return {String}
  */
-CSS.prototype.keyframes = function keyframes(name) {
+CSS.prototype.keyframes = function (name) {
   var time = 0,
       rule = ['@' + _vendor + 'keyframes ' + name + '{']
 
@@ -112,7 +112,7 @@ CSS.prototype.keyframes = function keyframes(name) {
       rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
     } else { // Parallel (it doesn't work with custom easings for now)
       var frames = []
-      a.animations.forEach(function(a){
+      a.animations.forEach(function (a) {
         a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay)
         a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration)
       })
@@ -142,7 +142,7 @@ CSS.prototype.keyframes = function keyframes(name) {
  * @param {number} time
  * @return {String}
  */
-CSS.prototype.percent = function percent(time) {
+CSS.prototype.percent = function (time) {
   return (time * 100 / this.total).toFixed(3)
 }
 
@@ -152,7 +152,7 @@ CSS.prototype.percent = function percent(time) {
  * @param {number} ease
  * @return {String}
  */
-CSS.prototype.frame = function frame(time, ease) {
+CSS.prototype.frame = function (time, ease) {
   var percent = this.percent(time)
   return percent + '% {' +
     (percent ? _vendor + 'transform:' + this.item.matrix() + ';' : '') +

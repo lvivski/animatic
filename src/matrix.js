@@ -5,13 +5,13 @@ var radians = Math.PI / 180
  * @type {Object}
  */
 var Matrix = {
-  identity: function identity() {
+  identity: function() {
     return [1, 0, 0, 0,
       0, 1, 0, 0,
       0, 0, 1, 0,
       0, 0, 0, 1]
   },
-  multiply: function multiply(a, b) { // doesn't work for perspective
+  multiply: function (a, b) { // doesn't work for perspective
     var c = Matrix.identity()
 
     c[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8]
@@ -34,7 +34,7 @@ var Matrix = {
       ? c
       : multiply.apply(null, [c].concat(Array.prototype.slice.call(arguments, 2)))
   },
-  translate: function translate(tx, ty, tz) {
+  translate: function (tx, ty, tz) {
     if (!(tx || ty || tz)) return Matrix.identity()
 
     tx || (tx = 0)
@@ -55,7 +55,7 @@ var Matrix = {
   translateZ: function translateZ(t) {
     return this.translate(0, 0, t)
   }, */
-  scale: function scale(sx, sy, sz) {
+  scale: function (sx, sy, sz) {
     if (!(sx || sy || sz)) return Matrix.identity()
 
     sx || (sx = 1)
@@ -76,7 +76,7 @@ var Matrix = {
   scaleZ: function scaleZ(s) {
     return this.scale(0, 0, s)
   }, */
-  rotate: function rotate(ax, ay, az) {
+  rotate: function (ax, ay, az) {
     if (!(ax || ay || az)) return Matrix.identity()
 
     ax || (ax = 0)
@@ -134,7 +134,7 @@ var Matrix = {
       0, 0, 1, 0,
       0, 0, 0, 1]
   }, */
-  rotate3d: function rotate3d(x, y, z, a) {
+  rotate3d: function (x, y, z, a) {
     a || (a = 0)
     
     a *= radians
@@ -157,7 +157,7 @@ var Matrix = {
       x*z*_c+y*s, y*z*_c-x*s, zz+(1-zz)*c, 0,
       0, 0, 0, 1]
   },
-  skew: function skew(ax, ay) {
+  skew: function (ax, ay) {
     if (!(ax || ay)) return Matrix.identity()
 
     ax || (ax = 0)
@@ -177,14 +177,14 @@ var Matrix = {
   skewY: function skewY(a) {
     return this.skew(0, a)
   }, */
-  perspective: function perspective(p) {
+  perspective: function (p) {
     p = -1/p
     return [1, 0, 0, 0,
       0, 1, 0, 0,
       0, 0, 1, p,
       0, 0, 0, 1]
   },
-  parse: function parse(s) {
+  parse: function (s) {
     var m = s.match(/\((.+)\)/)[1].split(/,\s?/)
     if (m.length === 6) {
       m.splice(2, 0, '0', '0')
@@ -194,7 +194,7 @@ var Matrix = {
     }
     return m
   },
-  inverse: function inverse(m) {
+  inverse: function (m) {
     var a = Matrix.identity(),
 
         inv0 = m[5] * m[10] - m[6] * m[9],
@@ -229,7 +229,7 @@ var Matrix = {
 
     return a
   },
-  compose: function compose(translate, rotate, scale) {
+  compose: function (translate, rotate, scale) {
     translate || (translate = [])
     rotate || (rotate = [])
     scale || (scale = [])
@@ -258,7 +258,7 @@ var Matrix = {
 
     return a
   },
-  decompose: function decompose(m) { // supports only scale*rotate*translate matrix
+  decompose: function (m) { // supports only scale*rotate*translate matrix
     var sX = Vector.length(m[0], m[1], m[2]),
         sY = Vector.length(m[4], m[5], m[6]),
         sZ = Vector.length(m[8], m[9], m[10])
@@ -283,7 +283,7 @@ var Matrix = {
       scale: [sX, sY, sZ]
     }
   },
-  transpose: function transpose(m) {
+  transpose: function (m) {
     var t
     
     t = m[1]
@@ -312,7 +312,7 @@ var Matrix = {
     
     return m
   },
-  lookAt: function lookAt(eye, target, up) {
+  lookAt: function (eye, target, up) {
     var z = Vector.sub(eye, target)
     z = Vector.norm(z)
     if (Vector.length(z) === 0)
@@ -342,12 +342,12 @@ var Matrix = {
 
     return a
   },
-  stringify: function stringify(m) {
+  stringify: function (m) {
     for (var i = 0; i < m.length; ++i)
       if (Math.abs(m[i]) < 0.000001) m[i] = 0
     return 'matrix3d(' + m.join() + ')'
   },
-  toTestString: function toTestString(m) {
+  toTestString: function (m) {
     function clamp(n) {
      return n.toFixed(6);
     }

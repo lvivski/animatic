@@ -35,7 +35,7 @@ Animation.prototype.constructor = Animation
  * @param {number} tick Timestamp
  * @fires Animation#start
  */
-Animation.prototype.init = function init(tick, force) {
+Animation.prototype.init = function (tick, force) {
   if (this.start !== null && !force) return
   this.start = tick + this.delay
 
@@ -49,15 +49,15 @@ Animation.prototype.init = function init(tick, force) {
   this.emit('start')
 }
 
-Animation.prototype.animate = function animate() {
+Animation.prototype.animate = function () {
   return this.item.animate.apply(this.item, arguments)
 }
 
-Animation.prototype.css = function css() {
+Animation.prototype.css = function () {
   return this.item.css()
 }
 
-Animation.prototype.infinite = function infinite() {
+Animation.prototype.infinite = function () {
   this.item.infinite = true
   return this
 }
@@ -66,7 +66,7 @@ Animation.prototype.infinite = function infinite() {
  * Runs one tick of animation
  * @param {number} tick
  */
-Animation.prototype.run = function run(tick) {
+Animation.prototype.run = function (tick) {
   if (tick < this.start) return
 
   var percent = (tick - this.start) / this.duration
@@ -78,14 +78,14 @@ Animation.prototype.run = function run(tick) {
 /**
  * Pauses animation
  */
-Animation.prototype.pause = function pause() {
+Animation.prototype.pause = function () {
   this.diff = Date.now() - this.start
 }
 
 /**
  * Resumes animation
  */
-Animation.prototype.resume = function resume() {
+Animation.prototype.resume = function () {
   this.start = Date.now() - this.diff
 }
 
@@ -94,7 +94,7 @@ Animation.prototype.resume = function resume() {
  * @param {string} type
  * @param {number} percent
  */
-Animation.prototype.set = function set(type, percent) {
+Animation.prototype.set = function (type, percent) {
   var state = this.item.state,
       initial = this.initial
 
@@ -111,7 +111,7 @@ Animation.prototype.set = function set(type, percent) {
  * Transforms item
  * @param {number} percent
  */
-Animation.prototype.transform = function transform(percent) {
+Animation.prototype.transform = function (percent) {
   this.set('translate', percent)
   this.set('rotate', percent)
   this.set('scale', percent)
@@ -123,7 +123,7 @@ Animation.prototype.transform = function transform(percent) {
  * @param {boolean} abort
  * @fires Animation#end
  */
-Animation.prototype.end = function end(abort) {
+Animation.prototype.end = function (abort) {
   !abort && this.transform(1)
   this.start = null
   this.emit('end')
