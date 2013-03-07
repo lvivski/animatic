@@ -1,6 +1,5 @@
 /**
- * Creates new timeline and start frame loop
- * @param {boolean=} start
+ * Creates new Timeline and start frame loop
  * @constructor
  */
 function Timeline() {
@@ -40,7 +39,7 @@ Timeline.prototype.update = function (tick) {
 }
 
 /**
- * Plays timeline
+ * Plays/Resumes Timeline
  */
 Timeline.prototype.play = function () {
   this.running = true
@@ -48,14 +47,14 @@ Timeline.prototype.play = function () {
 }
 
 /**
- * Pauses timeline
+ * Pauses Timeline
  */
 Timeline.prototype.pause = function () {
   this.running = false
 }
 
 /**
- * Stops the World
+ * Stops Timeline
  */
 Timeline.prototype.stop = function () {
   this.currentTime = 0
