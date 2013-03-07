@@ -40,6 +40,7 @@ Parallel.prototype.constructor = Parallel
 /**
  * Initializes all animations in a set
  * @param {number} tick
+ * @param {boolean=} force Force initialization
  * @fires Parallel#start
  */
 Parallel.prototype.init = function (tick, force) {

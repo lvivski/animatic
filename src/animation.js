@@ -33,6 +33,7 @@ Animation.prototype.constructor = Animation
 /**
  * Starts animation timer
  * @param {number} tick Timestamp
+ * @param {boolean=} force Force initialization
  * @fires Animation#start
  */
 Animation.prototype.init = function (tick, force) {
