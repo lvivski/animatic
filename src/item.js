@@ -17,7 +17,6 @@ Item.prototype.constructor = Item
 
 /**
  * Initializes item
- * adds "transform" handler
  */
 Item.prototype.init = function () {
 
@@ -42,6 +41,10 @@ Item.prototype.update = function (tick) {
   this.style()
 }
 
+/**
+ * Updates item on timeline
+ * @param {number} tick
+ */
 Item.prototype.timeline = function (tick) {
   this.seek(tick)
   this.style()
@@ -69,19 +72,27 @@ Item.prototype.resume = function () {
  * Sets style to the dom node
  */
 Item.prototype.style = function () {
-  this.dom.style[_transformProperty] = this.matrix()
+  this.dom.style[_transformProperty] = this.transform()
   this.dom.style.opacity = this.opacity()
 }
 
 /**
- * Calculates CSS transform matrix for state
+ * Returns transform CSS value
  * @return {string}
+ */
+Item.prototype.transform = function () {
+  return Matrix.stringify(this.matrix())
+}
+
+/**
+ * Calculates transformation matrix for the state
+ * @return {Object}
  */
 Item.prototype.matrix = function () {
   var state = this.state
-  return Matrix.stringify(Matrix.compose(
+  return Matrix.compose(
     state.translate, state.rotate, state.scale
-  ))
+  )
 }
 
 /**
@@ -89,10 +100,7 @@ Item.prototype.matrix = function () {
  * @return {Object}
  */
 Item.prototype.center = function () {
-  var state = this.state
-  return Matrix.decompose(Matrix.inverse(Matrix.compose(
-    state.translate, state.rotate, state.scale
-  )))
+  return Matrix.decompose(Matrix.inverse(this.matrix()))
 }
 
 /**
