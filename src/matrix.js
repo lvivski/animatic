@@ -11,7 +11,7 @@ var Matrix = {
       0, 0, 1, 0,
       0, 0, 0, 1]
   },
-  multiply: function (a, b) { // doesn't work for perspective
+  multiply: function multiply(a, b) { // doesn't work for perspective
     var c = Matrix.identity()
 
     c[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8]
@@ -136,7 +136,7 @@ var Matrix = {
   }, */
   rotate3d: function (x, y, z, a) {
     a || (a = 0)
-    
+
     a *= radians
 
     var s = Math.sin(a),
@@ -162,7 +162,7 @@ var Matrix = {
 
     ax || (ax = 0)
     ay || (ay = 0)
-    
+
     ax *= radians
     ay *= radians
 
@@ -179,6 +179,7 @@ var Matrix = {
   }, */
   perspective: function (p) {
     p = -1/p
+
     return [1, 0, 0, 0,
       0, 1, 0, 0,
       0, 0, 1, p,
@@ -192,6 +193,7 @@ var Matrix = {
       m.splice(8, 0, '0', '0', '1', '0')
       m.push('0', '1')
     }
+
     return m
   },
   inverse: function (m) {
@@ -285,7 +287,7 @@ var Matrix = {
   },
   transpose: function (m) {
     var t
-    
+
     t = m[1]
     m[1] = m[4]
     m[4] = t
@@ -301,15 +303,15 @@ var Matrix = {
     t = m[3]
     m[3] = m[12]
     m[12] = t
-    
+
     t = m[7]
     m[7] = m[13]
     m[13] = t
-    
+
     t = m[11]
     m[11] = m[14]
     m[14] = t
-    
+
     return m
   },
   lookAt: function (eye, target, up) {
@@ -325,7 +327,7 @@ var Matrix = {
     }
 
     var y = Vector.cross(z, x)
-    
+
     var a = Matrix.identity()
 
     a[0] = x[0]
@@ -349,7 +351,7 @@ var Matrix = {
   },
   toTestString: function (m) {
     function clamp(n) {
-     return n.toFixed(6);
+     return n.toFixed(6)
     }
     function isAffine(m) {
       return m[2] === 0 &&
