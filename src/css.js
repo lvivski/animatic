@@ -4,6 +4,7 @@
  * @constructor
  */
 function CSS(item, animations) {
+  !document.styleSheets.length && this.createStyleSheet()
   this.stylesheet = document.styleSheets[0]
 
   this.item = item
@@ -16,6 +17,14 @@ function CSS(item, animations) {
   })
 
   this.style()
+}
+
+/**
+ * Creates new stylesheet and adds it to HEAD
+ */
+CSS.prototype.createStyleSheet = function () {
+  var style = document.createElement('style')
+  document.getElementsByTagName('head')[0].appendChild(style)
 }
 
 /**
