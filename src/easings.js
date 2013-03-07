@@ -3,7 +3,7 @@
  * used for Animations
  * @type {*}
  */
-var easings = (function(){
+var easings = (function () {
   var fn = {
     quad: function (p) {
       return Math.pow(p, 2)
@@ -32,10 +32,10 @@ var easings = (function(){
   }
 
   var easings = {
-    linear: function(p) { return p }
+    linear: function (p) { return p }
   }
 
-  Object.keys(fn).forEach(function(name){
+  Object.keys(fn).forEach(function (name) {
     var ease = fn[name]
     easings['ease-in-' + name] = ease
     easings['ease-out-' + name] = function (p) {
