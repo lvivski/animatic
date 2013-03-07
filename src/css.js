@@ -49,18 +49,16 @@ CSS.prototype.resume = function () {
  * extracts values and sets item state
  */
 CSS.prototype.stop = function () {
-  var style = getComputedStyle(this.item.dom),
-      transform = style[_vendor + 'transform'],
-      opacity = style.opacity
+  var computed = getComputedStyle(this.item.dom),
+      style = this.item.dom.style
 
-  this.item.dom.style[_animationProperty] = ''
-  this.item.dom.style[_transitionProperty] = ''
+  style[_animationProperty] = ''
+  style[_transitionProperty] = ''
 
-  this.item.dom.style[_transformProperty] = transform
-  this.item.dom.style.opacity = opacity
+  this.item.state = Matrix.decompose(Matrix.parse(computed[_vendor + 'transform']))
+  this.item.state.opacity = computed.opacity
+  this.item.style()
 
-  this.item.state = Matrix.decompose(Matrix.parse(transform))
-  this.item.state.opacity = opacity
   return this
 }
 
