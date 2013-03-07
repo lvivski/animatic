@@ -30,7 +30,7 @@ var Vector = {
       z = x[2]
       x = x[0]
     }
-    var len = Vector.length(x, y, z)
+    var len = this.length(x, y, z)
 
     if (len !== 0) {
       x /= len

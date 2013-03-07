@@ -12,7 +12,7 @@ var Matrix = {
       0, 0, 0, 1]
   },
   multiply: function multiply(a, b) { // doesn't work for perspective
-    var c = Matrix.identity()
+    var c = this.identity()
 
     c[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8]
     c[1] = a[0] * b[1] + a[1] * b[5] + a[2] * b[9]
@@ -32,10 +32,10 @@ var Matrix = {
 
     return 2 >= arguments.length
       ? c
-      : multiply.apply(null, [c].concat(Array.prototype.slice.call(arguments, 2)))
+      : multiply.apply(this, [c].concat(Array.prototype.slice.call(arguments, 2)))
   },
   translate: function (tx, ty, tz) {
-    if (!(tx || ty || tz)) return Matrix.identity()
+    if (!(tx || ty || tz)) return this.identity()
 
     tx || (tx = 0)
     ty || (ty = 0)
@@ -56,7 +56,7 @@ var Matrix = {
     return this.translate(0, 0, t)
   }, */
   scale: function (sx, sy, sz) {
-    if (!(sx || sy || sz)) return Matrix.identity()
+    if (!(sx || sy || sz)) return this.identity()
 
     sx || (sx = 1)
     sy || (sy = 1)
@@ -77,7 +77,7 @@ var Matrix = {
     return this.scale(0, 0, s)
   }, */
   rotate: function (ax, ay, az) {
-    if (!(ax || ay || az)) return Matrix.identity()
+    if (!(ax || ay || az)) return this.identity()
 
     ax || (ax = 0)
     ay || (ay = 0)
@@ -158,7 +158,7 @@ var Matrix = {
       0, 0, 0, 1]
   },
   skew: function (ax, ay) {
-    if (!(ax || ay)) return Matrix.identity()
+    if (!(ax || ay)) return this.identity()
 
     ax || (ax = 0)
     ay || (ay = 0)
@@ -197,7 +197,7 @@ var Matrix = {
     return m
   },
   inverse: function (m) {
-    var a = Matrix.identity(),
+    var a = this.identity(),
 
         inv0 = m[5] * m[10] - m[6] * m[9],
         inv1 = m[1] * m[10] - m[2] * m[9],
@@ -236,7 +236,7 @@ var Matrix = {
     rotate || (rotate = [])
     scale || (scale = [])
 
-    var a = Matrix.rotate(rotate[0], rotate[1], rotate[2])
+    var a = this.rotate(rotate[0], rotate[1], rotate[2])
 
     if (scale.length) {
       a[0] *= scale[0]
@@ -328,7 +328,7 @@ var Matrix = {
 
     var y = Vector.cross(z, x)
 
-    var a = Matrix.identity()
+    var a = this.identity()
 
     a[0] = x[0]
     a[1] = x[1]
