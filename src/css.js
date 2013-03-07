@@ -98,8 +98,8 @@ CSS.prototype.style = function () {
 
 /**
  * Generates @keyframes based on animations
- * @param {String} name Animation name
- * @return {String}
+ * @param {string} name Animation name
+ * @return {string}
  */
 CSS.prototype.keyframes = function (name) {
   var time = 0,
@@ -149,7 +149,7 @@ CSS.prototype.keyframes = function (name) {
 /**
  * Calcuates percent for keyframes
  * @param {number} time
- * @return {String}
+ * @return {string}
  */
 CSS.prototype.percent = function (time) {
   return (time * 100 / this.total).toFixed(3)
@@ -158,8 +158,8 @@ CSS.prototype.percent = function (time) {
 /**
  * Generates one frame for @keyframes
  * @param {number} time
- * @param {number} ease
- * @return {String}
+ * @param {string=} ease
+ * @return {string}
  */
 CSS.prototype.frame = function (time, ease) {
   var percent = this.percent(time)

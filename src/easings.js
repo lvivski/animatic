@@ -1,7 +1,7 @@
 /**
  * Different timing functions
  * used for Animations
- * @type {*}
+ * @type {Object}
  */
 var easings = (function () {
   var fn = {
