@@ -14,10 +14,11 @@ function Parallel(item, animations, duration, ease, delay) {
 
   this.animations = animations.map(function(a){
     return new Animation(item,
-      a.transform || {
+      {
         translate: a.translate,
         rotate: a.rotate,
-        scale: a.scale
+        scale: a.scale,
+        opacity: a.opacity
       },
       a.duration || duration,
       a.ease || ease,

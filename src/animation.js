@@ -20,9 +20,9 @@ function Animation(item, transform, duration, ease, delay) {
   this.start = null
   this.diff = null
 
-  this.duration = parseInt(duration || transform.duration, 10) || 500
-  this.delay = parseInt(delay || transform.delay, 10) || 0
-  this.ease = easings[ease] || easings[transform.ease] || easings.linear
+  this.duration = parseInt(transform.duration || duration, 10) || 500
+  this.delay = parseInt(transform.delay || delay, 10) || 0
+  this.ease = easings[transform.ease] || easings[ease] || easings.linear
 
   this.easeName = ease || 'linear'
 }
