@@ -1,12 +1,12 @@
 (function() {
   var a = window.anima = window.a = {};
-  a.js = function js() {
+  a.js = function() {
     return new World(true);
   };
-  a.css = function css() {
+  a.css = function() {
     return new World();
   };
-  a.timeline = function timeline() {
+  a.timeline = function() {
     return new Timeline();
   };
   var vendors = [ "webkit", "Moz", "O", "ms" ], i = 0, _requestAnimationFrame = window.requestAnimationFrame, _cancelAnimationFrame = window.cancelAnimationFrame;
@@ -99,6 +99,7 @@
     return easings;
   }();
   function CSS(item, animations) {
+    !document.styleSheets.length && this.createStyleSheet();
     this.stylesheet = document.styleSheets[0];
     this.item = item;
     this.animations = animations;
@@ -109,6 +110,10 @@
     });
     this.style();
   }
+  CSS.prototype.createStyleSheet = function() {
+    var style = document.createElement("style");
+    document.getElementsByTagName("head")[0].appendChild(style);
+  };
   CSS.prototype.pause = function() {
     this.item.dom.style[_animationProperty + "PlayState"] = "paused";
     return this;
@@ -188,7 +193,7 @@
   };
   CSS.prototype.frame = function(time, ease) {
     var percent = this.percent(time);
-    return percent + "% {" + (percent ? _vendor + "transform:" + this.item.matrix() + ";" : "") + (percent ? "opacity:" + this.item.opacity() + ";" : "") + (ease ? _vendor + "animation-timing-function:" + ease + ";" : "") + "}";
+    return percent + "% {" + (percent ? _vendor + "transform:" + this.item.transform() + ";" : "") + (percent ? "opacity:" + this.item.opacity() + ";" : "") + (ease ? _vendor + "animation-timing-function:" + ease + ";" : "") + "}";
   };
   function EventEmitter() {
     this.handlers = {};
@@ -224,9 +229,9 @@
     this.opacity = transform.opacity;
     this.start = null;
     this.diff = null;
-    this.duration = parseInt(duration || transform.duration, 10) || 500;
-    this.delay = parseInt(delay || transform.delay, 10) || 0;
-    this.ease = easings[ease] || easings[transform.ease] || easings.linear;
+    this.duration = parseInt(transform.duration || duration, 10) || 500;
+    this.delay = parseInt(transform.delay || delay, 10) || 0;
+    this.ease = easings[transform.ease] || easings[ease] || easings.linear;
     this.easeName = ease || "linear";
   }
   Animation.prototype = new EventEmitter();
@@ -290,10 +295,11 @@
     EventEmitter.call(this);
     this.item = item;
     this.animations = animations.map(function(a) {
-      return new Animation(item, a.transform || {
+      return new Animation(item, {
         translate: a.translate,
         rotate: a.rotate,
-        scale: a.scale
+        scale: a.scale,
+        opacity: a.opacity
       }, a.duration || duration, a.ease || ease, a.delay || delay);
     });
     this.start = null;
@@ -460,7 +466,7 @@
         z = x[2];
         x = x[0];
       }
-      var len = Vector.length(x, y, z);
+      var len = this.length(x, y, z);
       if (len !== 0) {
         x /= len;
         y /= len;
@@ -485,8 +491,8 @@
     identity: function() {
       return [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
     },
-    multiply: function(a, b) {
-      var c = Matrix.identity();
+    multiply: function multiply(a, b) {
+      var c = this.identity();
       c[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8];
       c[1] = a[0] * b[1] + a[1] * b[5] + a[2] * b[9];
       c[2] = a[0] * b[2] + a[1] * b[6] + a[2] * b[10];
@@ -499,24 +505,24 @@
       c[12] = a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + b[12];
       c[13] = a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + b[13];
       c[14] = a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + b[14];
-      return 2 >= arguments.length ? c : multiply.apply(null, [ c ].concat(Array.prototype.slice.call(arguments, 2)));
+      return 2 >= arguments.length ? c : multiply.apply(this, [ c ].concat(Array.prototype.slice.call(arguments, 2)));
     },
     translate: function(tx, ty, tz) {
-      if (!(tx || ty || tz)) return Matrix.identity();
+      if (!(tx || ty || tz)) return this.identity();
       tx || (tx = 0);
       ty || (ty = 0);
       tz || (tz = 0);
       return [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, tx, ty, tz, 1 ];
     },
     scale: function(sx, sy, sz) {
-      if (!(sx || sy || sz)) return Matrix.identity();
+      if (!(sx || sy || sz)) return this.identity();
       sx || (sx = 1);
       sy || (sy = 1);
       sz || (sz = 1);
       return [ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1 ];
     },
     rotate: function(ax, ay, az) {
-      if (!(ax || ay || az)) return Matrix.identity();
+      if (!(ax || ay || az)) return this.identity();
       ax || (ax = 0);
       ay || (ay = 0);
       az || (az = 0);
@@ -537,7 +543,7 @@
       return [ xx + (1 - xx) * c, x * y * _c + z * s, x * z * _c - y * s, 0, x * y * _c - z * s, yy + (1 - yy) * c, y * z * _c + x * s, 0, x * z * _c + y * s, y * z * _c - x * s, zz + (1 - zz) * c, 0, 0, 0, 0, 1 ];
     },
     skew: function(ax, ay) {
-      if (!(ax || ay)) return Matrix.identity();
+      if (!(ax || ay)) return this.identity();
       ax || (ax = 0);
       ay || (ay = 0);
       ax *= radians;
@@ -559,7 +565,7 @@
       return m;
     },
     inverse: function(m) {
-      var a = Matrix.identity(), inv0 = m[5] * m[10] - m[6] * m[9], inv1 = m[1] * m[10] - m[2] * m[9], inv2 = m[1] * m[6] - m[2] * m[5], inv4 = m[4] * m[10] - m[6] * m[8], inv5 = m[0] * m[10] - m[2] * m[8], inv6 = m[0] * m[6] - m[2] * m[4], inv8 = m[4] * m[9] - m[5] * m[8], inv9 = m[0] * m[9] - m[1] * m[8], inv10 = m[0] * m[5] - m[1] * m[4], det = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8);
+      var a = this.identity(), inv0 = m[5] * m[10] - m[6] * m[9], inv1 = m[1] * m[10] - m[2] * m[9], inv2 = m[1] * m[6] - m[2] * m[5], inv4 = m[4] * m[10] - m[6] * m[8], inv5 = m[0] * m[10] - m[2] * m[8], inv6 = m[0] * m[6] - m[2] * m[4], inv8 = m[4] * m[9] - m[5] * m[8], inv9 = m[0] * m[9] - m[1] * m[8], inv10 = m[0] * m[5] - m[1] * m[4], det = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8);
       a[0] = det * inv0;
       a[1] = -det * inv1;
       a[2] = det * inv2;
@@ -578,7 +584,7 @@
       translate || (translate = []);
       rotate || (rotate = []);
       scale || (scale = []);
-      var a = Matrix.rotate(rotate[0], rotate[1], rotate[2]);
+      var a = this.rotate(rotate[0], rotate[1], rotate[2]);
       if (scale.length) {
         a[0] *= scale[0];
         a[1] *= scale[0];
@@ -644,7 +650,7 @@
         x = Vector.norm(Vector.cross(up, z));
       }
       var y = Vector.cross(z, x);
-      var a = Matrix.identity();
+      var a = this.identity();
       a[0] = x[0];
       a[1] = x[1];
       a[2] = x[2];
@@ -713,16 +719,18 @@
     this.running = true;
   };
   Item.prototype.style = function() {
-    this.dom.style[_transformProperty] = this.matrix();
+    this.dom.style[_transformProperty] = this.transform();
     this.dom.style.opacity = this.opacity();
+  };
+  Item.prototype.transform = function() {
+    return Matrix.stringify(this.matrix());
   };
   Item.prototype.matrix = function() {
     var state = this.state;
-    return Matrix.stringify(Matrix.compose(state.translate, state.rotate, state.scale));
+    return Matrix.compose(state.translate, state.rotate, state.scale);
   };
   Item.prototype.center = function() {
-    var state = this.state;
-    return Matrix.decompose(Matrix.inverse(Matrix.compose(state.translate, state.rotate, state.scale)));
+    return Matrix.decompose(Matrix.inverse(this.matrix()));
   };
   Item.prototype.lookAt = function(vector) {
     var transform = Matrix.decompose(Matrix.lookAt(vector, this.state.translate, [ 0, 1, 0 ]));
