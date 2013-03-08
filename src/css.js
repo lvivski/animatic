@@ -50,12 +50,13 @@ CSS.prototype.resume = function () {
  */
 CSS.prototype.stop = function () {
   var computed = getComputedStyle(this.item.dom),
+      transform = computed[_transformProperty],
       style = this.item.dom.style
 
   style[_animationProperty] = ''
   style[_transitionProperty] = ''
 
-  this.item.state = Matrix.decompose(Matrix.parse(computed[_vendor + 'transform']))
+  this.item.state = Matrix.decompose(Matrix.parse(transform))
   this.item.state.opacity = computed.opacity
   this.item.style()
 

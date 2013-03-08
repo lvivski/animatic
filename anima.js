@@ -123,10 +123,10 @@
     return this;
   };
   CSS.prototype.stop = function() {
-    var computed = getComputedStyle(this.item.dom), style = this.item.dom.style;
+    var computed = getComputedStyle(this.item.dom), transform = computed[_transformProperty], style = this.item.dom.style;
     style[_animationProperty] = "";
     style[_transitionProperty] = "";
-    this.item.state = Matrix.decompose(Matrix.parse(computed[_vendor + "transform"]));
+    this.item.state = Matrix.decompose(Matrix.parse(transform));
     this.item.state.opacity = computed.opacity;
     this.item.style();
     return this;
@@ -234,7 +234,6 @@
     this.easeName = ease || "linear";
   }
   Animation.prototype = new EventEmitter();
-  Animation.prototype.constructor = Animation;
   Animation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick + this.delay;
@@ -309,7 +308,6 @@
     }));
   }
   Parallel.prototype = new EventEmitter();
-  Parallel.prototype.constructor = Parallel;
   Parallel.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick;
@@ -362,7 +360,6 @@
     start && this.init();
   }
   World.prototype = new EventEmitter();
-  World.prototype.constructor = World;
   World.prototype.init = function() {
     var self = this;
     this._frame = _requestAnimationFrame(update);
@@ -409,7 +406,6 @@
     this.start = 0;
   }
   Timeline.prototype = new World();
-  Timeline.prototype.constructor = Timeline;
   Timeline.prototype.init = function() {
     this._frame = _requestAnimationFrame(update);
     var self = this;
@@ -688,7 +684,6 @@
     this.init();
   }
   Item.prototype = new EventEmitter();
-  Item.prototype.constructor = Item;
   Item.prototype.init = function() {
     this.infinite = false;
     this.running = true;
