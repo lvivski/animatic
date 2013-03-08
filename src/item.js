@@ -13,7 +13,6 @@ function Item(node) {
 }
 
 Item.prototype = new EventEmitter
-Item.prototype.constructor = Item
 
 /**
  * Initializes item

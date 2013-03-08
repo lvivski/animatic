@@ -35,7 +35,6 @@ function Parallel(item, animations, duration, ease, delay) {
 }
 
 Parallel.prototype = new EventEmitter
-Parallel.prototype.constructor = Parallel
 
 /**
  * Initializes all animations in a set
