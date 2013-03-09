@@ -123,11 +123,11 @@
     return this;
   };
   CSS.prototype.stop = function() {
-    var computed = getComputedStyle(this.item.dom), transform = computed[_transformProperty], style = this.item.dom.style;
+    var computed = getComputedStyle(this.item.dom), transform = computed[_transformProperty], opacity = computed.opacity, style = this.item.dom.style;
     style[_animationProperty] = "";
     style[_transitionProperty] = "";
     this.item.state = Matrix.decompose(Matrix.parse(transform));
-    this.item.state.opacity = computed.opacity;
+    this.item.state.opacity = opacity;
     this.item.style();
     return this;
   };
