@@ -99,7 +99,7 @@ Animation.prototype.set = function (type, percent) {
       initial = this.initial
 
   if (Array.isArray(this[type])) {
-    for(var i = 0; i < 3; ++i) if (this[type][i]) {
+    for (var i = 0; i < 3; ++i) if (this[type][i]) {
       state[type][i] = initial[type][i] + this[type][i] * percent
     }
   } else if (typeof this[type] !== 'undefined') {
