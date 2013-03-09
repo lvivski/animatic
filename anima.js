@@ -156,7 +156,7 @@
   };
   CSS.prototype.keyframes = function(name) {
     var time = 0, rule = [ "@" + _vendor + "keyframes " + name + "{" ];
-    for (var i = 0; i < this.animations.length; i++) {
+    for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
       if (a instanceof Animation) {
