@@ -143,7 +143,7 @@
     if (this.item.animations[0] instanceof Animation && this.item.animations.length == 1) {
       var a = this.item.animations[0];
       a.init();
-      this.item.dom.style[_transitionProperty] = "all " + a.duration + "ms " + easings.css[a.easeName] + " " + a.delay + "ms";
+      this.item.dom.style[_transitionProperty] = a.duration + "ms " + easings.css[a.easeName] + " " + a.delay + "ms";
       a.transform(1);
       this.handle("TransitionEnd");
       this.item.style();
