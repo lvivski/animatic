@@ -30,7 +30,7 @@ EventEmitter.prototype.off = function (event, handler) {
   if (handler) {
     handlers.splice(handlers.indexOf(handler), 1)
   } else {
-    this.handlers[event] = []
+    this.handlers[event] = null
   }
 
   return this
