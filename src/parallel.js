@@ -12,7 +12,7 @@ function Parallel(item, animations, duration, ease, delay) {
 
   this.item = item
 
-  this.animations = animations.map(function(a){
+  this.animations = animations.map(function (a) {
     return new Animation(item,
       {
         translate: a.translate,
@@ -29,12 +29,25 @@ function Parallel(item, animations, duration, ease, delay) {
   this.start = null
   this.delay = 0
   this.easeName = ease || 'linear'
-  this.duration = Math.max.apply(null, this.animations.map(function(a){
+  this.duration = Math.max.apply(null, this.animations.map(function (a) {
     return a.duration + a.delay
   }))
 }
 
 Parallel.prototype = new EventEmitter
+
+/**
+ * Calls a method on all animations
+ * @param {string} method
+ */
+Parallel.prototype.all = function (method) {
+  var args = Array.prototype.slice.call(arguments, 1)
+
+  for (var i = 0; i < this.animations.length; ++i) {
+    var a = this.animations[i]
+    a[method].apply(a, args)
+  }
+}
 
 /**
  * Initializes all animations in a set
@@ -45,9 +58,7 @@ Parallel.prototype = new EventEmitter
 Parallel.prototype.init = function (tick, force) {
   if (this.start !== null && !force) return
   this.start = tick
-  for (var i = 0; i < this.animations.length; ++i) {
-    this.animations[i].init(tick, force)
-  }
+  this.all('init', tick, force)
   this.emit('start')
 }
 
@@ -84,18 +95,14 @@ Parallel.prototype.run = function (tick) {
  * Pauses animations
  */
 Parallel.prototype.pause = function () {
-  for (var i = 0; i < this.animations.length; ++i) {
-    this.animations[i].pause()
-  }
+  this.all('pause')
 }
 
 /**
  * Resumes animations
  */
 Parallel.prototype.resume = function () {
-  for (var i = 0; i < this.animations.length; ++i) {
-    this.animations[i].resume()
-  }
+  this.all('resume')
 }
 
 /**
@@ -104,8 +111,6 @@ Parallel.prototype.resume = function () {
  * @fires Parallel#end
  */
 Parallel.prototype.end = function (abort) {
-  for (var i = 0; i < this.animations.length; ++i) {
-    this.animations[i].end(abort)
-  }
+  this.all('end', abort)
   this.emit('end')
 }

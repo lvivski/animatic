@@ -206,7 +206,7 @@
     if (handler) {
       handlers.splice(handlers.indexOf(handler), 1);
     } else {
-      this.handlers[event] = [];
+      this.handlers[event] = null;
     }
     return this;
   };
@@ -308,12 +308,17 @@
     }));
   }
   Parallel.prototype = new EventEmitter();
+  Parallel.prototype.all = function(method) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    for (var i = 0; i < this.animations.length; ++i) {
+      var a = this.animations[i];
+      a[method].apply(a, args);
+    }
+  };
   Parallel.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick;
-    for (var i = 0; i < this.animations.length; ++i) {
-      this.animations[i].init(tick, force);
-    }
+    this.all("init", tick, force);
     this.emit("start");
   };
   Parallel.prototype.animate = function() {
@@ -338,19 +343,13 @@
     }
   };
   Parallel.prototype.pause = function() {
-    for (var i = 0; i < this.animations.length; ++i) {
-      this.animations[i].pause();
-    }
+    this.all("pause");
   };
   Parallel.prototype.resume = function() {
-    for (var i = 0; i < this.animations.length; ++i) {
-      this.animations[i].resume();
-    }
+    this.all("resume");
   };
   Parallel.prototype.end = function(abort) {
-    for (var i = 0; i < this.animations.length; ++i) {
-      this.animations[i].end(abort);
-    }
+    this.all("end", abort);
     this.emit("end");
   };
   function World(start) {
