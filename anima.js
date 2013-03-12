@@ -143,14 +143,14 @@
     if (this.item.animations[0] instanceof Animation && this.item.animations.length == 1) {
       var a = this.item.animations[0];
       a.init();
-      this.item.dom.style[_transitionProperty] = a.duration + "ms " + easings.css[a.easeName] + " " + a.delay + "ms";
+      this.item.dom.style[_transitionProperty] = a.duration + "ms" + " " + easings.css[a.easeName] + " " + a.delay + "ms";
       a.transform(1);
       this.handle("TransitionEnd");
       this.item.style();
     } else {
       this.stylesheet.insertRule(this.keyframes(animation), 0);
       this.handle("AnimationEnd");
-      this.item.dom.style[_animationProperty] = animation + " " + this.total + "ms" + (this.item.infinite ? " infinite " : " ") + "forwards";
+      this.item.dom.style[_animationProperty] = animation + " " + this.total + "ms" + " " + (this.item.infinite ? "infinite" : "") + " " + "forwards";
     }
     this.item.animations = [];
   };
