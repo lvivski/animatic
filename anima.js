@@ -665,21 +665,6 @@
     stringify: function(m) {
       for (var i = 0; i < m.length; ++i) if (Math.abs(m[i]) < 1e-6) m[i] = 0;
       return "matrix3d(" + m.join() + ")";
-    },
-    toTestString: function(m) {
-      function clamp(n) {
-        return n.toFixed(6);
-      }
-      function isAffine(m) {
-        return m[2] === 0 && m[3] === 0 && m[6] === 0 && m[7] === 0 && m[8] === 0 && m[9] === 0 && m[10] === 1 && m[11] === 0 && m[14] === 0 && m[15] === 1;
-      }
-      function filterAffine(_, i) {
-        return [ 0, 1, 4, 5, 12, 13 ].indexOf(i) !== -1;
-      }
-      if (isAffine(m)) {
-        return "matrix(" + m.filter(filterAffine).map(clamp).join(", ") + ")";
-      }
-      return "matrix3d(" + m.map(clamp).join(", ") + ")";
     }
   };
   function Item(node) {
