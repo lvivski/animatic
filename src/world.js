@@ -6,7 +6,7 @@
 function World(start) {
   EventEmitter.call(this)
   this.items = []
-  this._frame = null
+  this.frame = null
   start && this.init()
 }
 
@@ -18,11 +18,11 @@ World.prototype = new EventEmitter
 World.prototype.init = function () {
   var self = this
 
-  this._frame = _requestAnimationFrame(update)
+  this.frame = _requestAnimationFrame(update)
 
   function update(tick) {
     self.update(tick)
-    self._frame = _requestAnimationFrame(update)
+    self.frame = _requestAnimationFrame(update)
   }
 }
 
@@ -51,8 +51,8 @@ World.prototype.add = function (node) {
  * Cancels next frame
  */
 World.prototype.cancel = function () {
-  this._frame && _cancelAnimationFrame(this._frame)
-  this._frame = 0
+  this.frame && _cancelAnimationFrame(this.frame)
+  this.frame = 0
 }
 
 /**

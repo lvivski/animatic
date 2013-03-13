@@ -355,16 +355,16 @@
   function World(start) {
     EventEmitter.call(this);
     this.items = [];
-    this._frame = null;
+    this.frame = null;
     start && this.init();
   }
   World.prototype = new EventEmitter();
   World.prototype.init = function() {
     var self = this;
-    this._frame = _requestAnimationFrame(update);
+    this.frame = _requestAnimationFrame(update);
     function update(tick) {
       self.update(tick);
-      self._frame = _requestAnimationFrame(update);
+      self.frame = _requestAnimationFrame(update);
     }
   };
   World.prototype.update = function(tick) {
@@ -378,8 +378,8 @@
     return item;
   };
   World.prototype.cancel = function() {
-    this._frame && _cancelAnimationFrame(this._frame);
-    this._frame = 0;
+    this.frame && _cancelAnimationFrame(this.frame);
+    this.frame = 0;
   };
   World.prototype.stop = function() {
     this.cancel();
@@ -406,21 +406,21 @@
   }
   Timeline.prototype = new World();
   Timeline.prototype.init = function() {
-    this._frame = _requestAnimationFrame(update);
+    this.frame = _requestAnimationFrame(update);
     var self = this;
     function update(tick) {
       if (self.running) {
         self.currentTime = tick - self.start;
       }
       self.update(self.currentTime);
-      self._frame = _requestAnimationFrame(update);
+      self.frame = _requestAnimationFrame(update);
     }
   };
   Timeline.prototype.update = function(tick) {
     for (var i = 0; i < this.items.length; ++i) {
-      if (this._changed || this.running) {
+      if (this.changed || this.running) {
         this.items[i].timeline(tick);
-        this._changed = false;
+        this.changed = false;
         this.emit("update", tick);
       } else {
         this.items[i].style();
@@ -439,7 +439,7 @@
     this.running = false;
   };
   Timeline.prototype.seek = function(time) {
-    this._changed = true;
+    this.changed = true;
     this.currentTime = time;
   };
   var Vector = {

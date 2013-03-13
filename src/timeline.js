@@ -14,7 +14,7 @@ Timeline.prototype = new World
  * Starts new frame loop
  */
 Timeline.prototype.init = function () {
-  this._frame = _requestAnimationFrame(update)
+  this.frame = _requestAnimationFrame(update)
 
   var self = this
   function update(tick) {
@@ -22,7 +22,7 @@ Timeline.prototype.init = function () {
       self.currentTime = tick - self.start
     }
     self.update(self.currentTime)
-    self._frame = _requestAnimationFrame(update)
+    self.frame = _requestAnimationFrame(update)
   }
 }
 
@@ -32,9 +32,9 @@ Timeline.prototype.init = function () {
  */
 Timeline.prototype.update = function (tick) {
   for (var i = 0; i < this.items.length; ++i) {
-    if (this._changed || this.running) {
+    if (this.changed || this.running) {
       this.items[i].timeline(tick)
-      this._changed = false
+      this.changed = false
       this.emit('update', tick)
     } else {
       this.items[i].style()
@@ -70,6 +70,6 @@ Timeline.prototype.stop = function () {
  * @param {number} time
  */
 Timeline.prototype.seek = function (time) {
-  this._changed = true
+  this.changed = true
   this.currentTime = time
 }
