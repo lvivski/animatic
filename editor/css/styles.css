@@ -1,0 +1,53 @@
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  font: 16px/1.5 Arial, sans-serif;
+}
+
+label {
+  display: block;
+}
+
+.viewport {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-perspective: 400px;
+  -moz-perspective: 400px;
+  -ms-perspective: 400px;
+  -o-perspective: 400px;
+  perspective: 400px;
+  -webkit-transform: translateZ(-99999px);
+  -moz-transform: translateZ(-99999px);
+  -ms-transform: translateZ(-99999px);
+  -o-transform: translateZ(-99999px);
+  transform: translateZ(-99999px);
+}
+
+.controls {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 300px;
+  background: #ddd;
+  opacity: .7;
+}
+
+.controls input {
+  width: 95%;
+}
+
+.timeline {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: #ddd;
+  opacity: .7;
+}
+
+.timeline input[type=range] {
+  width: 93%;
+}

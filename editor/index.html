@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+	<title>Animator</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <div class="viewport">
+    <div style="position:absolute;background:blue;width:100px;height:100px"></div>
+  </div>
+  <div class="controls">
+    <div class="translate">
+      translate
+      <label>x<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="0"></label>
+      <label>y<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="1"></label>
+      <label>z<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="2"></label>
+    </div>
+    <div class="rotate">
+      rotate
+      <label>x<input type="range" value="0" max="180" data-transform="rotate" data-axis="0"></label>
+      <label>y<input type="range" value="0" max="180" data-transform="rotate" data-axis="1"></label>
+      <label>z<input type="range" value="0" max="180" data-transform="rotate" data-axis="2"></label>
+    </div>
+    <div class="scale">
+      scale
+      <label>x<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="0"></label>
+      <label>y<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="1"></label>
+      <label>z<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="2"></label>
+    </div>
+  </div>
+  <div class="timeline">
+    <input type="range" value="0" max="5000"><input type="button" value="keyframe">
+  </divs>
+  <script src="../anima.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>
