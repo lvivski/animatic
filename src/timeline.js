@@ -35,11 +35,11 @@ Timeline.prototype.update = function (tick) {
     if (this._changed || this.running) {
       this.items[i].timeline(tick)
       this._changed = false
+      this.emit('update', tick)
     } else {
       this.items[i].style()
     }
   }
-  this.emit('update', tick)
 }
 
 /**
