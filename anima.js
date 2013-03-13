@@ -418,7 +418,12 @@
   };
   Timeline.prototype.update = function(tick) {
     for (var i = 0; i < this.items.length; ++i) {
-      this.items[i].timeline(tick);
+      if (this._changed || this.running) {
+        this.items[i].timeline(tick);
+        this._changed = false;
+      } else {
+        this.items[i].style();
+      }
     }
     this.emit("update", tick);
   };
@@ -434,6 +439,7 @@
     this.running = false;
   };
   Timeline.prototype.seek = function(time) {
+    this._changed = true;
     this.currentTime = time;
   };
   var Vector = {
