@@ -19,9 +19,9 @@
   var _vendor = vendor ? "-" + vendor + "-" : "", _transformProperty = getProperty("transform"), _animationProperty = getProperty("animation"), _transitionProperty = getProperty("transition");
   function getProperty(property) {
     var style = document.createElement("div").style, Property = property[0].toUpperCase() + property.slice(1);
-    if (typeof style.transform === "undefined") {
+    if (style.transform === undefined) {
       return vendors.filter(function(vendor) {
-        return typeof style[vendor + Property] !== "undefined";
+        return style[vendor + Property] !== undefined;
       })[0] + Property;
     } else {
       return property;
@@ -274,7 +274,7 @@
       for (var i = 0; i < 3; ++i) if (this[type][i]) {
         state[type][i] = initial[type][i] + this[type][i] * percent;
       }
-    } else if (typeof this[type] !== "undefined") {
+    } else if (this[type] !== undefined) {
       state[type] = initial[type] + (this[type] - initial[type]) * percent;
     }
   };
