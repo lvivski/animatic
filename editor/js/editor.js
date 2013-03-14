@@ -14,7 +14,7 @@ var State = {
       rotate: state.rotate.slice(),
       scale: state.scale.slice()
     }
-  }
+  },
   diff: function (prev, next) {
     function differ(type) {
       return function (t, i) {
@@ -60,7 +60,7 @@ function parseKeyframes(item) {
       prevTime = 0
 
   keyframes[index].forEach(function(frame) {
-    item.animate(State.diff(prevState, frame.state), frame.time - prevTime);
+    item.animate(State.diff(prevState, frame.state), frame.time - prevTime)
     prevState = State.copy(frame.state)
     prevTime = frame.time
   })
