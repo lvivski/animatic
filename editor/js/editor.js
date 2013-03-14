@@ -76,7 +76,7 @@ document.querySelector('.timeline input[type=button]').addEventListener('click',
 
 Array.prototype.slice.call(document.querySelectorAll('.controls input[type=range]'))
 .forEach(function(range){
-  range.addEventListener("change", function () {
+  range.addEventListener('change', function () {
     item.state[this.dataset['transform']][this.dataset['axis']] = this.value
   }, false)
 })
