@@ -49,5 +49,17 @@ label {
 }
 
 .timeline input[type=range] {
+  -webkit-appearance: none;
   width: 93%;
+  height: 2px;
+  background: #333;
+  margin-bottom: 10px;
+}
+
+.timeline ::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 5px;
+  background: red;
+  cursor: col-resize;
 }

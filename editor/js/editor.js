@@ -30,7 +30,7 @@ var State = {
 }
 
 timeline.on('update', function(time) {
-  document.querySelector('.timeline input').value = time
+  document.querySelector('.timeline input[type=range]').value = time
 
   !['translate','rotate','scale'].forEach(function(t){
     [0,1,2].forEach(function(a) {
