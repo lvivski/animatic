@@ -107,7 +107,7 @@
       return a.delay + a.duration;
     }).reduce(function(a, b) {
       return a + b;
-    });
+    }, 0);
     !static && this.style();
   }
   CSS.prototype.createStyleSheet = function() {
