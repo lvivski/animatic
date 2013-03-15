@@ -30,11 +30,11 @@ var State = {
 }
 
 timeline.on('update', function(time) {
-  document.querySelector('.timeline input[type=range]').value = time
+  document.querySelector('.panel_timeline input[type=range]').value = time
 
   !['translate','rotate','scale'].forEach(function(t){
     [0,1,2].forEach(function(a) {
-      document.querySelector('.controls input[data-transform='+ t +'][data-axis="' + a + '"]').value = item.state[t][a]
+      document.querySelector('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]').value = item.state[t][a]
     })
   })
 })
@@ -82,15 +82,15 @@ function popup(text) {
   document.querySelector('.popup').style.display = 'block'
 }
 
-document.querySelector('.timeline input[type=range]').addEventListener('change', function () {
+document.querySelector('.panel_timeline input[type=range]').addEventListener('change', function () {
   timeline.seek(this.value)
 }, false)
 
-document.querySelector('.timeline input[type=button]').addEventListener('click', function () {
+document.querySelector('.panel_timeline input[type=button]').addEventListener('click', function () {
   createKeyframe(item, timeline.currentTime)
 }, false)
 
-document.querySelector('.timeline .code').addEventListener('click', function () {
+document.querySelector('.panel_timeline .code').addEventListener('click', function () {
   getKeyframes(item)
 }, false)
 
