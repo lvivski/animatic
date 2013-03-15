@@ -163,7 +163,6 @@
         i === 0 && rule.push(this.frame(0, easings.css[a.easeName]));
         a.delay && rule.push(this.frame(time += a.delay));
         a.transform(1);
-        console.log(this.item.state.translate.slice());
         rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]));
       } else {
         var frames = [];

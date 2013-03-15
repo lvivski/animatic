@@ -120,8 +120,6 @@ CSS.prototype.keyframes = function (name) {
       a.delay && rule.push(this.frame(time += a.delay))
 
       a.transform(1)
-      
-      console.log(this.item.state.translate.slice())
 
       rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
     } else { // Parallel (it doesn't work with custom easings for now)
