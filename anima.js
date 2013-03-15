@@ -98,7 +98,7 @@
     };
     return easings;
   }();
-  function CSS(item, animations) {
+  function CSS(item, animations, static) {
     !document.styleSheets.length && this.createStyleSheet();
     this.stylesheet = document.styleSheets[0];
     this.item = item;
@@ -108,7 +108,7 @@
     }).reduce(function(a, b) {
       return a + b;
     });
-    this.style();
+    !static && this.style();
   }
   CSS.prototype.createStyleSheet = function() {
     var style = document.createElement("style");
@@ -156,6 +156,7 @@
   };
   CSS.prototype.keyframes = function(name) {
     var time = 0, rule = [ "@" + _vendor + "keyframes " + name + "{" ];
+    console.log(this.item.state.translate.slice());
     for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i], aNext = this.animations[i + 1];
       a.init();
@@ -163,6 +164,7 @@
         i === 0 && rule.push(this.frame(0, easings.css[a.easeName]));
         a.delay && rule.push(this.frame(time += a.delay));
         a.transform(1);
+        console.log(this.item.state.translate.slice());
         rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]));
       } else {
         var frames = [];
@@ -797,7 +799,7 @@
   Item.prototype.stop = function() {
     return this.finish(true);
   };
-  Item.prototype.css = function() {
-    return new CSS(this, this.animations);
+  Item.prototype.css = function(static) {
+    return new CSS(this, this.animations, static);
   };
 })();

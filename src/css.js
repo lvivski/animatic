@@ -1,9 +1,11 @@
 /**
  * CSSify animations
+ * @param {Item} item
  * @param {Array} animations
+ * @param {boolean} static
  * @constructor
  */
-function CSS(item, animations) {
+function CSS(item, animations, static) {
   !document.styleSheets.length && this.createStyleSheet()
   this.stylesheet = document.styleSheets[0]
 
@@ -16,7 +18,7 @@ function CSS(item, animations) {
     return a + b
   })
 
-  this.style()
+  !static && this.style()
 }
 
 /**
@@ -118,6 +120,8 @@ CSS.prototype.keyframes = function (name) {
       a.delay && rule.push(this.frame(time += a.delay))
 
       a.transform(1)
+      
+      console.log(this.item.state.translate.slice())
 
       rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
     } else { // Parallel (it doesn't work with custom easings for now)
