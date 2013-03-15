@@ -77,14 +77,8 @@ function getKeyframes(item) {
   popup(item.css(true).keyframes('animation'))
 }
 
-function preText(text) {
-  return text.split(';').join(';\n  ')
-	     .split('{').join('{\n  ')
-	     .split('}').join('}\n')
-}
-
 function popup(text) {
-  $('.popup')[0].textContent = preText(text)
+  $('.popup')[0].textContent = text.replace(/([;{}])/g, '$1\n')
   $('.popup')[0].style.display = 'block'
 }
 
