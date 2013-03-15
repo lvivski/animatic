@@ -45,6 +45,46 @@ Editor.prototype.init = function () {
 
   var this_ = this
 
+  var container = document.createElement('div')
+
+  container.innerHTML = '<div class="panel panel_right">\
+    <div class="panel__bg"></div>\
+    <div class="panel__controls">\
+      <div class="translate">\
+	translate\
+	<label>x<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="0"></label>\
+	<label>y<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="1"></label>\
+	<label>z<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="2"></label>\
+      </div>\
+      <div class="rotate">\
+	rotate\
+	<label>x<input type="range" value="0" max="180" data-transform="rotate" data-axis="0"></label>\
+	<label>y<input type="range" value="0" max="180" data-transform="rotate" data-axis="1"></label>\
+	<label>z<input type="range" value="0" max="180" data-transform="rotate" data-axis="2"></label>\
+      </div>\
+      <div class="scale">\
+	scale\
+	<label>x<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="0"></label>\
+	<label>y<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="1"></label>\
+	<label>z<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="2"></label>\
+      </div>\
+    </div>\
+  </div>\
+  <div class="panel panel_timeline">\
+    <div class="panel__bg"></div>\
+    <div class="panel__controls">\
+      <input type="button" value="keyframe">\
+      <input type="range" value="0" max="5000">\
+      <input type="button" value="code" class="code">\
+    </div>\
+  </div>\
+  <div class="popup"></div>'
+
+  Array.prototype.slice.call(container.childNodes).forEach(function(div) {
+    console.log(div)
+    document.body.appendChild(div)
+  })
+
   this.timeline.on('update', function (time) {
     $('.panel_timeline input[type=range]')[0].value = time
 
