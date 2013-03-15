@@ -63,3 +63,18 @@ label {
   background: red;
   cursor: col-resize;
 }
+
+.popup {
+  width: 70%;
+  height: 70%;
+  box-shadow: 0 0 50px rgba(0,0,0,.2);
+  position: absolute;
+  left: 15%;
+  top: 15%;
+  -webkit-transform: translateZ(99999px);
+  overflow: scroll;
+  display: none;
+  font: 13px/1.8 Menlo, Monaco, Mono-Space;
+  white-space: pre;
+  background: white;
+}

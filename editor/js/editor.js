@@ -66,12 +66,32 @@ function parseKeyframes(item) {
   })
 }
 
+function getKeyframes(item) {
+  item.clear()
+  popup(item.css(true).keyframes('animation'))
+}
+
+function preText(text) {
+  return text.split(';').join(';\n  ')
+	     .split('{').join('{\n  ')
+	     .split('}').join('}\n')
+}
+
+function popup(text) {
+  document.querySelector('.popup').textContent = preText(text)
+  document.querySelector('.popup').style.display = 'block'
+}
+
 document.querySelector('.timeline input[type=range]').addEventListener('change', function () {
   timeline.seek(this.value)
 }, false)
 
 document.querySelector('.timeline input[type=button]').addEventListener('click', function () {
   createKeyframe(item, timeline.currentTime)
+}, false)
+
+document.querySelector('.timeline .code').addEventListener('click', function () {
+  getKeyframes(item)
 }, false)
 
 Array.prototype.slice.call(document.querySelectorAll('.controls input[type=range]'))
