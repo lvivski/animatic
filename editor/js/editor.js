@@ -52,21 +52,21 @@ Editor.prototype.init = function () {
     <div class="panel__controls">\
       <div class="translate">\
 	translate\
-	<label>x<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="0"></label>\
-	<label>y<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="1"></label>\
-	<label>z<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="2"></label>\
+	<label>x<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="x"></label>\
+	<label>y<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="y"></label>\
+	<label>z<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="z"></label>\
       </div>\
       <div class="rotate">\
 	rotate\
-	<label>x<input type="range" value="0" max="180" data-transform="rotate" data-axis="0"></label>\
-	<label>y<input type="range" value="0" max="180" data-transform="rotate" data-axis="1"></label>\
-	<label>z<input type="range" value="0" max="180" data-transform="rotate" data-axis="2"></label>\
+	<label>x<input type="range" value="0" max="180" data-transform="rotate" data-axis="x"></label>\
+	<label>y<input type="range" value="0" max="180" data-transform="rotate" data-axis="y"></label>\
+	<label>z<input type="range" value="0" max="180" data-transform="rotate" data-axis="z"></label>\
       </div>\
       <div class="scale">\
 	scale\
-	<label>x<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="0"></label>\
-	<label>y<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="1"></label>\
-	<label>z<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="2"></label>\
+	<label>x<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="x"></label>\
+	<label>y<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="y"></label>\
+	<label>z<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="z"></label>\
       </div>\
     </div>\
   </div>\
@@ -81,7 +81,6 @@ Editor.prototype.init = function () {
   <div class="popup"></div>'
 
   Array.prototype.slice.call(container.childNodes).forEach(function(div) {
-    console.log(div)
     document.body.appendChild(div)
   })
 
@@ -89,8 +88,8 @@ Editor.prototype.init = function () {
     $('.panel_timeline input[type=range]')[0].value = time
 
     !['translate','rotate','scale'].forEach(function(t){
-      [0,1,2].forEach(function(a) {
-	$('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')[0].value = this_.timeline.items[this_.current].state[t][a]
+      ['x','y','z'].forEach(function(a, i) {
+	$('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')[0].value = this_.timeline.items[this_.current].state[t][i]
       })
     })
   }.bind(this))
@@ -109,7 +108,7 @@ Editor.prototype.init = function () {
 
   $('.panel_right input[type=range]').forEach(function(range){
     range.addEventListener('change', function () {
-      this_.timeline.items[this_.current].state[this.dataset['transform']][this.dataset['axis']] = this.value
+      this_.timeline.items[this_.current].state[this.dataset['transform']][['x','y','z'].indexOf(this.dataset['axis'])] = this.value
     }, false)
   })
 }
