@@ -10,6 +10,35 @@ label {
   display: block;
 }
 
+input[type=button] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  font-size: 1em;
+  background: #fafafa;
+  border: 1px solid #999;
+  border-radius: .3em;
+  cursor: pointer;
+}
+
+input[type=button]:hover {
+  background: -webkit-linear-gradient(#fff, #dfdfdf);
+  background: -moz-linear-gradient(#fff, #dfdfdf);
+  background: -ms-linear-gradient(#fff, #dfdfdf);
+  background: -o-linear-gradient(#fff, #dfdfdf);
+  background: linear-gradient(#fff, #dfdfdf);
+}
+
+input[type=button]:active {
+  background: -webkit-linear-gradient(#dfdfdf, #fff);
+  background: -moz-linear-gradient(#dfdfdf, #fff);
+  background: -ms-linear-gradient(#dfdfdf, #fff);
+  background: -o-linear-gradient(#dfdfdf, #fff);
+  background: linear-gradient(#dfdfdf, #fff);
+}
+
 .viewport {
   position: absolute;
   left: 50%;
@@ -26,17 +55,32 @@ label {
   transform: translateZ(-99999px);
 }
 
+
 .controls {
   position: absolute;
   right: 0;
   top: 0;
   width: 300px;
-  background: #ddd;
-  opacity: .7;
+  font-size: 1.4em;
+}
+
+.controls-bg, .timeline-bg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  background: rgba(255,255,255,.9);
+  width: 100%;
+  z-index: 0;
+}
+
+.controls-content {
+  position:relative;
+  padding: 15px;
 }
 
 .controls input {
-  width: 95%;
+  width: 90%;
 }
 
 .timeline {
@@ -44,12 +88,16 @@ label {
   left: 0;
   bottom: 0;
   width: 100%;
-  background: #ddd;
-  opacity: .7;
+  font-size: 1.4em;
+}
+
+.timeline-content {
+  position:relative;
+  padding: 15px;
 }
 
 .timeline input[type=range] {
-  width: 88%;
+  width: 80%;
   height: 2px;
   background: #333;
   margin-bottom: 10px;
