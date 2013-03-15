@@ -56,15 +56,24 @@ input[type=button]:active {
 }
 
 
-.controls {
+.panel {
   position: absolute;
-  right: 0;
-  top: 0;
-  width: 300px;
   font-size: 1.4em;
 }
 
-.controls-bg, .timeline-bg {
+.panel_right {
+  right: 0;
+  top: 0;
+  width: 300px;
+}
+
+.panel_timeline {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.panel__bg {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -74,29 +83,16 @@ input[type=button]:active {
   z-index: 0;
 }
 
-.controls-content {
+.panel__controls {
   position:relative;
   padding: 15px;
 }
 
-.controls input {
+.panel_right input {
   width: 90%;
 }
 
-.timeline {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  font-size: 1.4em;
-}
-
-.timeline-content {
-  position:relative;
-  padding: 15px;
-}
-
-.timeline input[type=range] {
+.panel_timeline input[type=range] {
   width: 80%;
   height: 2px;
   background: #333;
