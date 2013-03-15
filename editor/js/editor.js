@@ -100,7 +100,7 @@ $('.panel_timeline .code')[0].addEventListener('click', function () {
   getKeyframes(item)
 }, false)
 
-$('.controls input[type=range]').forEach(function(range){
+$('.panel_right input[type=range]').forEach(function(range){
   range.addEventListener('change', function () {
     item.state[this.dataset['transform']][this.dataset['axis']] = this.value
   }, false)
