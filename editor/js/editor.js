@@ -1,6 +1,12 @@
 var timeline = anima.timeline(),
-    item = timeline.add(document.querySelector('.viewport div')),
+    item = timeline.add($('.viewport div')[0]),
     keyframes = []
+
+function $(selector, context) {
+  return Array.prototype.slice.call(
+    (context || document).querySelectorAll(selector)
+  )
+}
 
 var State = {
   initial: {
@@ -30,11 +36,11 @@ var State = {
 }
 
 timeline.on('update', function(time) {
-  document.querySelector('.panel_timeline input[type=range]').value = time
+  $('.panel_timeline input[type=range]')[0].value = time
 
   !['translate','rotate','scale'].forEach(function(t){
     [0,1,2].forEach(function(a) {
-      document.querySelector('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]').value = item.state[t][a]
+      $('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')[0].value = item.state[t][a]
     })
   })
 })
@@ -78,24 +84,23 @@ function preText(text) {
 }
 
 function popup(text) {
-  document.querySelector('.popup').textContent = preText(text)
-  document.querySelector('.popup').style.display = 'block'
+  $('.popup')[0].textContent = preText(text)
+  $('.popup')[0].style.display = 'block'
 }
 
-document.querySelector('.panel_timeline input[type=range]').addEventListener('change', function () {
+$('.panel_timeline input[type=range]')[0].addEventListener('change', function () {
   timeline.seek(this.value)
 }, false)
 
-document.querySelector('.panel_timeline input[type=button]').addEventListener('click', function () {
+$('.panel_timeline input[type=button]')[0].addEventListener('click', function () {
   createKeyframe(item, timeline.currentTime)
 }, false)
 
-document.querySelector('.panel_timeline .code').addEventListener('click', function () {
+$('.panel_timeline .code')[0].addEventListener('click', function () {
   getKeyframes(item)
 }, false)
 
-Array.prototype.slice.call(document.querySelectorAll('.controls input[type=range]'))
-.forEach(function(range){
+$('.controls input[type=range]').forEach(function(range){
   range.addEventListener('change', function () {
     item.state[this.dataset['transform']][this.dataset['axis']] = this.value
   }, false)
