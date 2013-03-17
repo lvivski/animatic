@@ -47,42 +47,53 @@ Editor.prototype.init = function () {
 
   var container = document.createElement('div')
 
-  var timeline = '<div class="panel panel_timeline">\
+  function wrap(mix, content) {
+    return '<div class="panel panel_' + mix + '">\
     <div class="panel__bg"></div>\
-    <div class="panel__controls">\
-      <input type="button" value="keyframe">\
-      <input type="range" value="0" max="5000">\
-      <input type="button" value="code" class="code">\
-    </div>\
-  </div>'
+    <div class="panel__controls">' + content + '</div>\
+    </div>'
+  }
 
-  var controls = '<div class="panel panel_right">\
-    <div class="panel__bg"></div>\
-    <div class="panel__controls">\
-      <div class="translate">\
-	translate\
-	<label>x<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="x"></label>\
-	<label>y<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="y"></label>\
-	<label>z<input type="range" value="0" min="-500" max="500" data-transform="translate" data-axis="z"></label>\
-      </div>\
-      <div class="rotate">\
-	rotate\
-	<label>x<input type="range" value="0" max="180" data-transform="rotate" data-axis="x"></label>\
-	<label>y<input type="range" value="0" max="180" data-transform="rotate" data-axis="y"></label>\
-	<label>z<input type="range" value="0" max="180" data-transform="rotate" data-axis="z"></label>\
-      </div>\
-      <div class="scale">\
-	scale\
-	<label>x<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="x"></label>\
-	<label>y<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="y"></label>\
-	<label>z<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="z"></label>\
-      </div>\
-    </div>\
-  </div>'
+  function timeline() {
+    return '<input type="button" value="keyframe">\
+      <input type="range" value="0" max="5000">\
+      <input type="button" value="code" class="code">'
+  }
+
+  function controls() {
+    var config = {
+      translate: {
+	min: -500,
+	max: 500
+      },
+      rotate: {
+	max: 180
+      },
+      scale: {
+	max: 5,
+	step: .1
+      }
+    }
+
+    return Object.keys(config).map(function (t) {
+      return '<div class="' + t + '">' + t +
+      ['x','y','z'].map(function (a) {
+	var min = config[t].min || 0,
+	    max = config[t].max || 100,
+	    step = config[t].step || 1
+
+	return '<label>' + a +
+	  '<input type="range" value="0" \
+	    min="'+ min +'" max="' + max + '" step="' + step + '" \
+	    data-transform="' + t + '" data-axis="'+ a +'">\
+	  </label>'
+      }).join('') + '</div>'
+    }).join('')
+  }
 
   var popup = '<div class="popup"></div>'
 
-  container.innerHTML = controls + timeline + popup
+  container.innerHTML = wrap('right', controls()) + wrap('timeline', timeline()) + popup
 
   Array.prototype.slice.call(container.childNodes).forEach(function(div) {
     document.body.appendChild(div)
