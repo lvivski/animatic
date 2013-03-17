@@ -123,7 +123,8 @@ UI.Editor.prototype.init = function () {
 
     !['translate','rotate','scale'].forEach(function(t){
       ['x','y','z'].forEach(function(a, i) {
-	$('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]').value = this_.timeline.items[this_.current].state[t][i]
+	$('.panel_right input[data-transform='+ t +']
+	  [data-axis="' + a + '"]').value = this_.timeline.items[this_.current].state[t][i]
       })
     })
   }.bind(this))
@@ -142,7 +143,8 @@ UI.Editor.prototype.init = function () {
 
   $.all('.panel_right input[type=range]').forEach(function(range){
     range.addEventListener('change', function () {
-      this_.timeline.items[this_.current].state[this.dataset['transform']][['x','y','z'].indexOf(this.dataset['axis'])] = this.value
+      this_.timeline.items[this_.current].state[this.dataset['transform']]
+	[['x','y','z'].indexOf(this.dataset['axis'])] = this.value
     }, false)
   })
 }
