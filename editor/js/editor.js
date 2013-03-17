@@ -1,5 +1,4 @@
-var timeline = anima.timeline()
-timeline.add($('.viewport div'))
+(function(){
 
 function $(selector, context) {
   return (context || document).querySelector(selector)
@@ -187,4 +186,10 @@ UI.Editor.prototype.popup = function (string) {
   $('.popup').style.display = 'block'
 }
 
-new UI.Editor(timeline)
+anima.editor = function () {
+  var timeline = anima.timeline()
+  timeline.add($('.viewport div'))
+  new UI.Editor(timeline)
+}
+
+}())
