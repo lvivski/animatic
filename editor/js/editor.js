@@ -104,6 +104,15 @@ UI.Popup.prototype.toString = function () {
   return '<div class="popup"></div>'
 }
 
+UI.Popup.prototype.show = function (string) {
+  $('.popup').textContent = string.replace(/([;{}])/g, '$1\n')
+  $('.popup').style.display = 'block'
+}
+
+UI.Popup.prototype.hide = function () {
+  $('.popup').style.display = 'none'
+}
+
 UI.Editor.prototype.init = function () {
   this.current = 0
   this.keyframes = []
@@ -112,7 +121,9 @@ UI.Editor.prototype.init = function () {
 
   var container = document.createElement('div')
 
-  container.innerHTML = new UI.Panel('right', new UI.Controls) + new UI.Panel('timeline', new UI.Timeline) + new UI.Popup
+  this.popup = new UI.Popup
+
+  container.innerHTML = new UI.Panel('right', new UI.Controls) + new UI.Panel('timeline', new UI.Timeline) + this.popup
 
   Array.prototype.slice.call(container.childNodes).forEach(function(div) {
     document.body.appendChild(div)
@@ -123,8 +134,8 @@ UI.Editor.prototype.init = function () {
 
     !['translate','rotate','scale'].forEach(function(t){
       ['x','y','z'].forEach(function(a, i) {
-	$('.panel_right input[data-transform='+ t +']
-	  [data-axis="' + a + '"]').value = this_.timeline.items[this_.current].state[t][i]
+	$('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')
+	  .value = this_.timeline.items[this_.current].state[t][i]
       })
     })
   }.bind(this))
@@ -180,12 +191,7 @@ UI.Editor.prototype.animate = function (item) {
 
 UI.Editor.prototype.stringify = function (item) {
   item.clear()
-  this.popup(item.css(true).keyframes('animation'))
-}
-
-UI.Editor.prototype.popup = function (string) {
-  $('.popup').textContent = string.replace(/([;{}])/g, '$1\n')
-  $('.popup').style.display = 'block'
+  this.popup.show(item.css(true).keyframes('animation'))
 }
 
 anima.editor = function () {
