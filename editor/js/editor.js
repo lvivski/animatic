@@ -38,12 +38,74 @@ var State = {
   }
 }
 
-function Editor(timeline) {
+var UI = {}
+
+UI.Editor = function (timeline) {
   this.timeline = timeline
   this.init()
 }
 
-Editor.prototype.init = function () {
+UI.Panel = function (type, content) {
+  this.type = type
+  this.content = content
+}
+
+UI.Panel.prototype.toString = function () {
+  return '<div class="panel panel_' + this.type + '">\
+  <div class="panel__bg"></div>\
+  <div class="panel__controls">' + this.content + '</div>\
+  </div>'
+}
+
+UI.Timeline = function () {}
+
+UI.Timeline.prototype.toString = function () {
+  return '<input type="button" value="keyframe">\
+    <input type="range" value="0" max="5000">\
+    <input type="button" value="code" class="code">'
+}
+
+UI.Controls = function () {
+  this.config = {
+    translate: {
+      min: -500,
+      max: 500
+    },
+    rotate: {
+      max: 180
+    },
+    scale: {
+      max: 5,
+      step: .1
+    }
+  }
+}
+
+UI.Controls.prototype.toString = function () {
+  var _this = this
+  return Object.keys(this.config).map(function (t) {
+    return '<div class="' + t + '">' + t +
+    ['x','y','z'].map(function (a) {
+      var min = _this.config[t].min || 0,
+	  max = _this.config[t].max || 100,
+	  step = _this.config[t].step || 1
+
+      return '<label>' + a +
+	'<input type="range" value="0" \
+	  min="'+ min +'" max="' + max + '" step="' + step + '" \
+	  data-transform="' + t + '" data-axis="'+ a +'">\
+	</label>'
+    }).join('') + '</div>'
+  }).join('')
+}
+
+UI.Popup = function () {}
+
+UI.Popup.prototype.toString = function () {
+  return '<div class="popup"></div>'
+}
+
+UI.Editor.prototype.init = function () {
   this.current = 0
   this.keyframes = []
 
@@ -51,53 +113,7 @@ Editor.prototype.init = function () {
 
   var container = document.createElement('div')
 
-  function wrap(mix, content) {
-    return '<div class="panel panel_' + mix + '">\
-    <div class="panel__bg"></div>\
-    <div class="panel__controls">' + content + '</div>\
-    </div>'
-  }
-
-  function timeline() {
-    return '<input type="button" value="keyframe">\
-      <input type="range" value="0" max="5000">\
-      <input type="button" value="code" class="code">'
-  }
-
-  function controls() {
-    var config = {
-      translate: {
-	min: -500,
-	max: 500
-      },
-      rotate: {
-	max: 180
-      },
-      scale: {
-	max: 5,
-	step: .1
-      }
-    }
-
-    return Object.keys(config).map(function (t) {
-      return '<div class="' + t + '">' + t +
-      ['x','y','z'].map(function (a) {
-	var min = config[t].min || 0,
-	    max = config[t].max || 100,
-	    step = config[t].step || 1
-
-	return '<label>' + a +
-	  '<input type="range" value="0" \
-	    min="'+ min +'" max="' + max + '" step="' + step + '" \
-	    data-transform="' + t + '" data-axis="'+ a +'">\
-	  </label>'
-      }).join('') + '</div>'
-    }).join('')
-  }
-
-  var popup = '<div class="popup"></div>'
-
-  container.innerHTML = wrap('right', controls()) + wrap('timeline', timeline()) + popup
+  container.innerHTML = new UI.Panel('right', new UI.Controls) + new UI.Panel('timeline', new UI.Timeline) + new UI.Popup
 
   Array.prototype.slice.call(container.childNodes).forEach(function(div) {
     document.body.appendChild(div)
@@ -132,7 +148,7 @@ Editor.prototype.init = function () {
   })
 }
 
-Editor.prototype.keyframe = function (time) {
+UI.Editor.prototype.keyframe = function (time) {
   var index = this.current,
       keyframes = this.keyframes,
       item = this.timeline.items[this.current],
@@ -146,7 +162,7 @@ Editor.prototype.keyframe = function (time) {
   item.state = State.copy(state)
 }
 
-Editor.prototype.animate = function (item) {
+UI.Editor.prototype.animate = function (item) {
   item.stop()
   item.clear()
 
@@ -161,14 +177,14 @@ Editor.prototype.animate = function (item) {
   })
 }
 
-Editor.prototype.stringify = function (item) {
+UI.Editor.prototype.stringify = function (item) {
   item.clear()
   this.popup(item.css(true).keyframes('animation'))
 }
 
-Editor.prototype.popup = function (string) {
+UI.Editor.prototype.popup = function (string) {
   $('.popup').textContent = string.replace(/([;{}])/g, '$1\n')
   $('.popup').style.display = 'block'
 }
 
-new Editor(timeline)
+new UI.Editor(timeline)
