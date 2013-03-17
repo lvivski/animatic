@@ -1,7 +1,11 @@
 var timeline = anima.timeline()
-timeline.add($('.viewport div')[0])
+timeline.add($('.viewport div'))
 
 function $(selector, context) {
+  return (context || document).querySelector(selector)
+}
+
+$.all = function (selector, context) {
   return Array.prototype.slice.call(
     (context || document).querySelectorAll(selector)
   )
@@ -100,28 +104,28 @@ Editor.prototype.init = function () {
   })
 
   this.timeline.on('update', function (time) {
-    $('.panel_timeline input[type=range]')[0].value = time
+    $('.panel_timeline input[type=range]').value = time
 
     !['translate','rotate','scale'].forEach(function(t){
       ['x','y','z'].forEach(function(a, i) {
-	$('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')[0].value = this_.timeline.items[this_.current].state[t][i]
+	$('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]').value = this_.timeline.items[this_.current].state[t][i]
       })
     })
   }.bind(this))
 
-  $('.panel_timeline input[type=range]')[0].addEventListener('change', function () {
+  $('.panel_timeline input[type=range]').addEventListener('change', function () {
     this_.timeline.seek(this.value)
   }, false)
 
-  $('.panel_timeline input[type=button]')[0].addEventListener('click', function () {
+  $('.panel_timeline input[type=button]').addEventListener('click', function () {
     this_.keyframe(this_.timeline.currentTime)
   }, false)
 
-  $('.panel_timeline .code')[0].addEventListener('click', function () {
+  $('.panel_timeline .code').addEventListener('click', function () {
     this_.stringify(this_.timeline.items[this_.current])
   }, false)
 
-  $('.panel_right input[type=range]').forEach(function(range){
+  $.all('.panel_right input[type=range]').forEach(function(range){
     range.addEventListener('change', function () {
       this_.timeline.items[this_.current].state[this.dataset['transform']][['x','y','z'].indexOf(this.dataset['axis'])] = this.value
     }, false)
@@ -163,8 +167,8 @@ Editor.prototype.stringify = function (item) {
 }
 
 Editor.prototype.popup = function (string) {
-  $('.popup')[0].textContent = string.replace(/([;{}])/g, '$1\n')
-  $('.popup')[0].style.display = 'block'
+  $('.popup').textContent = string.replace(/([;{}])/g, '$1\n')
+  $('.popup').style.display = 'block'
 }
 
 new Editor(timeline)
