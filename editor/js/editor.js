@@ -47,7 +47,16 @@ Editor.prototype.init = function () {
 
   var container = document.createElement('div')
 
-  container.innerHTML = '<div class="panel panel_right">\
+  var timeline = '<div class="panel panel_timeline">\
+    <div class="panel__bg"></div>\
+    <div class="panel__controls">\
+      <input type="button" value="keyframe">\
+      <input type="range" value="0" max="5000">\
+      <input type="button" value="code" class="code">\
+    </div>\
+  </div>'
+
+  var controls = '<div class="panel panel_right">\
     <div class="panel__bg"></div>\
     <div class="panel__controls">\
       <div class="translate">\
@@ -69,16 +78,11 @@ Editor.prototype.init = function () {
 	<label>z<input type="range" value="1" data-transform="scale" max="5" step=".1" data-axis="z"></label>\
       </div>\
     </div>\
-  </div>\
-  <div class="panel panel_timeline">\
-    <div class="panel__bg"></div>\
-    <div class="panel__controls">\
-      <input type="button" value="keyframe">\
-      <input type="range" value="0" max="5000">\
-      <input type="button" value="code" class="code">\
-    </div>\
-  </div>\
-  <div class="popup"></div>'
+  </div>'
+
+  var popup = '<div class="popup"></div>'
+
+  container.innerHTML = controls + timeline + popup
 
   Array.prototype.slice.call(container.childNodes).forEach(function(div) {
     document.body.appendChild(div)
