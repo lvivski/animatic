@@ -29,7 +29,7 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
 
   this.animations.push(animation)
 
-  var duration = this.animations.map(function (a) {
+  duration = this.animations.map(function (a) {
     return a.duration + a.delay
   })
 

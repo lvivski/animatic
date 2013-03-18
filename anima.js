@@ -307,7 +307,7 @@
       animation = new Animation(this.item, transform, duration, ease, delay);
     }
     this.animations.push(animation);
-    var duration = this.animations.map(function(a) {
+    duration = this.animations.map(function(a) {
       return a.duration + a.delay;
     });
     if (this instanceof Parallel) {
