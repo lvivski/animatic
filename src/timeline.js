@@ -30,6 +30,7 @@ Timeline.prototype.init = function () {
 /**
  * Updates Items in Timeline
  * @param {number} tick
+ * @fires Timeline#update
  */
 Timeline.prototype.update = function (tick) {
   for (var i = 0; i < this.items.length; ++i) {
