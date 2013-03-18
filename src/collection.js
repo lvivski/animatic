@@ -52,9 +52,11 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
 
   function sequence(item, transforms) {
     var sequence = new Sequence(item)
+
     transforms.forEach(function (t) {
       sequence.add(t, duration, ease, delay)
     })
+
     return sequence
   }
 
@@ -68,6 +70,7 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
 	      parallel.add(t, duration, ease, delay)
       }
     })
+
     return parallel
   }
 }
