@@ -81,7 +81,7 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
  * @returns {Sequence}
  */
 Collection.prototype.animate = function (transform, duration, ease, delay) {
-  return this.runner.add(transform, duration, ease, delay)
+  return this.add(transform, duration, ease, delay)
 }
 
 /**
