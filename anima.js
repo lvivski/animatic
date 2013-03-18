@@ -302,7 +302,9 @@
   Collection.prototype = new EventEmitter();
   Collection.prototype.add = function(transform, duration, ease, delay) {
     var animation;
-    if (Array.isArray(transform)) {
+    if (transform instanceof Collection) {
+      animation = transform;
+    } else if (Array.isArray(transform)) {
       animation = parallel(this.item, transform);
     } else {
       animation = new Animation(this.item, transform, duration, ease, delay);
@@ -330,7 +332,7 @@
       var parallel = new Parallel(item);
       transforms.forEach(function(t) {
 	if (Array.isArray(t)) {
-	  parallel.animations.push(sequence(item, t));
+	  parallel.add(sequence(item, t));
 	} else {
 	  parallel.add(t, duration, ease, delay);
 	}
