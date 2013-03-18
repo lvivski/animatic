@@ -5,13 +5,12 @@
  * @param {boolean} static
  * @constructor
  */
-function CSS(item, animations, static) {
+function CSS(item, static) {
   !document.styleSheets.length && this.createStyleSheet()
   this.stylesheet = document.styleSheets[0]
 
   this.item = item
   this.runner = item.runner
-  this.animations = animations
 
   this.total = this.runner.duration
 

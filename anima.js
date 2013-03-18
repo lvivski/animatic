@@ -98,12 +98,11 @@
     };
     return easings;
   }();
-  function CSS(item, animations, static) {
+  function CSS(item, static) {
     !document.styleSheets.length && this.createStyleSheet();
     this.stylesheet = document.styleSheets[0];
     this.item = item;
     this.runner = item.runner;
-    this.animations = animations;
     this.total = this.runner.duration;
     !static && this.style();
   }
@@ -851,6 +850,6 @@
     return this.finish(true);
   };
   Item.prototype.css = function(static) {
-    return new CSS(this, this.animations, static);
+    return new CSS(this, static);
   };
 })();
