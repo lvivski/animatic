@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Cards</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: inline-block;
+      position: absolute;
+      top: 30%;
+      -webkit-perspective: 1000px;
+    }
+    .card {
+      width: 200px;
+      -webkit-transform-style: preserve-3d;
+      height: 300px;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .face, .back {
+    	position: absolute;
+    	width: 100%;
+    	height: 100%;
+      border-radius: 15px;
+    	-webkit-backface-visibility: hidden;
+    	
+      box-sizing: border-box;
+    }
+    .face {
+        background: white;
+        -webkit-transform: rotateY(180deg);
+        border: 1px solid #999;
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 7em;
+        padding-top: 40%;
+    }
+    .face:before,
+    .face:after {
+      position: absolute;
+      font-size: .5em;
+    }
+    .face:before {
+      left: 10px;
+      top: 0;
+    }
+    .face:after {
+      right: 10px;
+      bottom: 0;
+    }
+    .face[data-suit=spades],
+    .face[data-suit=clubs] {
+      color: black;
+    }
+    .face[data-suit=hearts],
+    .face[data-suit=diamonds] {
+      color: red;
+    }
+    .face[data-suit=spades]:before,
+    .face[data-suit=spades]:after {
+      content: '♠';
+    }
+    .face[data-suit=hearts]:before,
+    .face[data-suit=hearts]:after {
+      content: '♥';
+    }
+    .face[data-suit=diamonds]:before,
+    .face[data-suit=diamonds]:after {
+      content: '♦';
+    }
+    .face[data-suit=clubs]:before,
+    .face[data-suit=clubs]:after {
+      content: '♣';
+    }
+    .back {
+        background-color:#556;
+        background-image: -webkit-linear-gradient(60deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), -webkit-linear-gradient(-60deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), -webkit-linear-gradient(60deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), -webkit-linear-gradient(-60deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), -webkit-linear-gradient(30deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a), -webkit-linear-gradient(30deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);
+        background-size:40px 70px;
+        background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
+        border: 1px solid #334B5E;
+    }
+  </style>
+</head>
+<body>
+</body>
+<script src="../anima.js"></script>
+<script>
+var world = anima.js(),
+    suits = 'spades hearts diamonds clubs'.split(' ')
+    values = '2 3 4 5 6 7 8 9 10 J Q K A'.split(' ')
+
+values.sort(function(){ return Math.round(Math.random())-0.5})
+
+for (var j = 0; j < 13; ++j) for (var i = 0; i < 4; ++i) {
+  var container = document.createElement('div'),
+      card = document.createElement('div'),
+      face = document.createElement('div'),
+      back = document.createElement('div')
+  
+  container.classList.add('container')
+  card.classList.add('card')
+  face.classList.add('face')
+  back.classList.add('back')
+      
+  face.setAttribute('data-suit', suits[i])
+  face.innerText = values[j]
+  
+  card.appendChild(face)
+  card.appendChild(back)
+  container.appendChild(card)
+  document.body.appendChild(container)
+}
+
+var width = window.innerWidth,
+    height = window.innerHeight,
+    duration = 1000
+
+Array.prototype.slice.call(document.querySelectorAll('.container')).forEach(function(card, i){
+  var container = world.add(card),
+      item = world.add(card.querySelector('.card')),
+      p = i / 52,
+      x = 0
+
+  container.animate({translate: [width * p, 0, 0]}, duration * p).on('end', function(){
+    item.x = (width / 2 - container.state.translate[0] - 75) * .7
+  })
+
+  card.querySelector('.back').addEventListener('click', function(){
+    item.animate([
+      {
+        translate: [0, 0, 150],
+        rotate: [0,90,0]
+      },
+      {
+        translate: [-100, 0, 0]
+      }
+    ], 300)
+    .on('end', function(){
+      card.style.zIndex = 900
+    })
+    .animate([
+      {
+        translate: [0, 0, 150],
+        rotate: [0,90,0]
+      },
+      {
+        translate: [item.x+100, 0, 0]
+      }
+    ], 300)
+  }, false)
+  
+  card.querySelector('.face').addEventListener('click', function(){
+    item.animate([
+      {
+        translate: [0, 0, -150],
+        rotate: [0,-90,0]
+      },
+      {
+        translate: [-item.x-100, 0, 0]
+      }
+    ], 300)
+    .on('end', function(){
+      card.style.zIndex = ''
+    })
+    .animate([
+      {
+        translate: [0, 0, -150],
+        rotate: [0,-90,0]
+      },
+      {
+        translate: [100, 0, 0]
+      }
+    ], 300)
+  }, false)
+})
+</script>
+</html>
