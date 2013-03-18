@@ -299,7 +299,7 @@
   Collection.prototype.add = function(transform, duration, ease, delay) {
     if (Array.isArray(transform)) {
       transform = parallel(this.item, transform);
-    } else if (!transform instanceof Collection) {
+    } else if (!(transform instanceof Collection)) {
       transform = new Animation(this.item, transform, duration, ease, delay);
     }
     this.animations.push(transform);
