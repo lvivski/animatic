@@ -52,7 +52,7 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
   function parallel(item, transforms) {
     var parallel = new Parallel(item)
 
-    transforms.forEach(function(t){
+    transforms.forEach(function (t) {
       if (Array.isArray(t)) {
 	      parallel.add(sequence(item, t))
       } else {
