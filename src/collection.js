@@ -16,6 +16,13 @@ function Collection(item) {
 
 Collection.prototype = new EventEmitter
 
+/**
+ * Add item to the collection
+ * @param transform
+ * @param duration
+ * @param ease
+ * @param delay
+ */
 Collection.prototype.add = function (transform, duration, ease, delay) {
   var animation
 
@@ -41,6 +48,8 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
     }, 0)
   }
 
+  return this
+
   function sequence(item, transforms) {
     var sequence = new Sequence(item)
     transforms.forEach(function (t) {
@@ -63,10 +72,19 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
   }
 }
 
-Collection.prototype.animate = function () {
-  return this.item.animate.apply(this.item, arguments)
+/**
+ * Add animation to collection
+ * chainable
+ * @returns {Sequence}
+ */
+Collection.prototype.animate = function (transform, duration, ease, delay) {
+  return this.runner.add(transform, duration, ease, delay)
 }
 
+/**
+ * Apply styles
+ * @returns {CSS}
+ */
 Collection.prototype.css = function () {
   return this.item.css()
 }

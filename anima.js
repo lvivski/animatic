@@ -317,6 +317,7 @@
         return a + b;
       }, 0);
     }
+    return this;
     function sequence(item, transforms) {
       var sequence = new Sequence(item);
       transforms.forEach(function(t) {
@@ -336,8 +337,8 @@
       return parallel;
     }
   };
-  Collection.prototype.animate = function() {
-    return this.item.animate.apply(this.item, arguments);
+  Collection.prototype.animate = function(transform, duration, ease, delay) {
+    return this.runner.add(transform, duration, ease, delay);
   };
   Collection.prototype.css = function() {
     return this.item.css();
@@ -843,8 +844,7 @@
     this.state.opacity = 1;
   };
   Item.prototype.animate = function(transform, duration, ease, delay) {
-    this.runner.add(transform, duration, ease, delay);
-    return this.runner;
+    return this.runner.add(transform, duration, ease, delay);
   };
   Item.prototype.finish = function(abort) {
     this.runner.end(abort);

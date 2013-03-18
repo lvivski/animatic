@@ -187,8 +187,7 @@ Item.prototype.clear = function () {
  * @return {Sequence}
  */
 Item.prototype.animate = function (transform, duration, ease, delay) {
-  this.runner.add(transform, duration, ease, delay)
-  return this.runner
+  return this.runner.add(transform, duration, ease, delay)
 }
 
 /**
