@@ -309,30 +309,30 @@
     this.animations.push(animation);
     if (this instanceof Parallel) {
       this.duration = Math.max.apply(null, this.animations.map(function(a) {
-	return a.duration + a.delay;
+        return a.duration + a.delay;
       }));
     } else {
       this.duration = this.animations.map(function(a) {
-	return a.duration + a.delay;
+        return a.duration + a.delay;
       }).reduce(function(a, b) {
-	return a + b;
+        return a + b;
       }, 0);
     }
     function sequence(item, transforms) {
       var sequence = new Sequence(item);
       transforms.forEach(function(t) {
-	sequence.add(t, duration, ease, delay);
+        sequence.add(t, duration, ease, delay);
       });
       return sequence;
     }
     function parallel(item, transforms) {
       var parallel = new Parallel(item);
       transforms.forEach(function(t) {
-	if (Array.isArray(t)) {
-	  parallel.add(sequence(item, t));
-	} else {
-	  parallel.add(t, duration, ease, delay);
-	}
+        if (Array.isArray(t)) {
+          parallel.add(sequence(item, t));
+        } else {
+          parallel.add(t, duration, ease, delay);
+        }
       });
       return parallel;
     }
@@ -396,10 +396,10 @@
       var first = this.animations[0];
       first.init(tick);
       if (first.start + first.duration <= tick) {
-	this._infinite && this.animations.push(first);
-	this.animations.shift();
-	first.end();
-	continue;
+        this._infinite && this.animations.push(first);
+        this.animations.shift();
+        first.end();
+        continue;
       }
       first.run(tick);
       break;
@@ -412,9 +412,9 @@
       var a = this.animations[i];
       a.init(time, true);
       if (a.start + a.duration <= tick) {
-	a.end();
-	time += a.delay + a.duration;
-	continue;
+        a.end();
+        time += a.delay + a.duration;
+        continue;
       }
       a.run(tick);
       break;
