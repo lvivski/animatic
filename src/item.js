@@ -7,19 +7,19 @@ function Item(node) {
   EventEmitter.call(this)
 
   this.dom = node
-  this.animations = []
 
   this.init()
 }
 
 Item.prototype = new EventEmitter
+Item.prototype.constructor = Item
 
 /**
  * Initializes item
  */
 Item.prototype.init = function () {
 
-  this.infinite = false
+  this.runner = new Sequence(this)
 
   this.running = true
 
@@ -36,7 +36,7 @@ Item.prototype.init = function () {
  * @param {number} tick
  */
 Item.prototype.update = function (tick) {
-  this.animation(tick)
+  this.runner && this.runner.run(tick)
   this.style()
 }
 
@@ -45,7 +45,8 @@ Item.prototype.update = function (tick) {
  * @param {number} tick
  */
 Item.prototype.timeline = function (tick) {
-  this.seek(tick)
+  this.clear()
+  this.runner && this.runner.seek(tick)
   this.style()
 }
 
@@ -54,7 +55,7 @@ Item.prototype.timeline = function (tick) {
  */
 Item.prototype.pause = function () {
   if (!this.running) return
-  this.animations.length && this.animations[0].pause()
+  this.runner && this.runner.pause()
   this.running = false
 }
 
@@ -63,7 +64,7 @@ Item.prototype.pause = function () {
  */
 Item.prototype.resume = function () {
   if (this.running) return
-  this.animations.length && this.animations[0].resume()
+  this.runner && this.runner.resume()
   this.running = true
 }
 
@@ -186,54 +187,9 @@ Item.prototype.clear = function () {
  * @return {Animation|Parallel}
  */
 Item.prototype.animate = function (transform, duration, ease, delay) {
-  var ctor = Array.isArray(transform) ? Parallel : Animation,
-      animation = new ctor(this, transform, duration, ease, delay)
+  this.runner.add(transform, duration, ease, delay)
 
-  this.animations.push(animation)
-
-  return animation
-}
-
-/**
- * Runs animation on frame
- * @param {number} tick
- */
-Item.prototype.animation = function (tick) {
-  if (!this.running || this.animations.length === 0) return
-
-  while (this.animations.length !== 0) {
-    var first = this.animations[0]
-    first.init(tick)
-    if (first.start + first.duration <= tick) {
-      this.infinite && this.animations.push(first)
-      this.animations.shift()
-      first.end()
-      continue
-    }
-    first.run(tick)
-    break
-  }
-}
-
-/**
- * Seeks animations
- * @param {number} tick
- */
-Item.prototype.seek = function (tick) {
-  if (this.animations.length === 0) return
-  this.clear()
-  var time = 0
-  for (var i = 0; i < this.animations.length; ++i) {
-    var a = this.animations[i]
-    a.init(time, true)
-    if (a.start + a.duration <= tick) {
-      a.end()
-      time += a.delay + a.duration
-      continue
-    }
-    a.run(tick)
-    break
-  }
+  return this.runner
 }
 
 /**
@@ -241,14 +197,7 @@ Item.prototype.seek = function (tick) {
  * @param {boolean} abort
  */
 Item.prototype.finish = function (abort) {
-  if (this.animations.length === 0) return this
-  for (var i = 0; i < this.animations.length; ++i) {
-    this.animations[i].end(abort)
-  }
-  this.animations = []
-
-  this.infinite = false
-
+  this.runner.end(abort)
   return this
 }
 

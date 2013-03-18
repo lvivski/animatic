@@ -1,42 +1,18 @@
 /**
  * Creates a set of parallel animations
  * @param {Item} item
- * @param {Array} animations
- * @param {number} duration
- * @param {string} ease
- * @param {number} delay
+ * @param {Array=} animations
+ * @param {number=} duration
+ * @param {string=} ease
+ * @param {number=} delay
  * @constructor
  */
 function Sequence(item, animations, duration, ease, delay) {
-    EventEmitter.call(this)
-
-    this.item = item
-
-    this.animations = animations.map(function (a) {
-	return new Animation(item,
-	    {
-		translate: a.translate,
-		rotate: a.rotate,
-		scale: a.scale,
-		opacity: a.opacity
-	    },
-	    a.duration || duration,
-	    a.ease || ease,
-	    a.delay || delay
-	)
-    })
-
-    this.start = null
-    this.delay = 0
-    this.easeName = ease || 'linear'
-    this.duration = Math.max.apply(null, this.animations.map(function (a) {
-	return a.duration + a.delay
-    }))
-
-    this.inifinine = false
+  Collection.call(this, item, animations, duration, ease, delay)
 }
 
-Sequence.prototype = new EventEmitter
+Sequence.prototype = new Collection
+Sequence.prototype.constructor = Sequence
 
 /**
  * Initializes all animations in a set
@@ -45,23 +21,11 @@ Sequence.prototype = new EventEmitter
  * @fires Sequence#start
  */
 Sequence.prototype.init = function (tick, force) {
-    if (this.start !== null && !force) return
-    this.start = tick
-    this.animations[0].init(tick, force)
-    this.emit('start')
-}
+  if (this.start !== null && !force) return
 
-Sequence.prototype.animate = function () {
-    return this.item.animate.apply(this.item, arguments)
-}
-
-Sequence.prototype.css = function () {
-    return this.item.css()
-}
-
-Sequence.prototype.infinite = function () {
-    this.item.infinite = true
-    return this
+  this.start = tick
+  this.animations[0].init(tick, force)
+  this.emit('start')
 }
 
 /**
@@ -73,6 +37,7 @@ Sequence.prototype.run = function (tick) {
     var first = this.animations[0]
     first.init(tick)
     if (first.start + first.duration <= tick) {
+      this.infinite && this.animations.push(first)
       this.animations.shift()
       first.end()
       continue
@@ -83,17 +48,50 @@ Sequence.prototype.run = function (tick) {
 }
 
 /**
+ * Seeks animations
+ * @param {number} tick
+ */
+Sequence.prototype.seek = function (tick) {
+  if (this.animations.length === 0) return
+  var time = 0
+  for (var i = 0; i < this.animations.length; ++i) {
+    var a = this.animations[i]
+    a.init(time, true)
+    if (a.start + a.duration <= tick) {
+      a.end()
+      time += a.delay + a.duration
+      continue
+    }
+    a.run(tick)
+    break
+  }
+}
+
+Sequence.prototype.animate = function () {
+  return this.item.animate.apply(this.item, arguments)
+}
+
+Sequence.prototype.css = function () {
+  return this.item.css()
+}
+
+Sequence.prototype.infinite = function () {
+  this.infinite = true
+  return this
+}
+
+/**
  * Pauses animations
  */
 Sequence.prototype.pause = function () {
-    this.animations.length && this.animations[0].pause()
+  this.animations.length && this.animations[0].pause()
 }
 
 /**
  * Resumes animations
  */
 Sequence.prototype.resume = function () {
-    this.animations.length && this.animations[0].resume()
+  this.animations.length && this.animations[0].resume()
 }
 
 /**
@@ -102,8 +100,10 @@ Sequence.prototype.resume = function () {
  * @fires Sequence#end
  */
 Sequence.prototype.end = function (abort) {
-    for (var i = 0; i < this.animations.length; ++i) {
-	this.animations[i].end(abort)
-    }
-    this.emit('end')
+  for (var i = 0; i < this.animations.length; ++i) {
+    this.animations[i].end(abort)
+  }
+  this.animations = []
+  this.infinite = false
+  this.emit('end')
 }

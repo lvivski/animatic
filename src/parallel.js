@@ -8,33 +8,11 @@
  * @constructor
  */
 function Parallel(item, animations, duration, ease, delay) {
-  EventEmitter.call(this)
-
-  this.item = item
-
-  this.animations = animations.map(function (a) {
-    return new Animation(item,
-      {
-        translate: a.translate,
-        rotate: a.rotate,
-        scale: a.scale,
-        opacity: a.opacity
-      },
-      a.duration || duration,
-      a.ease || ease,
-      a.delay || delay
-    )
-  })
-
-  this.start = null
-  this.delay = 0
-  this.easeName = ease || 'linear'
-  this.duration = Math.max.apply(null, this.animations.map(function (a) {
-    return a.duration + a.delay
-  }))
+  Collection.call(this, item, animations, duration, ease, delay)
 }
 
-Parallel.prototype = new EventEmitter
+Parallel.prototype = new Collection
+Parallel.prototype.constructor = Parallel
 
 /**
  * Calls a method on all animations
@@ -62,19 +40,6 @@ Parallel.prototype.init = function (tick, force) {
   this.emit('start')
 }
 
-Parallel.prototype.animate = function () {
-  return this.item.animate.apply(this.item, arguments)
-}
-
-Parallel.prototype.css = function () {
-  return this.item.css()
-}
-
-Parallel.prototype.infinite = function () {
-  this.item.infinite = true
-  return this
-}
-
 /**
  * Runs one tick of animations
  * @param {number} tick
@@ -89,6 +54,14 @@ Parallel.prototype.run = function (tick) {
     }
     a.run(tick)
   }
+}
+
+/**
+ * Seeks to the animation tick
+ * @param {number} tick
+ */
+Parallel.prototype.seek = function (tick) {
+  this.run(tick)
 }
 
 /**

@@ -11,6 +11,7 @@ function World(start) {
 }
 
 World.prototype = new EventEmitter
+World.prototype.constructor = World
 
 /**
  * Starts new frame loop

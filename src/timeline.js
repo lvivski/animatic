@@ -9,6 +9,7 @@ function Timeline() {
 }
 
 Timeline.prototype = new World
+Timeline.prototype.constructor = Timeline
 
 /**
  * Starts new frame loop

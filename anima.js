@@ -289,25 +289,42 @@
     this.start = null;
     this.emit("end");
   };
-  function Parallel(item, animations, duration, ease, delay) {
+  function Collection(item, animations, duration, ease, delay) {
     EventEmitter.call(this);
-    this.item = item;
-    this.animations = animations.map(function(a) {
-      return new Animation(item, {
-        translate: a.translate,
-        rotate: a.rotate,
-        scale: a.scale,
-        opacity: a.opacity
-      }, a.duration || duration, a.ease || ease, a.delay || delay);
-    });
+    if (arguments.length === 0) return;
     this.start = null;
-    this.delay = 0;
+    this.item = item;
+    this.delay = delay || 0;
+    this.duration = duration || 0;
     this.easeName = ease || "linear";
+    this.animations = [];
+    if (animations) {
+      this.animations = animations.map(function(a) {
+	return new Animation(item, {
+	  translate: a.translate,
+	  rotate: a.rotate,
+	  scale: a.scale,
+	  opacity: a.opacity
+	}, a.duration || duration, a.ease || ease, a.delay || delay);
+      });
+      this.duration = Math.max.apply(null, this.animations.map(function(a) {
+	return a.duration + a.delay;
+      }));
+    }
+  }
+  Collection.prototype = new EventEmitter();
+  Collection.prototype.add = function(transform, duration, ease, delay) {
+    var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this.item, transform, duration || this.duration, ease || this.easeName, delay || this.delay);
+    this.animations.push(animation);
     this.duration = Math.max.apply(null, this.animations.map(function(a) {
       return a.duration + a.delay;
     }));
+  };
+  function Parallel(item, animations, duration, ease, delay) {
+    Collection.call(this, item, animations, duration, ease, delay);
   }
-  Parallel.prototype = new EventEmitter();
+  Parallel.prototype = new Collection();
+  Parallel.prototype.constructor = Parallel;
   Parallel.prototype.all = function(method) {
     var args = Array.prototype.slice.call(arguments, 1);
     for (var i = 0; i < this.animations.length; ++i) {
@@ -321,16 +338,6 @@
     this.all("init", tick, force);
     this.emit("start");
   };
-  Parallel.prototype.animate = function() {
-    return this.item.animate.apply(this.item, arguments);
-  };
-  Parallel.prototype.css = function() {
-    return this.item.css();
-  };
-  Parallel.prototype.infinite = function() {
-    this.item.infinite = true;
-    return this;
-  };
   Parallel.prototype.run = function(tick) {
     for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i];
@@ -342,6 +349,9 @@
       a.run(tick);
     }
   };
+  Parallel.prototype.seek = function(tick) {
+    this.run(tick);
+  };
   Parallel.prototype.pause = function() {
     this.all("pause");
   };
@@ -352,6 +362,70 @@
     this.all("end", abort);
     this.emit("end");
   };
+  function Sequence(item, animations, duration, ease, delay) {
+    Collection.call(this, item, animations, duration, ease, delay);
+  }
+  Sequence.prototype = new Collection();
+  Sequence.prototype.constructor = Sequence;
+  Sequence.prototype.init = function(tick, force) {
+    if (this.start !== null && !force) return;
+    this.start = tick;
+    this.animations[0].init(tick, force);
+    this.emit("start");
+  };
+  Sequence.prototype.run = function(tick) {
+    while (this.animations.length !== 0) {
+      var first = this.animations[0];
+      first.init(tick);
+      if (first.start + first.duration <= tick) {
+	this.infinite && this.animations.push(first);
+	this.animations.shift();
+	first.end();
+	continue;
+      }
+      first.run(tick);
+      break;
+    }
+  };
+  Sequence.prototype.seek = function(tick) {
+    if (this.animations.length === 0) return;
+    var time = 0;
+    for (var i = 0; i < this.animations.length; ++i) {
+      var a = this.animations[i];
+      a.init(time, true);
+      if (a.start + a.duration <= tick) {
+	a.end();
+	time += a.delay + a.duration;
+	continue;
+      }
+      a.run(tick);
+      break;
+    }
+  };
+  Sequence.prototype.animate = function() {
+    return this.item.animate.apply(this.item, arguments);
+  };
+  Sequence.prototype.css = function() {
+    return this.item.css();
+  };
+  Sequence.prototype.infinite = function() {
+    this.infinite = true;
+    return this;
+  };
+  Sequence.prototype.pause = function() {
+    this.animations.length && this.animations[0].pause();
+  };
+  Sequence.prototype.resume = function() {
+    this.animations.length && this.animations[0].resume();
+  };
+  Sequence.prototype.end = function(abort) {
+    for (var i = 0; i < this.animations.length; ++i) {
+      this.animations[i].end(abort);
+    }
+    this.animations = [];
+    this.infinite = false;
+    this.emit("end");
+  };
   function World(start) {
     EventEmitter.call(this);
     this.items = [];
@@ -359,6 +433,7 @@
     start && this.init();
   }
   World.prototype = new EventEmitter();
+  World.prototype.constructor = World;
   World.prototype.init = function() {
     var self = this;
     this.frame = _requestAnimationFrame(update);
@@ -405,6 +480,7 @@
     this.start = 0;
   }
   Timeline.prototype = new World();
+  Timeline.prototype.constructor = Timeline;
   Timeline.prototype.init = function() {
     this.frame = _requestAnimationFrame(update);
     var self = this;
@@ -670,12 +746,12 @@
   function Item(node) {
     EventEmitter.call(this);
     this.dom = node;
-    this.animations = [];
     this.init();
   }
   Item.prototype = new EventEmitter();
+  Item.prototype.constructor = Item;
   Item.prototype.init = function() {
-    this.infinite = false;
+    this.runner = new Sequence(this);
     this.running = true;
     this.state = {
       translate: [ 0, 0, 0 ],
@@ -685,21 +761,22 @@
     };
   };
   Item.prototype.update = function(tick) {
-    this.animation(tick);
+    this.runner && this.runner.run(tick);
     this.style();
   };
   Item.prototype.timeline = function(tick) {
-    this.seek(tick);
+    this.clear();
+    this.runner && this.runner.seek(tick);
     this.style();
   };
   Item.prototype.pause = function() {
     if (!this.running) return;
-    this.animations.length && this.animations[0].pause();
+    this.runner && this.runner.pause();
     this.running = false;
   };
   Item.prototype.resume = function() {
     if (this.running) return;
-    this.animations.length && this.animations[0].resume();
+    this.runner && this.runner.resume();
     this.running = true;
   };
   Item.prototype.style = function() {
@@ -749,49 +826,11 @@
     this.state.opacity = 1;
   };
   Item.prototype.animate = function(transform, duration, ease, delay) {
-    var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this, transform, duration, ease, delay);
-    this.animations.push(animation);
-    return animation;
-  };
-  Item.prototype.animation = function(tick) {
-    if (!this.running || this.animations.length === 0) return;
-    while (this.animations.length !== 0) {
-      var first = this.animations[0];
-      first.init(tick);
-      if (first.start + first.duration <= tick) {
-        this.infinite && this.animations.push(first);
-        this.animations.shift();
-        first.end();
-        continue;
-      }
-      first.run(tick);
-      break;
-    }
-  };
-  Item.prototype.seek = function(tick) {
-    if (this.animations.length === 0) return;
-    this.clear();
-    var time = 0;
-    for (var i = 0; i < this.animations.length; ++i) {
-      var a = this.animations[i];
-      a.init(time, true);
-      if (a.start + a.duration <= tick) {
-        a.end();
-        time += a.delay + a.duration;
-        continue;
-      }
-      a.run(tick);
-      break;
-    }
+    this.runner.add(transform, duration, ease, delay);
+    return this.runner;
   };
   Item.prototype.finish = function(abort) {
-    if (this.animations.length === 0) return this;
-    for (var i = 0; i < this.animations.length; ++i) {
-      var a = this.animations[i];
-      a.end(abort);
-    }
-    this.animations = [];
-    this.infinite = false;
+    this.runner.end(abort);
     return this;
   };
   Item.prototype.stop = function() {

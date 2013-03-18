@@ -6,7 +6,9 @@ FILES = \
 	src/css.js \
 	src/eventemitter.js \
 	src/animation.js \
+	src/collection.js \
 	src/parallel.js \
+	src/sequence.js \
 	src/world.js \
 	src/timeline.js \
 	src/vector.js \
