@@ -107,7 +107,7 @@ CSS.prototype.keyframes = function (name) {
 
   for (var i = 0; i < this.runner.animations.length; ++i) {
     var a = this.runner.animations[i],
-	aNext = this.runner.animations[i+1]
+        aNext = this.runner.animations[i+1]
 
     a.init()
 
