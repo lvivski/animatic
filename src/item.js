@@ -243,8 +243,7 @@ Item.prototype.seek = function (tick) {
 Item.prototype.finish = function (abort) {
   if (this.animations.length === 0) return this
   for (var i = 0; i < this.animations.length; ++i) {
-    var a = this.animations[i]
-    a.end(abort)
+    this.animations[i].end(abort)
   }
   this.animations = []
 
