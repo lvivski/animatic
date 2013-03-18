@@ -19,18 +19,59 @@
   item
       .animate([
 	[
-	    {
-	      translate: [0, 100 ,0],
-	      duration: 250
-	    },
-	    {
-	      translate: [0, -100, 0],
-	      duration: 250
-	    }
+	  {
+	    translate: [0, 300, 0],
+	    duration: 500,
+	    ease: 'ease-in-quad'
+	  },{
+	    scale: [.1, -.2, 0],
+	    duration: 50
+	  },{
+	    scale: [-.1, .2, 0],
+	    duration: 50
+	  },{
+	    translate: [0, -200, 0],
+	    duration: 450,
+	    ease: 'ease-out-quad'
+	  },{
+	    translate: [0, 200, 0],
+	    duration: 450,
+	    ease: 'ease-in-quad'
+	  },{
+	    scale: [.05, -.15, 0],
+	    duration: 40
+	  },{
+	    scale: [-.05, .15, 0],
+	    duration: 40
+	  },{
+	    translate: [0, -100, 0],
+	    duration: 350,
+	    ease: 'ease-out-quad'
+	  },{
+	    translate: [0, 100, 0],
+	    duration: 300,
+	    ease: 'ease-in-quad'
+	  },{
+	    scale: [.02, -.1, 0],
+	    duration: 25
+	  },{
+	    scale: [-.02, .1, 0],
+	    duration: 25
+	  },{
+	    translate: [0, -50, 0],
+	    duration: 200,
+	    ease: 'ease-out-quad'
+	  },{
+	    translate: [0, 50, 0],
+	    duration: 150,
+	    ease: 'ease-in-quad'
+	  }
 	],
 	{
-	  translate: [500, 0, 0]
+	  translate: [800, 0, 0],
+	  duration: 2900,
+	  ease: 'ease-out-quad'
 	}
-      ], 500)
+      ])
 </script>
 </html>

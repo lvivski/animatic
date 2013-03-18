@@ -10,13 +10,10 @@ function CSS(item, animations, static) {
   this.stylesheet = document.styleSheets[0]
 
   this.item = item
+  this.runner = item.runner
   this.animations = animations
 
-  this.total = this.animations.map(function (a) {
-    return a.delay + a.duration
-  }).reduce(function (a, b) {
-    return a + b
-  }, 0)
+  this.total = this.runner.duration
 
   !static && this.style()
 }
@@ -81,9 +78,9 @@ CSS.prototype.handle = function (event) {
 CSS.prototype.style = function () {
   var animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
 
-  if (this.item.animations[0] instanceof Animation &&
-    this.item.animations.length == 1) { // transition
-    var a = this.item.animations[0]
+  if (this.runner.animations[0] instanceof Animation &&
+    this.runner.animations.length == 1) { // transition
+    var a = this.runner.animations[0]
     a.init()
     this.item.dom.style[_transitionProperty] = a.duration + 'ms' + ' ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
     a.transform(1)
@@ -93,10 +90,10 @@ CSS.prototype.style = function () {
     this.stylesheet.insertRule(this.keyframes(animation), 0)
     this.handle('AnimationEnd')
     this.item.dom.style[_animationProperty] = animation + ' ' + this.total + 'ms' + ' ' +
-        (this.item.infinite ? 'infinite' : '') + ' ' + 'forwards'
+	(this.runner._infinite ? 'infinite' : '') + ' ' + 'forwards'
   }
 
-  this.item.animations = []
+  this.runner.animations = []
 }
 
 /**
@@ -108,9 +105,9 @@ CSS.prototype.keyframes = function (name) {
   var time = 0,
       rule = ['@' + _vendor + 'keyframes ' + name + '{']
 
-  for (var i = 0; i < this.animations.length; ++i) {
-    var a = this.animations[i],
-        aNext = this.animations[i+1]
+  for (var i = 0; i < this.runner.animations.length; ++i) {
+    var a = this.runner.animations[i],
+	aNext = this.runner.animations[i+1]
 
     a.init()
 
