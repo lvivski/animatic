@@ -24,17 +24,13 @@ Collection.prototype = new EventEmitter
  * @param delay
  */
 Collection.prototype.add = function (transform, duration, ease, delay) {
-  var animation
-
-  if (transform instanceof Collection) {
-    animation = transform
-  } else if (Array.isArray(transform)) {
-    animation = parallel(this.item, transform)
-  } else {
-    animation = new Animation(this.item, transform, duration, ease, delay)
+  if (Array.isArray(transform)) {
+    transform = parallel(this.item, transform)
+  } else if (!transform instanceof Collection) {
+    transform = new Animation(this.item, transform, duration, ease, delay)
   }
 
-  this.animations.push(animation)
+  this.animations.push(transform)
 
   duration = this.animations.map(function (a) {
     return a.duration + a.delay
