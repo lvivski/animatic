@@ -28,6 +28,7 @@ function Animation(item, transform, duration, ease, delay) {
 }
 
 Animation.prototype = new EventEmitter
+Animation.prototype.constructor = Animation
 
 /**
  * Starts animation timer

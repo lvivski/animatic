@@ -7,8 +7,8 @@
  * @param {number} delay
  * @constructor
  */
-function Parallel(item, animations, duration, ease, delay) {
-  Collection.call(this, item, animations, duration, ease, delay)
+function Parallel(item) {
+  Collection.call(this, item)
 }
 
 Parallel.prototype = new Collection

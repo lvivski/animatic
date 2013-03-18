@@ -7,8 +7,10 @@
  * @param {number=} delay
  * @constructor
  */
-function Sequence(item, animations, duration, ease, delay) {
-  Collection.call(this, item, animations, duration, ease, delay)
+function Sequence(item) {
+  Collection.call(this, item)
+
+  this._infinite = false
 }
 
 Sequence.prototype = new Collection
@@ -37,7 +39,7 @@ Sequence.prototype.run = function (tick) {
     var first = this.animations[0]
     first.init(tick)
     if (first.start + first.duration <= tick) {
-      this.infinite && this.animations.push(first)
+      this._infinite && this.animations.push(first)
       this.animations.shift()
       first.end()
       continue
@@ -76,7 +78,7 @@ Sequence.prototype.css = function () {
 }
 
 Sequence.prototype.infinite = function () {
-  this.infinite = true
+  this._infinite = true
   return this
 }
 
@@ -104,6 +106,6 @@ Sequence.prototype.end = function (abort) {
     this.animations[i].end(abort)
   }
   this.animations = []
-  this.infinite = false
+  this._infinite = false
   this.emit('end')
 }

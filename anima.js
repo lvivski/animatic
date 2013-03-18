@@ -234,6 +234,7 @@
     this.easeName = ease || "linear";
   }
   Animation.prototype = new EventEmitter();
+  Animation.prototype.constructor = Animation;
   Animation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick + this.delay;
@@ -289,39 +290,49 @@
     this.start = null;
     this.emit("end");
   };
-  function Collection(item, animations, duration, ease, delay) {
+  function Collection(item) {
     EventEmitter.call(this);
-    if (arguments.length === 0) return;
     this.start = null;
     this.item = item;
-    this.delay = delay || 0;
-    this.duration = duration || 0;
-    this.easeName = ease || "linear";
+    this.delay = 0;
+    this.duration = 0;
+    this.easeName = "linear";
     this.animations = [];
-    if (animations) {
-      this.animations = animations.map(function(a) {
-	return new Animation(item, {
-	  translate: a.translate,
-	  rotate: a.rotate,
-	  scale: a.scale,
-	  opacity: a.opacity
-	}, a.duration || duration, a.ease || ease, a.delay || delay);
-      });
-      this.duration = Math.max.apply(null, this.animations.map(function(a) {
-	return a.duration + a.delay;
-      }));
-    }
   }
   Collection.prototype = new EventEmitter();
   Collection.prototype.add = function(transform, duration, ease, delay) {
-    var ctor = Array.isArray(transform) ? Parallel : Animation, animation = new ctor(this.item, transform, duration || this.duration, ease || this.easeName, delay || this.delay);
+    var animation;
+    if (Array.isArray(transform)) {
+      animation = new Parallel(this.item);
+      transform.forEach(function(t) {
+	if (t.sequence) {
+	  var sequence = new Sequence(this.item);
+	  animation.animations.push(sequence);
+	  t.sequence.forEach(function(s) {
+	    sequence.add(s, duration, ease, delay);
+	  });
+	} else {
+	  animation.add(t, duration, ease, delay);
+	}
+      });
+    } else {
+      animation = new Animation(this.item, transform, duration, ease, delay);
+    }
     this.animations.push(animation);
-    this.duration = Math.max.apply(null, this.animations.map(function(a) {
-      return a.duration + a.delay;
-    }));
+    if (this instanceof Parallel) {
+      this.duration = Math.max.apply(null, this.animations.map(function(a) {
+	return a.duration + a.delay;
+      }));
+    } else {
+      this.duration = this.animations.map(function(a) {
+	return a.duration + a.delay;
+      }).reduce(function(a, b) {
+	return a + b;
+      }, 0);
+    }
   };
-  function Parallel(item, animations, duration, ease, delay) {
-    Collection.call(this, item, animations, duration, ease, delay);
+  function Parallel(item) {
+    Collection.call(this, item);
   }
   Parallel.prototype = new Collection();
   Parallel.prototype.constructor = Parallel;
@@ -362,8 +373,9 @@
     this.all("end", abort);
     this.emit("end");
   };
-  function Sequence(item, animations, duration, ease, delay) {
-    Collection.call(this, item, animations, duration, ease, delay);
+  function Sequence(item) {
+    Collection.call(this, item);
+    this._infinite = false;
   }
   Sequence.prototype = new Collection();
   Sequence.prototype.constructor = Sequence;
@@ -378,7 +390,7 @@
       var first = this.animations[0];
       first.init(tick);
       if (first.start + first.duration <= tick) {
-	this.infinite && this.animations.push(first);
+	this._infinite && this.animations.push(first);
 	this.animations.shift();
 	first.end();
 	continue;
@@ -409,7 +421,7 @@
     return this.item.css();
   };
   Sequence.prototype.infinite = function() {
-    this.infinite = true;
+    this._infinite = true;
     return this;
   };
   Sequence.prototype.pause = function() {
@@ -423,7 +435,7 @@
       this.animations[i].end(abort);
     }
     this.animations = [];
-    this.infinite = false;
+    this._infinite = false;
     this.emit("end");
   };
   function World(start) {
