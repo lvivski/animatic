@@ -18,20 +18,9 @@ Collection.prototype = new EventEmitter
 
 Collection.prototype.add = function (transform, duration, ease, delay) {
   var animation
-  if (Array.isArray(transform)) {
-    animation = new Parallel(this.item)
 
-    transform.forEach(function(t){
-      if (t.sequence) {
-	var sequence = new Sequence(this.item)
-	animation.animations.push(sequence)
-	t.sequence.forEach(function (s) {
-	  sequence.add(s, duration, ease, delay)
-	})
-      } else {
-	animation.add(t, duration, ease, delay)
-      }
-    })
+  if (Array.isArray(transform)) {
+    animation = parallel(this.item, transform)
   } else {
     animation = new Animation(this.item, transform, duration, ease, delay)
   }
@@ -48,6 +37,27 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
     }).reduce(function (a, b) {
       return a + b
     }, 0)
+  }
+
+  function sequence(item, transforms) {
+    var sequence = new Sequence(item)
+    transforms.forEach(function (t) {
+      sequence.add(t, duration, ease, delay)
+    })
+    return sequence
+  }
+
+  function parallel(item, transforms) {
+    var parallel = new Parallel(item)
+
+    transforms.forEach(function(t){
+      if (Array.isArray(t)) {
+	parallel.animations.push(sequence(item, t))
+      } else {
+	parallel.add(t, duration, ease, delay)
+      }
+    })
+    return parallel
   }
 
 }
