@@ -29,14 +29,14 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
 
   this.animations.push(animation)
 
+  var duration = this.animations.map(function (a) {
+    return a.duration + a.delay
+  })
+
   if (this instanceof Parallel) {
-    this.duration = Math.max.apply(null, this.animations.map(function (a) {
-      return a.duration + a.delay
-    }))
+    this.duration = Math.max.apply(null, duration)
   } else {
-    this.duration = this.animations.map(function (a) {
-      return a.duration + a.delay
-    }).reduce(function (a, b) {
+    this.duration = duration.reduce(function (a, b) {
       return a + b
     }, 0)
   }
@@ -61,5 +61,12 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
     })
     return parallel
   }
+}
 
+Collection.prototype.animate = function () {
+  return this.item.animate.apply(this.item, arguments)
+}
+
+Collection.prototype.css = function () {
+  return this.item.css()
 }

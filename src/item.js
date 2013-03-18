@@ -36,7 +36,7 @@ Item.prototype.init = function () {
  * @param {number} tick
  */
 Item.prototype.update = function (tick) {
-  this.runner && this.runner.run(tick)
+  this.runner.run(tick)
   this.style()
 }
 
@@ -46,7 +46,7 @@ Item.prototype.update = function (tick) {
  */
 Item.prototype.timeline = function (tick) {
   this.clear()
-  this.runner && this.runner.seek(tick)
+  this.runner.seek(tick)
   this.style()
 }
 
@@ -55,7 +55,7 @@ Item.prototype.timeline = function (tick) {
  */
 Item.prototype.pause = function () {
   if (!this.running) return
-  this.runner && this.runner.pause()
+  this.runner.pause()
   this.running = false
 }
 
@@ -64,7 +64,7 @@ Item.prototype.pause = function () {
  */
 Item.prototype.resume = function () {
   if (this.running) return
-  this.runner && this.runner.resume()
+  this.runner.resume()
   this.running = true
 }
 
@@ -184,11 +184,10 @@ Item.prototype.clear = function () {
  * @param {number} duration
  * @param {string} ease
  * @param {number} delay
- * @return {Animation|Parallel}
+ * @return {Sequence}
  */
 Item.prototype.animate = function (transform, duration, ease, delay) {
   this.runner.add(transform, duration, ease, delay)
-
   return this.runner
 }
 

@@ -1,10 +1,6 @@
 /**
  * Creates a set of parallel animations
  * @param {Item} item
- * @param {Array=} animations
- * @param {number=} duration
- * @param {string=} ease
- * @param {number=} delay
  * @constructor
  */
 function Sequence(item) {
@@ -69,14 +65,10 @@ Sequence.prototype.seek = function (tick) {
   }
 }
 
-Sequence.prototype.animate = function () {
-  return this.item.animate.apply(this.item, arguments)
-}
-
-Sequence.prototype.css = function () {
-  return this.item.css()
-}
-
+/**
+ * Play animation infinitely
+ * @returns {Sequence}
+ */
 Sequence.prototype.infinite = function () {
   this._infinite = true
   return this

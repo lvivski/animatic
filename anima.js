@@ -307,14 +307,13 @@
       animation = new Animation(this.item, transform, duration, ease, delay);
     }
     this.animations.push(animation);
+    var duration = this.animations.map(function(a) {
+      return a.duration + a.delay;
+    });
     if (this instanceof Parallel) {
-      this.duration = Math.max.apply(null, this.animations.map(function(a) {
-        return a.duration + a.delay;
-      }));
+      this.duration = Math.max.apply(null, duration);
     } else {
-      this.duration = this.animations.map(function(a) {
-        return a.duration + a.delay;
-      }).reduce(function(a, b) {
+      this.duration = duration.reduce(function(a, b) {
         return a + b;
       }, 0);
     }
@@ -336,6 +335,12 @@
       });
       return parallel;
     }
+  };
+  Collection.prototype.animate = function() {
+    return this.item.animate.apply(this.item, arguments);
+  };
+  Collection.prototype.css = function() {
+    return this.item.css();
   };
   function Parallel(item) {
     Collection.call(this, item);
@@ -419,12 +424,6 @@
       a.run(tick);
       break;
     }
-  };
-  Sequence.prototype.animate = function() {
-    return this.item.animate.apply(this.item, arguments);
-  };
-  Sequence.prototype.css = function() {
-    return this.item.css();
   };
   Sequence.prototype.infinite = function() {
     this._infinite = true;
@@ -779,22 +778,22 @@
     };
   };
   Item.prototype.update = function(tick) {
-    this.runner && this.runner.run(tick);
+    this.runner.run(tick);
     this.style();
   };
   Item.prototype.timeline = function(tick) {
     this.clear();
-    this.runner && this.runner.seek(tick);
+    this.runner.seek(tick);
     this.style();
   };
   Item.prototype.pause = function() {
     if (!this.running) return;
-    this.runner && this.runner.pause();
+    this.runner.pause();
     this.running = false;
   };
   Item.prototype.resume = function() {
     if (this.running) return;
-    this.runner && this.runner.resume();
+    this.runner.resume();
     this.running = true;
   };
   Item.prototype.style = function() {

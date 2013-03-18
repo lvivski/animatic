@@ -1,10 +1,6 @@
 /**
  * Creates a set of parallel animations
  * @param {Item} item
- * @param {Array} animations
- * @param {number} duration
- * @param {string} ease
- * @param {number} delay
  * @constructor
  */
 function Parallel(item) {
