@@ -162,7 +162,7 @@
         rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]));
       } else {
         var frames = [];
-        a.animation.forEach(function(a) {
+        a.animations.forEach(function(a) {
           a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay);
           a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration);
         });
@@ -171,8 +171,8 @@
         });
         for (var k = 0; k < frames.length; ++k) {
           var frame = frames[k];
-          for (var j = 0; j < a.animation.length; ++j) {
-            var pa = a.animation[j];
+          for (var j = 0; j < a.animations.length; ++j) {
+            var pa = a.animations[j];
             if (pa.delay >= frame || pa.delay + pa.duration < frame) continue;
             pa.transform(pa.ease((frame - pa.delay) / pa.duration));
           }
