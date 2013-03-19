@@ -19,7 +19,7 @@ Item.prototype.constructor = Item
  */
 Item.prototype.init = function () {
 
-  this.runner = new Sequence(this)
+  this.animation = new Sequence(this)
 
   this.running = true
 
@@ -36,7 +36,7 @@ Item.prototype.init = function () {
  * @param {number} tick
  */
 Item.prototype.update = function (tick) {
-  this.runner.run(tick)
+  this.animation.run(tick)
   this.style()
 }
 
@@ -46,7 +46,7 @@ Item.prototype.update = function (tick) {
  */
 Item.prototype.timeline = function (tick) {
   this.clear()
-  this.runner.seek(tick)
+  this.animation.seek(tick)
   this.style()
 }
 
@@ -55,7 +55,7 @@ Item.prototype.timeline = function (tick) {
  */
 Item.prototype.pause = function () {
   if (!this.running) return
-  this.runner.pause()
+  this.animation.pause()
   this.running = false
 }
 
@@ -64,16 +64,22 @@ Item.prototype.pause = function () {
  */
 Item.prototype.resume = function () {
   if (this.running) return
-  this.runner.resume()
+  this.animation.resume()
   this.running = true
 }
 
 /**
  * Sets style to the dom node
+ * @param {string} property
+ * @param {string} value
  */
-Item.prototype.style = function () {
-  this.dom.style[_transformProperty] = this.transform()
-  this.dom.style.opacity = this.opacity()
+Item.prototype.style = function (property, value) {
+  if (property && value) {
+    this.dom.style[property] = value
+  } else {
+    this.dom.style[_transformProperty] = this.transform()
+    this.dom.style.opacity = this.opacity()
+  }
 }
 
 /**
@@ -187,7 +193,7 @@ Item.prototype.clear = function () {
  * @return {Sequence}
  */
 Item.prototype.animate = function (transform, duration, ease, delay) {
-  return this.runner.add(transform, duration, ease, delay)
+  return this.animation.add(transform, duration, ease, delay)
 }
 
 /**
@@ -195,7 +201,7 @@ Item.prototype.animate = function (transform, duration, ease, delay) {
  * @param {boolean} abort
  */
 Item.prototype.finish = function (abort) {
-  this.runner.end(abort)
+  this.animation.end(abort)
   return this
 }
 

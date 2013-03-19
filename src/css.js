@@ -10,9 +10,9 @@ function CSS(item, static) {
   this.stylesheet = document.styleSheets[0]
 
   this.item = item
-  this.runner = item.runner
+  this.animation = item.animation
 
-  this.total = this.runner.duration
+  this.total = this.animation.duration
 
   !static && this.style()
 }
@@ -29,7 +29,7 @@ CSS.prototype.createStyleSheet = function () {
  * Pauses CSS animation
  */
 CSS.prototype.pause = function () {
-  this.item.dom.style[_animationProperty + 'PlayState'] = 'paused'
+  this.item.style(_animationProperty + 'PlayState','paused')
   return this
 }
 
@@ -37,7 +37,7 @@ CSS.prototype.pause = function () {
  * Resumes CSS animation
  */
 CSS.prototype.resume = function () {
-  this.item.dom.style[_animationProperty + 'PlayState'] = 'running'
+  this.item.style(_animationProperty + 'PlayState', 'running')
   return this
 }
 
@@ -49,11 +49,10 @@ CSS.prototype.resume = function () {
 CSS.prototype.stop = function () {
   var computed = getComputedStyle(this.item.dom),
       transform = computed[_transformProperty],
-      opacity = computed.opacity,
-      style = this.item.dom.style
+      opacity = computed.opacity
 
-  style[_animationProperty] = ''
-  style[_transitionProperty] = ''
+  this.item.style(_animationProperty, '')
+  this.item.style(_transitionProperty, '')
 
   this.item.state = Matrix.decompose(Matrix.parse(transform))
   this.item.state.opacity = opacity
@@ -77,22 +76,22 @@ CSS.prototype.handle = function (event) {
 CSS.prototype.style = function () {
   var animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
 
-  if (this.runner.animations[0] instanceof Animation &&
-    this.runner.animations.length == 1) { // transition
-    var a = this.runner.animations[0]
+  if (this.animation.get(0) instanceof Animation &&
+    this.animation.length === 1) { // transition
+    var a = this.animation.get(0)
     a.init()
-    this.item.dom.style[_transitionProperty] = a.duration + 'ms' + ' ' + easings.css[a.easeName] + ' ' + a.delay + 'ms'
+    this.item.style(_transitionProperty, a.duration + 'ms' + ' ' + easings.css[a.easeName] + ' ' + a.delay + 'ms')
     a.transform(1)
     this.handle('TransitionEnd')
     this.item.style()
   } else { // animation
     this.stylesheet.insertRule(this.keyframes(animation), 0)
     this.handle('AnimationEnd')
-    this.item.dom.style[_animationProperty] = animation + ' ' + this.total + 'ms' + ' ' +
-	(this.runner._infinite ? 'infinite' : '') + ' ' + 'forwards'
+    this.item.style(_animationProperty, animation + ' ' + this.total + 'ms' + ' ' +
+      (this.animation._infinite ? 'infinite' : '') + ' ' + 'forwards')
   }
 
-  this.runner.animations = []
+  this.animation.empty()
 }
 
 /**
@@ -104,9 +103,9 @@ CSS.prototype.keyframes = function (name) {
   var time = 0,
       rule = ['@' + _vendor + 'keyframes ' + name + '{']
 
-  for (var i = 0; i < this.runner.animations.length; ++i) {
-    var a = this.runner.animations[i],
-        aNext = this.runner.animations[i+1]
+  for (var i = 0; i < this.animation.length; ++i) {
+    var a = this.animation.get(i),
+        aNext = this.animation.get(i+1)
 
     a.init()
 
@@ -120,7 +119,7 @@ CSS.prototype.keyframes = function (name) {
       rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
     } else { // Parallel (it doesn't work with custom easings for now)
       var frames = []
-      a.animations.forEach(function (a) {
+      a.animation.forEach(function (a) {
         a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay)
         a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration)
       })
@@ -129,8 +128,8 @@ CSS.prototype.keyframes = function (name) {
 
       for (var k = 0; k < frames.length; ++k) {
         var frame = frames[k]
-        for (var j = 0; j < a.animations.length; ++j) {
-          var pa = a.animations[j]
+        for (var j = 0; j < a.animation.length; ++j) {
+          var pa = a.animation[j]
           // it's animation start or it's already ended
           if (pa.delay >= frame || pa.delay + pa.duration < frame)
             continue

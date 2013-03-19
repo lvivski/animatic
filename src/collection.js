@@ -72,6 +72,29 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
 }
 
 /**
+ * Collection length
+ */
+Collection.prototype.__defineGetter__('length', function () {
+  return this.animations.length;
+})
+
+/**
+ * Get element by index
+ * @param {number} index
+ * @returns {Animation|Collection}
+ */
+Collection.prototype.get = function (index) {
+  return this.animations[index]
+}
+
+/**
+ * Remove all elements from collection
+ */
+Collection.prototype.empty = function () {
+  this.animations = []
+}
+
+/**
  * Add animation to collection
  * chainable
  * @returns {Sequence}
