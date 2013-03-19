@@ -124,8 +124,8 @@
         translate[0] = 200
         break
     }
-    if (container.runner.animations.length) {
-      var a = container.runner.animations[0]
+    if (container.animation.length) {
+      var a = container.animation.get(0)
       a.translate = translate.map(function(t, i) {
         return t || a.translate[i]
       })
