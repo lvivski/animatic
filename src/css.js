@@ -1,11 +1,10 @@
 /**
  * CSSify animations
  * @param {Item} item
- * @param {Array} animations
- * @param {boolean} static
+ * @param {boolean=} inactive
  * @constructor
  */
-function CSS(item, static) {
+function CSS(item, inactive) {
   !document.styleSheets.length && this.createStyleSheet()
   this.stylesheet = document.styleSheets[0]
 
@@ -14,7 +13,7 @@ function CSS(item, static) {
 
   this.total = this.animation.duration
 
-  !static && this.style()
+  !inactive && this.style()
 }
 
 /**
