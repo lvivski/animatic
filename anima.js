@@ -103,7 +103,7 @@
     this.stylesheet = document.styleSheets[0];
     this.item = item;
     this.animation = item.animation;
-    this.total = this.animation.duration;
+    this.total = item.animation.duration;
     !idle && this.style();
   }
   CSS.prototype.createStyleSheet = function() {

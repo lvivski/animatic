@@ -10,8 +10,7 @@ function CSS(item, idle) {
 
   this.item = item
   this.animation = item.animation
-
-  this.total = this.animation.duration
+  this.total = item.animation.duration
 
   !idle && this.style()
 }
