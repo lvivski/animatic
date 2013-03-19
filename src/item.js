@@ -214,9 +214,9 @@ Item.prototype.stop = function () {
 
 /**
  * Generates CSS animation or transition
- * @param {boolean=} inactive
+ * @param {boolean=} idle
  * @return {CSS}
  */
-Item.prototype.css = function (inactive) {
-  return new CSS(this, inactive)
+Item.prototype.css = function (idle) {
+  return new CSS(this, idle)
 }

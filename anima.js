@@ -98,13 +98,13 @@
     };
     return easings;
   }();
-  function CSS(item, inactive) {
+  function CSS(item, idle) {
     !document.styleSheets.length && this.createStyleSheet();
     this.stylesheet = document.styleSheets[0];
     this.item = item;
     this.animation = item.animation;
     this.total = this.animation.duration;
-    !inactive && this.style();
+    !idle && this.style();
   }
   CSS.prototype.createStyleSheet = function() {
     var style = document.createElement("style");
@@ -862,7 +862,7 @@
   Item.prototype.stop = function() {
     return this.finish(true);
   };
-  Item.prototype.css = function(inactive) {
-    return new CSS(this, inactive);
+  Item.prototype.css = function(idle) {
+    return new CSS(this, idle);
   };
 })();
