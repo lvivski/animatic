@@ -75,7 +75,7 @@ Collection.prototype.add = function (transform, duration, ease, delay) {
  * Collection length
  */
 Collection.prototype.__defineGetter__('length', function () {
-  return this.animations.length;
+  return this.animations.length
 })
 
 /**
