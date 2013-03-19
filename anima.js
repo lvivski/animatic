@@ -119,7 +119,7 @@
     return this;
   };
   CSS.prototype.stop = function() {
-    var computed = getComputedStyle(this.item.dom), transform = computed[_transformProperty], opacity = computed.opacity;
+    var computed = getComputedStyle(this.item.dom, null), transform = computed[_transformProperty], opacity = computed.opacity;
     this.item.style(_animationProperty, "");
     this.item.style(_transitionProperty, "");
     this.item.state = Matrix.decompose(Matrix.parse(transform));

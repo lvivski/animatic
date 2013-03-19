@@ -46,7 +46,7 @@ CSS.prototype.resume = function () {
  * extracts values and sets item state
  */
 CSS.prototype.stop = function () {
-  var computed = getComputedStyle(this.item.dom),
+  var computed = getComputedStyle(this.item.dom, null),
       transform = computed[_transformProperty],
       opacity = computed.opacity
 
