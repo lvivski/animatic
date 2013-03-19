@@ -102,8 +102,8 @@
     !document.styleSheets.length && this.createStyleSheet();
     this.stylesheet = document.styleSheets[0];
     this.item = item;
-    this.runner = item.runner;
-    this.total = this.runner.duration;
+    this.animation = item.animation;
+    this.total = this.animation.duration;
     !static && this.style();
   }
   CSS.prototype.createStyleSheet = function() {
@@ -111,17 +111,17 @@
     document.getElementsByTagName("head")[0].appendChild(style);
   };
   CSS.prototype.pause = function() {
-    this.item.dom.style[_animationProperty + "PlayState"] = "paused";
+    this.item.style(_animationProperty + "PlayState", "paused");
     return this;
   };
   CSS.prototype.resume = function() {
-    this.item.dom.style[_animationProperty + "PlayState"] = "running";
+    this.item.style(_animationProperty + "PlayState", "running");
     return this;
   };
   CSS.prototype.stop = function() {
-    var computed = getComputedStyle(this.item.dom), transform = computed[_transformProperty], opacity = computed.opacity, style = this.item.dom.style;
-    style[_animationProperty] = "";
-    style[_transitionProperty] = "";
+    var computed = getComputedStyle(this.item.dom), transform = computed[_transformProperty], opacity = computed.opacity;
+    this.item.style(_animationProperty, "");
+    this.item.style(_transitionProperty, "");
     this.item.state = Matrix.decompose(Matrix.parse(transform));
     this.item.state.opacity = opacity;
     this.item.style();
@@ -136,24 +136,24 @@
   };
   CSS.prototype.style = function() {
     var animation = "a" + Date.now() + "r" + Math.floor(Math.random() * 1e3);
-    if (this.runner.animations[0] instanceof Animation && this.runner.animations.length == 1) {
-      var a = this.runner.animations[0];
+    if (this.animation.get(0) instanceof Animation && this.animation.length === 1) {
+      var a = this.animation.get(0);
       a.init();
-      this.item.dom.style[_transitionProperty] = a.duration + "ms" + " " + easings.css[a.easeName] + " " + a.delay + "ms";
+      this.item.style(_transitionProperty, a.duration + "ms" + " " + easings.css[a.easeName] + " " + a.delay + "ms");
       a.transform(1);
       this.handle("TransitionEnd");
       this.item.style();
     } else {
       this.stylesheet.insertRule(this.keyframes(animation), 0);
       this.handle("AnimationEnd");
-      this.item.dom.style[_animationProperty] = animation + " " + this.total + "ms" + " " + (this.runner._infinite ? "infinite" : "") + " " + "forwards";
+      this.item.style(_animationProperty, animation + " " + this.total + "ms" + " " + (this.animation._infinite ? "infinite" : "") + " " + "forwards");
     }
-    this.runner.animations = [];
+    this.animation.empty();
   };
   CSS.prototype.keyframes = function(name) {
     var time = 0, rule = [ "@" + _vendor + "keyframes " + name + "{" ];
-    for (var i = 0; i < this.runner.animations.length; ++i) {
-      var a = this.runner.animations[i], aNext = this.runner.animations[i + 1];
+    for (var i = 0; i < this.animation.length; ++i) {
+      var a = this.animation.get(i), aNext = this.animation.get(i + 1);
       a.init();
       if (a instanceof Animation) {
         i === 0 && rule.push(this.frame(0, easings.css[a.easeName]));
@@ -162,7 +162,7 @@
         rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]));
       } else {
         var frames = [];
-        a.animations.forEach(function(a) {
+        a.animation.forEach(function(a) {
           a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay);
           a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration);
         });
@@ -171,8 +171,8 @@
         });
         for (var k = 0; k < frames.length; ++k) {
           var frame = frames[k];
-          for (var j = 0; j < a.animations.length; ++j) {
-            var pa = a.animations[j];
+          for (var j = 0; j < a.animation.length; ++j) {
+            var pa = a.animation[j];
             if (pa.delay >= frame || pa.delay + pa.duration < frame) continue;
             pa.transform(pa.ease((frame - pa.delay) / pa.duration));
           }
@@ -332,6 +332,15 @@
       });
       return parallel;
     }
+  };
+  Collection.prototype.__defineGetter__("length", function() {
+    return this.animations.length;
+  });
+  Collection.prototype.get = function(index) {
+    return this.animations[index];
+  };
+  Collection.prototype.empty = function() {
+    this.animations = [];
   };
   Collection.prototype.animate = function(transform, duration, ease, delay) {
     return this.add(transform, duration, ease, delay);
@@ -765,7 +774,7 @@
   Item.prototype = new EventEmitter();
   Item.prototype.constructor = Item;
   Item.prototype.init = function() {
-    this.runner = new Sequence(this);
+    this.animation = new Sequence(this);
     this.running = true;
     this.state = {
       translate: [ 0, 0, 0 ],
@@ -775,27 +784,31 @@
     };
   };
   Item.prototype.update = function(tick) {
-    this.runner.run(tick);
+    this.animation.run(tick);
     this.style();
   };
   Item.prototype.timeline = function(tick) {
     this.clear();
-    this.runner.seek(tick);
+    this.animation.seek(tick);
     this.style();
   };
   Item.prototype.pause = function() {
     if (!this.running) return;
-    this.runner.pause();
+    this.animation.pause();
     this.running = false;
   };
   Item.prototype.resume = function() {
     if (this.running) return;
-    this.runner.resume();
+    this.animation.resume();
     this.running = true;
   };
-  Item.prototype.style = function() {
-    this.dom.style[_transformProperty] = this.transform();
-    this.dom.style.opacity = this.opacity();
+  Item.prototype.style = function(property, value) {
+    if (property && value) {
+      this.dom.style[property] = value;
+    } else {
+      this.dom.style[_transformProperty] = this.transform();
+      this.dom.style.opacity = this.opacity();
+    }
   };
   Item.prototype.transform = function() {
     return Matrix.stringify(this.matrix());
@@ -840,10 +853,10 @@
     this.state.opacity = 1;
   };
   Item.prototype.animate = function(transform, duration, ease, delay) {
-    return this.runner.add(transform, duration, ease, delay);
+    return this.animation.add(transform, duration, ease, delay);
   };
   Item.prototype.finish = function(abort) {
-    this.runner.end(abort);
+    this.animation.end(abort);
     return this;
   };
   Item.prototype.stop = function() {
