@@ -70,8 +70,8 @@ Item.prototype.resume = function () {
 
 /**
  * Sets style to the dom node
- * @param {string} property
- * @param {string} value
+ * @param {string=} property
+ * @param {string=} value
  */
 Item.prototype.style = function (property, value) {
   if (property && value) {
