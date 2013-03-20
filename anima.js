@@ -1,4 +1,5 @@
 (function() {
+  "use strict";
   var a = window.anima = window.a = {};
   a.js = function() {
     return new World(true);

@@ -22,6 +22,7 @@ all: \
 anima.js: ${FILES}
 	@rm -f $@
 	@echo "(function(){" > $@.tmp
+	@echo "'use strict'" >> $@.tmp
 	@cat $(filter %.js,$^) >> $@.tmp
 	@echo "}())" >> $@.tmp
 	@$(JS_COMPILER) $@.tmp -b indent-level=2 -o $@
