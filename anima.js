@@ -203,7 +203,7 @@
     if (handler) {
       handlers.splice(handlers.indexOf(handler), 1);
     } else {
-      this.handlers[event] = null;
+      delete this.handlers[event];
     }
     return this;
   };
@@ -215,6 +215,9 @@
       }
     }
     return this;
+  };
+  EventEmitter.prototype.listeners = function(event) {
+    return this.handlers[event] || [];
   };
   function Animation(item, transform, duration, ease, delay) {
     EventEmitter.call(this);

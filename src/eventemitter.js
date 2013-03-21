@@ -30,7 +30,7 @@ EventEmitter.prototype.off = function (event, handler) {
   if (handler) {
     handlers.splice(handlers.indexOf(handler), 1)
   } else {
-    this.handlers[event] = null
+    delete this.handlers[event]
   }
 
   return this
@@ -52,4 +52,13 @@ EventEmitter.prototype.emit = function (event) {
   }
 
   return this
+}
+
+/**
+ * List all event listeners
+ * @param {string} event
+ * @returns {Array}
+ */
+EventEmitter.prototype.listeners = function (event) {
+  return this.handlers[event] || []
 }
