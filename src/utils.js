@@ -2,37 +2,26 @@
  * Vendor specific stuff
  */
 
-var vendors = ['webkit', 'Moz', 'O', 'ms'], i = 0,
-
-    _requestAnimationFrame = window.requestAnimationFrame,
+var _requestAnimationFrame = window.requestAnimationFrame,
     _cancelAnimationFrame = window.cancelAnimationFrame
-
-while(!_requestAnimationFrame && i < vendors.length) {
-  var vendor = vendors[i++].toLowerCase()
-
-  _requestAnimationFrame = window[vendor + 'RequestAnimationFrame']
-  _cancelAnimationFrame = window[vendor + 'CancelAnimationFrame']
-                || window[vendor + 'CancelRequestAnimationFrame']
+    
+for (var i = 0, vendors = ['webkit', 'Moz', 'O', 'ms'], vendor;
+     i < vendors.length && !_requestAnimationFrame; ++i) {
+  vendor = vendors[i]
+  _requestAnimationFrame = window[vendor.toLowerCase() + 'RequestAnimationFrame']
+  _cancelAnimationFrame = window[vendor.toLowerCase() + 'CancelAnimationFrame'] 
+                || window[vendor.toLowerCase() + 'CancelRequestAnimationFrame']
 }
 
-if (window.chrome && !vendor) // Chrome supports rAF without prefix, but css properties only with "-webkit-"
+if (window.chrome && !vendor) {// Chrome supports rAF without prefix, but css properties only with "-webkit-"
   vendor = vendors[0]
+}
 
-var _vendor = vendor ? '-' + vendor + '-' : '',
-
+var _vendor = vendor ? '-' + vendor.toLowerCase() + '-' : '',
     _transformProperty = getProperty('transform'),
     _animationProperty = getProperty('animation'),
     _transitionProperty = getProperty('transition')
-
-function getProperty(property) {
-  var style = document.createElement('div').style,
-      Property = property[0].toUpperCase() + property.slice(1)
-
-  if (style.transform === undefined) {
-    return vendors.filter(function(vendor){
-      return style[vendor + Property] !== undefined
-    })[0] + Property
-  } else {
-    return property
-  }
+    
+function getProperty(name) {
+  return vendor ? vendor + name[0].toUpperCase() + name.substr(1) : name
 }
