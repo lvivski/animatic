@@ -11,7 +11,7 @@ function Item(node) {
   this.init()
 }
 
-Item.prototype = new EventEmitter
+Item.prototype = Object.create(EventEmitter.prototype)
 Item.prototype.constructor = Item
 
 /**

@@ -8,7 +8,7 @@ function Timeline() {
   this.start = 0
 }
 
-Timeline.prototype = new World
+Timeline.prototype = Object.create(World.prototype)
 Timeline.prototype.constructor = Timeline
 
 /**

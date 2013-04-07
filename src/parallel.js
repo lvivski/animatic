@@ -7,7 +7,7 @@ function Parallel(item) {
   Collection.call(this, item)
 }
 
-Parallel.prototype = new Collection
+Parallel.prototype = Object.create(Collection.prototype)
 Parallel.prototype.constructor = Parallel
 
 /**

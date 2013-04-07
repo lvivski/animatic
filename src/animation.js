@@ -27,7 +27,7 @@ function Animation(item, transform, duration, ease, delay) {
   this.easeName = ease || 'linear'
 }
 
-Animation.prototype = new EventEmitter
+Animation.prototype = Object.create(EventEmitter.prototype)
 Animation.prototype.constructor = Animation
 
 /**

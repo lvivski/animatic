@@ -10,7 +10,7 @@ function World(start) {
   start && this.init()
 }
 
-World.prototype = new EventEmitter
+World.prototype = Object.create(EventEmitter.prototype)
 World.prototype.constructor = World
 
 /**

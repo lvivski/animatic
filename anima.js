@@ -228,7 +228,7 @@
     this.ease = easings[transform.ease] || easings[ease] || easings.linear;
     this.easeName = ease || "linear";
   }
-  Animation.prototype = new EventEmitter();
+  Animation.prototype = Object.create(EventEmitter.prototype);
   Animation.prototype.constructor = Animation;
   Animation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
@@ -294,7 +294,8 @@
     this.easeName = "linear";
     this.animations = [];
   }
-  Collection.prototype = new EventEmitter();
+  Collection.prototype = Object.create(EventEmitter.prototype);
+  Collection.prototype.constructor = Collection;
   Collection.prototype.add = function(transform, duration, ease, delay) {
     if (Array.isArray(transform)) {
       transform = parallel(this.item, transform);
@@ -350,7 +351,7 @@
   function Parallel(item) {
     Collection.call(this, item);
   }
-  Parallel.prototype = new Collection();
+  Parallel.prototype = Object.create(Collection.prototype);
   Parallel.prototype.constructor = Parallel;
   Parallel.prototype.all = function(method) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -393,7 +394,7 @@
     Collection.call(this, item);
     this._infinite = false;
   }
-  Sequence.prototype = new Collection();
+  Sequence.prototype = Object.create(Collection.prototype);
   Sequence.prototype.constructor = Sequence;
   Sequence.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
@@ -454,7 +455,7 @@
     this.frame = null;
     start && this.init();
   }
-  World.prototype = new EventEmitter();
+  World.prototype = Object.create(EventEmitter.prototype);
   World.prototype.constructor = World;
   World.prototype.init = function() {
     var self = this;
@@ -501,7 +502,7 @@
     this.currentTime = 0;
     this.start = 0;
   }
-  Timeline.prototype = new World();
+  Timeline.prototype = Object.create(World.prototype);
   Timeline.prototype.constructor = Timeline;
   Timeline.prototype.init = function() {
     this.frame = _requestAnimationFrame(update);
@@ -770,7 +771,7 @@
     this.dom = node;
     this.init();
   }
-  Item.prototype = new EventEmitter();
+  Item.prototype = Object.create(EventEmitter.prototype);
   Item.prototype.constructor = Item;
   Item.prototype.init = function() {
     this.animation = new Sequence(this);

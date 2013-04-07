@@ -14,7 +14,8 @@ function Collection(item) {
   this.animations = []
 }
 
-Collection.prototype = new EventEmitter
+Collection.prototype = Object.create(EventEmitter.prototype)
+Collection.prototype.constructor = Collection
 
 /**
  * Add item to the collection

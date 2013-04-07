@@ -9,7 +9,7 @@ function Sequence(item) {
   this._infinite = false
 }
 
-Sequence.prototype = new Collection
+Sequence.prototype = Object.create(Collection.prototype)
 Sequence.prototype.constructor = Sequence
 
 /**
