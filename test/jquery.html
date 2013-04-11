@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Jqery plugin tests</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="../example/css/main.css">
+</head>
+<body>
+  <div class="ball" style="left: 100px"></div>
+  <script src="../anima.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="../jquery.anima.js"></script>
+  <script>
+    $('.ball').anima('js').animate({
+      translate: [0, 300, 0]
+    }, 500, 'ease-in-quad')
+    .animate({
+      scale: [.1, -.2, 0]
+    }, 50)
+    .animate({
+      scale: [-.1, .2, 0]
+    }, 50)
+    .animate({
+      translate: [0, -300, 0]
+    }, 500, 'ease-out-quad')
+    .infinite()
+  </script>
+</body>
+</html>
