@@ -3,7 +3,13 @@
 		js: null,
 		css: null
 	};
-	
+
+	$.anima = {
+		world: function (type) {
+			return worlds[type];
+		}
+	};
+
 	$.fn.anima = function (type) {
 		if (!worlds.hasOwnProperty(type)) {
 			throw new Error('Invalid world type specified');
