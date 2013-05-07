@@ -102,9 +102,29 @@ input[type=button]:active {
 
 .panel_timeline input[type=range] {
   width: 80%;
-  height: 2px;
-  background: #333;
+  height: 1.6em;
+  background: #fff;
+  border: 1px solid #ccc;
   margin-bottom: 10px;
+  position: relative;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.panel_timeline input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1.6em;
+  width: 5px;
+  background: black;
+}
+
+.panel_timeline input[type=range]:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  pointer-event: 0;
 }
 
 ::-webkit-slider-thumb {

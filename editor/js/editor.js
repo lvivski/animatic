@@ -56,11 +56,13 @@ UI.Panel.prototype.toString = function () {
   </div>'
 }
 
-UI.Timeline = function () {}
+UI.Timeline = function (max) {
+  this.max = max || 5000
+}
 
 UI.Timeline.prototype.toString = function () {
   return '<input type="button" value="keyframe">\
-    <input type="range" value="0" max="5000">\
+    <input type="range" value="0" max="' + this.max + '">\
     <input type="button" value="code" class="code">'
 }
 
@@ -79,12 +81,12 @@ UI.Controls = function () {
 }
 
 UI.Controls.prototype.toString = function () {
-  var _this = this
+  var this_ = this
   return Object.keys(this.config).map(function (t) {
     return '<div class="' + t + '"><span>' + t + '</span>' + 
       ['x','y','z'].map(function (a) {
         return '<input type="text" value="' + (t === 'scale' ? 1 : 0) + '" \
-            data-step="' + _this.config[t].step + '" data-transform="' + t + '" data-axis="'+ a +'">'
+            data-step="' + this_.config[t].step + '" data-transform="' + t + '" data-axis="'+ a +'">'
       }).join('') + '</div>'
   }).join('')
 }
