@@ -26,7 +26,7 @@ var State = {
   diff: function (prev, next) {
     function differ(type) {
       return function (t, i) {
-	return t - prev[type][i]
+        return t - prev[type][i]
       }
     }
     return {
@@ -67,14 +67,12 @@ UI.Timeline.prototype.toString = function () {
 UI.Controls = function () {
   this.config = {
     translate: {
-      min: -500,
-      max: 500
+      step: 1
     },
     rotate: {
-      max: 180
+      step: 1
     },
     scale: {
-      max: 5,
       step: .1
     }
   }
@@ -83,18 +81,11 @@ UI.Controls = function () {
 UI.Controls.prototype.toString = function () {
   var _this = this
   return Object.keys(this.config).map(function (t) {
-    return '<div class="' + t + '">' + t +
-    ['x','y','z'].map(function (a) {
-      var min = _this.config[t].min || 0,
-	  max = _this.config[t].max || 100,
-	  step = _this.config[t].step || 1
-
-      return '<label>' + a +
-	'<input type="range" value="0" \
-	  min="'+ min +'" max="' + max + '" step="' + step + '" \
-	  data-transform="' + t + '" data-axis="'+ a +'">\
-	</label>'
-    }).join('') + '</div>'
+    return '<div class="' + t + '"><span>' + t + '</span>' + 
+      ['x','y','z'].map(function (a) {
+        return '<input type="text" value="' + (t === 'scale' ? 1 : 0) + '" \
+            data-step="' + _this.config[t].step + '" data-transform="' + t + '" data-axis="'+ a +'">'
+      }).join('') + '</div>'
   }).join('')
 }
 
@@ -134,8 +125,8 @@ UI.Editor.prototype.init = function () {
 
     !['translate','rotate','scale'].forEach(function(t){
       ['x','y','z'].forEach(function(a, i) {
-	$('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')
-	  .value = this_.timeline.items[this_.current].state[t][i]
+        $('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')
+          .value = this_.timeline.items[this_.current].state[t][i]
       })
     })
   }.bind(this))
@@ -152,10 +143,27 @@ UI.Editor.prototype.init = function () {
     this_.stringify(this_.timeline.items[this_.current])
   }, false)
 
-  $.all('.panel_right input[type=range]').forEach(function(range){
-    range.addEventListener('change', function () {
+  $.all('.panel_right input[type=text]').forEach(function(range){
+    range.addEventListener('keydown', function (e) {
+      e.preventDefault();
+      var prev = parseFloat(this.value),
+          step = parseFloat(this.dataset['step'])
+      switch (e.keyCode) {
+        case 37: // left
+          this.value = prev - step
+          break
+        case 38: // up
+          this.value = prev + 10 * step
+          break
+        case 39: // right
+          this.value = prev + step
+          break
+        case 40: // down
+          this.value = prev - 10 * step
+          break
+      }
       this_.timeline.items[this_.current].state[this.dataset['transform']]
-	[['x','y','z'].indexOf(this.dataset['axis'])] = this.value
+        [['x','y','z'].indexOf(this.dataset['axis'])] = this.value
     }, false)
   })
 }

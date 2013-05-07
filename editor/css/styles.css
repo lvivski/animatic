@@ -64,7 +64,7 @@ input[type=button]:active {
 .panel_right {
   right: 0;
   top: 0;
-  width: 300px;
+  width: 350px;
 }
 
 .panel_timeline {
@@ -88,8 +88,16 @@ input[type=button]:active {
   padding: 15px;
 }
 
+.panel_right span {
+  width: 90px;
+  display: inline-block;
+}
+
 .panel_right input {
-  width: 90%;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  width: 3em;
+  margin: 0 .1em;
 }
 
 .panel_timeline input[type=range] {
