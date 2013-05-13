@@ -2,17 +2,17 @@ JS_COMPILER ?= ./node_modules/uglify-js/bin/uglifyjs
 FILES = \
 	src/core.js \
 	src/utils.js \
-	src/easings.js \
-	src/css.js \
+	src/math/vector.js \
+	src/math/matrix.js \
 	src/eventemitter.js \
-	src/animation.js \
-	src/collection.js \
-	src/parallel.js \
-	src/sequence.js \
+	src/animations/easings.js \
+	src/animations/animation.js \
+	src/animations/collection.js \
+	src/animations/parallel.js \
+	src/animations/sequence.js \
+	src/css.js \
 	src/world.js \
 	src/timeline.js \
-	src/vector.js \
-	src/matrix.js \
 	src/item.js
 
 all: \
