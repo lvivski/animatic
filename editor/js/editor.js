@@ -210,4 +210,24 @@ anima.editor = function () {
   new UI.Editor(timeline)
 }
 
+function bsearch(needle, stack, comparator) {
+  var low = 0,
+      high = stack.length,
+      middle = 0
+
+  while (low <= high) {
+    middle = (low + high) >> 1
+    var comparison = comparator(stack[middle], needle)
+    
+    if (comparison > 0) {
+      low = middle + 1
+    } else if (comparison < 0) {
+      high = middle - 1
+    } else {
+      break
+    }
+  }
+  return middle
+}
+
 }())
