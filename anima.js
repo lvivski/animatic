@@ -70,6 +70,15 @@
     clone: function(v) {
       return v.slice();
     },
+    scale: function(x, y, z, f) {
+      if (Array.isArray(x)) {
+        f = y;
+        y = x[1];
+        z = x[2];
+        x = x[0];
+      }
+      return [ x * f, y * f, z * f ];
+    },
     zero: function() {
       return [ 0, 0, 0 ];
     }
