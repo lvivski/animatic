@@ -3,27 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Delay</title>
+  <title>Physics</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="block"></div>
+  <div class="ball" style="left: 100px;top: 200px"></div>
 </body>
 <script src="../anima.js"></script>
 <script>
   var world = anima.js(),
-      item = world.add(document.querySelector('.block'))
-
+      item = world.add(document.querySelector('.ball'), {
+        mass: 0.01,
+        viscosity: 0.07
+      })
+  
   item
     .animate({
-      translate: [200, 200, 100],
-      rotate: [0,0,5]
+      translate: [500, 0, 0]
     }, 500)
-    .animate({
-      translate: [100, 0, 0],
-      opacity: 0.5
-    }, 500, 'linear', 500)
 </script>
 </html>

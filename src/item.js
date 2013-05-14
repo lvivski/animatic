@@ -24,9 +24,9 @@ Item.prototype.init = function () {
   this.running = true
 
   this.state = {
-    translate: [0, 0, 0],
-    rotate: [0, 0, 0],
-    scale: [1, 1, 1],
+    translate: Vector.zero(),
+    rotate: Vector.zero(),
+    scale: Vector.set(1),
     opacity: 1
   }
 }
@@ -115,7 +115,7 @@ Item.prototype.center = function () {
  */
 Item.prototype.lookAt = function (vector) {
   var transform = Matrix.decompose(Matrix.lookAt(
-    vector, this.state.translate, [0, 1, 0]
+    vector, this.state.translate, Vector.set(0, 1, 0)
   ))
   this.state.rotate = transform.rotate
 }
@@ -178,9 +178,9 @@ Item.prototype.scale = function (s) {
  * Clears item transform
  */
 Item.prototype.clear = function () {
-  this.state.translate = [0, 0, 0]
-  this.state.rotate = [0, 0, 0]
-  this.state.scale = [1, 1, 1]
+  this.state.translate = Vector.zero()
+  this.state.rotate = Vector.zero()
+  this.state.scale = Vector.set(1)
   this.state.opacity = 1
 }
 

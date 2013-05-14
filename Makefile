@@ -13,7 +13,11 @@ FILES = \
 	src/css.js \
 	src/world.js \
 	src/timeline.js \
-	src/item.js
+	src/item.js \
+	src/physics/forces/constant.js \
+	src/physics/forces/attraction.js \
+	src/physics/verlet.js \
+	src/physics/particle.js \
 
 all: \
 	anima.js \

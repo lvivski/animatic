@@ -40,10 +40,17 @@ World.prototype.update = function (tick) {
 /**
  * Adds node to the animated world
  * @param {HTMLElement} node
+ * @param {number=} mass
+ * @param {number=} viscosity
  * @return {Item}
  */
-World.prototype.add = function (node) {
-  var item = new Item(node)
+World.prototype.add = function (node, mass, viscosity) {
+  var item
+  if (mass) {
+    item = new Particle(node, mass, viscosity)
+  } else {
+    item = new Item(node)
+  }
   this.items.push(item)
   return item
 }

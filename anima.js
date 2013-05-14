@@ -25,6 +25,15 @@
   }
   var Vector = {
     set: function(x, y, z) {
+      if (Array.isArray(x)) {
+        y = x[1];
+        z = x[2];
+        x = x[0];
+      }
+      if (y === undefined) {
+        y = x;
+        z = x;
+      }
       return [ x, y, z ];
     },
     length: function(x, y, z) {
@@ -711,8 +720,13 @@
       this.items[i].update(tick);
     }
   };
-  World.prototype.add = function(node) {
-    var item = new Item(node);
+  World.prototype.add = function(node, mass, viscosity) {
+    var item;
+    if (mass) {
+      item = new Particle(node, mass, viscosity);
+    } else {
+      item = new Item(node);
+    }
     this.items.push(item);
     return item;
   };
@@ -793,9 +807,9 @@
     this.animation = new Sequence(this);
     this.running = true;
     this.state = {
-      translate: [ 0, 0, 0 ],
-      rotate: [ 0, 0, 0 ],
-      scale: [ 1, 1, 1 ],
+      translate: Vector.zero(),
+      rotate: Vector.zero(),
+      scale: Vector.set(1),
       opacity: 1
     };
   };
@@ -837,7 +851,7 @@
     return Matrix.decompose(Matrix.inverse(this.matrix()));
   };
   Item.prototype.lookAt = function(vector) {
-    var transform = Matrix.decompose(Matrix.lookAt(vector, this.state.translate, [ 0, 1, 0 ]));
+    var transform = Matrix.decompose(Matrix.lookAt(vector, this.state.translate, Vector.set(0, 1, 0)));
     this.state.rotate = transform.rotate;
   };
   Item.prototype.opacity = function() {
@@ -863,9 +877,9 @@
     return this.add("scale", s);
   };
   Item.prototype.clear = function() {
-    this.state.translate = [ 0, 0, 0 ];
-    this.state.rotate = [ 0, 0, 0 ];
-    this.state.scale = [ 1, 1, 1 ];
+    this.state.translate = Vector.zero();
+    this.state.rotate = Vector.zero();
+    this.state.scale = Vector.set(1);
     this.state.opacity = 1;
   };
   Item.prototype.animate = function(transform, duration, ease, delay) {
@@ -880,5 +894,74 @@
   };
   Item.prototype.css = function(idle) {
     return new CSS(this, idle);
+  };
+  function Constant() {
+    var force = Vector.sub(this.state.translate, this.current.position);
+    this.current.acceleration = Vector.add(this.current.acceleration, force);
+  }
+  function Attraction(radius, strength) {
+    radius || (radius = 1e3);
+    strength || (strength = 100);
+    var force = Vector.sub(this.state.translate, this.current.position), distance = Vector.length(force);
+    if (distance < radius) {
+      force = Vector.scale(Vector.norm(force), 1 - distance * distance / (radius * radius));
+      this.current.acceleration = Vector.add(this.current.acceleration, Vector.scale(force, strength));
+    }
+  }
+  function Verlet(delta, drag) {
+    delta = delta * delta;
+    var current = this.current, previous = this.previous;
+    current.acceleration = Vector.scale(current.acceleration, this.mass);
+    current.velocity = Vector.sub(current.position, previous.position);
+    if (drag) {
+      current.velocity = Vector.scale(current.velocity, drag);
+    }
+    previous.position = current.position;
+    current.position = Vector.add(current.position, Vector.add(current.velocity, Vector.scale(current.acceleration, delta)));
+    current.acceleration = Vector.zero();
+  }
+  function Particle(node, mass, viscosity) {
+    Item.call(this, node);
+    if (mass === Object(mass)) {
+      viscosity = mass.viscosity;
+      mass = mass.mass;
+    }
+    this.mass = 1 / mass;
+    this.viscosity = viscosity;
+  }
+  Particle.prototype = Object.create(Item.prototype);
+  Particle.prototype.constructor = Particle;
+  Particle.prototype.init = function() {
+    Item.prototype.init.call(this);
+    this.current = {
+      position: Vector.zero(),
+      velocity: Vector.zero(),
+      acceleration: Vector.zero()
+    };
+    this.previous = {
+      position: Vector.zero(),
+      velocity: Vector.zero(),
+      acceleration: Vector.zero()
+    };
+    this.clock = null;
+  };
+  Particle.prototype.update = function(tick) {
+    this.animation.run(tick);
+    this.clock || (this.clock = tick);
+    var delta = tick - this.clock;
+    if (delta > 0) {
+      this.clock = tick;
+      delta *= .001;
+      this.integrate(delta);
+    }
+    this.style();
+  };
+  Particle.prototype.integrate = function(delta) {
+    Constant.call(this);
+    Verlet.call(this, delta, 1 - this.viscosity);
+  };
+  Particle.prototype.matrix = function() {
+    var state = this.state;
+    return Matrix.compose(this.current.position, state.rotate, state.scale);
   };
 })();

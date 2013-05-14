@@ -1,5 +1,14 @@
 var Vector = {
   set: function (x, y, z) {
+    if (Array.isArray(x)) {
+      y = x[1]
+      z = x[2]
+      x = x[0]
+    }
+    if (y === undefined) {
+      y = x
+      z = x
+    }
     return [x, y, z]
   },
   length: function (x, y, z) {
