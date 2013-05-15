@@ -7,9 +7,6 @@
 function Verlet(delta, drag) {
   // velocity = position - old_position
   // position = position + (velocity + acceleration * delta * delta)
-
-  delta = delta * delta
-
   var current = this.current,
       previous = this.previous
 
@@ -21,7 +18,7 @@ function Verlet(delta, drag) {
   }
 
   previous.position = current.position
-  current.position = Vector.add(current.position, Vector.add(current.velocity, Vector.scale(current.acceleration, delta)))
+  current.position = Vector.add(current.position, Vector.add(current.velocity, Vector.scale(current.acceleration, delta*delta)))
 
   current.acceleration = Vector.zero()
 }

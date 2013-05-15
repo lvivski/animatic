@@ -1,6 +1,6 @@
 /**
  * Creates a set of animations
- * @param {Item=} item
+ * @param {Item} item
  * @constructor
  */
 function Collection(item) {

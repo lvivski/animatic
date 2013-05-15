@@ -909,7 +909,6 @@
     }
   }
   function Verlet(delta, drag) {
-    delta = delta * delta;
     var current = this.current, previous = this.previous;
     current.acceleration = Vector.scale(current.acceleration, this.mass);
     current.velocity = Vector.sub(current.position, previous.position);
@@ -917,7 +916,7 @@
       current.velocity = Vector.scale(current.velocity, drag);
     }
     previous.position = current.position;
-    current.position = Vector.add(current.position, Vector.add(current.velocity, Vector.scale(current.acceleration, delta)));
+    current.position = Vector.add(current.position, Vector.add(current.velocity, Vector.scale(current.acceleration, delta * delta)));
     current.acceleration = Vector.zero();
   }
   function Particle(node, mass, viscosity) {
@@ -926,6 +925,8 @@
       viscosity = mass.viscosity;
       mass = mass.mass;
     }
+    mass || (mass = 1);
+    viscosity || (viscosity = .05);
     this.mass = 1 / mass;
     this.viscosity = viscosity;
   }
