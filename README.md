@@ -1,7 +1,8 @@
 # Anima
 CSS animations with a soul
 
-With Anima it's easy to animate over a hundred objects at a time.
+With Anima it's easy to animate over a hundred objects at a time. Each item can have it's mass and viscosity to emulate reallife objects!
+
 And it's only **5k** when gzipped.
 
 **[Examples](#examples)**
@@ -17,6 +18,8 @@ Another problem is calculating percents for keyframes. People create animations 
 Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: `JS` and `CSS`. The first one doesn't really use CSS transitions or `@keyframes`. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. `CSS` mode allows you to generate pure CSS animations, but it has limitations for parallel animations.
 
 _**Note**: `CSS` mode is experimental for now, not everything works as expected._
+
+_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#physics)_
 
 ## API
 
@@ -139,11 +142,11 @@ Each item can also have it's mass an viscosity
 ```js
 var world = js()
 world.add(document.querySelector('.div'), {
-	mass: 0.01, // this is mass
-	viscosity: 0.07 // this is velocity (controls friction)
+	mass: 0.01,
+	viscosity: 0.07 // velocity controls friction
 })
 ```
-See [physics examples](#physics-1)
+Take a look at [physics examples](#physics-1)
 
 ## Examples
 ### requestAnimationFrame
