@@ -32,7 +32,8 @@
         </div>
       </header>
       <section>
-<p>With Anima it&#8217;s easy to animate over a hundred objects at a time.<br/>
+<p>With Anima it&#8217;s easy to animate over a hundred objects at a time. Each item can have it's mass and viscosity to emulate reallife objects!
+<br/>
 And it&#8217;s only <strong>5k</strong> when gzipped. </p>
 
 <p><strong><a href="#examples" style="font-size:150%">Examples</a></strong> </p>
@@ -46,6 +47,8 @@ And it&#8217;s only <strong>5k</strong> when gzipped. </p>
 <p>Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: <code>JS</code> and <code>CSS</code>. The first one doesn&#8217;t really use CSS transitions or <code>@keyframes</code>. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. <code>CSS</code> mode allows you to generate pure CSS animations, but it has less control features for now. </p>
 
 <p><em><strong>Note</strong>: <code>CSS</code> mode is experimental for now, not everything works as expected.</em> </p>
+
+<p><em>Anima is the only animation framework that has elementary <b>physics integrated</b>. Now you can create lifelike animations with ease! See <a href="#physics">Physics API section</a></em></p>
 
 <h2 id="api">API</h2>
 
@@ -174,12 +177,12 @@ world.seek(500) // seek to 500ms
 
 <pre><code class="js">var world = js()
 world.add(document.querySelector('.div'), {
-    mass: 0.01, // this is mass
-    viscosity: 0.07 // this is velocity (controls friction)
+    mass: 0.01,
+    viscosity: 0.07 // velocity controls friction
 })
 </code></pre>
 
-See <a href="#physics-1">physics examples</a>
+Take a look at <a href="#physics-1">physics examples</a>
 <br><br>
 
 <h2 id="examples">Examples</h2>
