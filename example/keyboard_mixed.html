@@ -115,8 +115,8 @@ function onKeyDown(e) {
       translate[0] = 200
       break
   }
-  if (container.animations.length) {
-    var a = container.animations[0]
+  if (container.animation.length) {
+    var a = container.animation.get(0)
     a.translate = translate.map(function(t, i) {
       return t || a.translate[i]
     })
