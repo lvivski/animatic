@@ -143,7 +143,7 @@ world.add(document.querySelector('.div'), {
 	viscosity: 0.07 // this is velocity (controls friction)
 })
 ```
-You can see [physics example](http://lvivski.github.com/anima/example/physics.html) as a reference
+See [physics examples](#physics-1)
 
 ## Examples
 ### requestAnimationFrame
