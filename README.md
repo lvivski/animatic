@@ -20,7 +20,7 @@ _**Note**: `CSS` mode is experimental for now, not everything works as expected.
 
 ## API
 
-[Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#taking-control) | [Events](#animation-events) | [Easings](#timing-functions) | [Timeline](#timeline)
+[Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#taking-control) | [Events](#animation-events) | [Easings](#timing-functions) | [Timeline](#timeline) | [Physics](#physics)
 
 At first you have to initialize the World, so the frame loop will start (so called `JS` mode)
 ```js
@@ -134,6 +134,17 @@ world.seek(500) // seek to 500ms
 ```
 You can use [timeline example](http://lvivski.github.com/anima/example/timeline.html) as a reference
 
+### Physics
+Each item can also have it's mass an viscosity
+```js
+var world = js()
+world.add(document.querySelector('.div'), {
+	mass: 0.01, // this is mass
+	viscosity: 0.07 // this is velocity (controls friction)
+})
+```
+You can see [physics example](http://lvivski.github.com/anima/example/physics.html) as a reference
+
 ## Examples
 ### requestAnimationFrame
 - [keyboard control](http://lvivski.github.com/anima/example/keyboard.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
@@ -152,3 +163,7 @@ You can use [timeline example](http://lvivski.github.com/anima/example/timeline.
 uses both `JS` and `CSS` world at the same time
 
 - [keyboard control](http://lvivski.github.com/anima/example/keyboard_mixed.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
+
+### physics
+- [simple translate](http://lvivski.github.com/anima/example/physics.html)
+- [parallel animation](http://lvivski.github.com/anima/example/parallel_physics.html)

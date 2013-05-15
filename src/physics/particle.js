@@ -13,7 +13,7 @@ function Particle(node, mass, viscosity) {
     mass = mass.mass
   }
 
-  mass || (mass = 1)
+  mass || (mass = 0.01)
   viscosity || (viscosity = 0.05)
 
   this.mass = 1 / mass

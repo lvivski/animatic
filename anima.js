@@ -925,7 +925,7 @@
       viscosity = mass.viscosity;
       mass = mass.mass;
     }
-    mass || (mass = 1);
+    mass || (mass = .01);
     viscosity || (viscosity = .05);
     this.mass = 1 / mass;
     this.viscosity = viscosity;
