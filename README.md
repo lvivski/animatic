@@ -12,3 +12,5 @@ With Anima it's easy to animate over a hundred objects at a time. Each item can 
 And it's only 5k when gzipped.
 
 For Docs and Examples see: http://lvivski.github.com/anima/
+
+To suggest a feature, report a bug, or general discussion: http://github.com/lvivski/anima/issues/
