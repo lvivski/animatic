@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>{{ site.title }}</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/github.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  </head>
+  <body>
+    <div id="fb-root"></div>
+    <div class="wrapper">
+      <header>
+        <h1>Anima.js</h1>
+        <p class="view">
+          <a href="https://github.com/{{ site.github.username }}/{{ site.github.project }}">GitHub Repository</a>
+        </p>
+        <div>
+          <iframe src="http://ghbtns.com/github-btn.html?user={{ site.github.username }}&type=follow&size=large"
+            allowtransparency="true" frameborder="0" scrolling="0" width="160" height="50"></iframe>
+          <iframe src="http://ghbtns.com/github-btn.html?user={{ site.github.username }}&repo={{ site.github.project }}&type=watch&count=true&size=large"
+            allowtransparency="true" frameborder="0" scrolling="0" width="150" height="50"></iframe>
+          <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://{{ site.github.username }}.github.com/{{ site.github.project }}" data-via="{{ site.github.username }}" data-size="large">Tweet</a>
+          <div class="g-plusone" data-href="http://{{ site.github.username }}.github.com/anima"></div>
+          <br>
+        </div>
+      </header>
+      <section>
+        {{ content }}
+      </section>
+    </div>
+  </body>
+  <script>
+    var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']],
+        d = document,
+        head = document.getElementsByTagName('head')[0],
+        s = 'script'
+        
+    g('//www.google-analytics.com/ga.js')
+    g('https://apis.google.com/js/plusone.js')
+    b('//platform.twitter.com/widgets.js', 'twitter-wjs')
+        
+    function g(url) {
+      var js = d.createElement(s)
+      js.type = 'text/javascript';js.async = true
+      js.src = url
+      head.appendChild(js)
+    }
+        
+    function b(url, id) {
+      if (d.getElementById(id)) return      
+      var js = d.createElement(s);js.id = id
+      js.src = url
+      head.appendChild(js)
+    }
+  </script>
+</html>
