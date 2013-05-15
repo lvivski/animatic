@@ -948,18 +948,25 @@
   };
   Particle.prototype.update = function(tick) {
     this.animation.run(tick);
-    this.clock || (this.clock = tick);
-    var delta = tick - this.clock;
-    if (delta > 0) {
-      this.clock = tick;
-      delta *= .001;
-      this.integrate(delta);
-    }
+    this.integrate(tick);
     this.style();
   };
-  Particle.prototype.integrate = function(delta) {
-    Constant.call(this);
-    Verlet.call(this, delta, 1 - this.viscosity);
+  Particle.prototype.timeline = function(tick) {
+    this.clear();
+    this.animation.seek(tick);
+    this.integrate(tick, true);
+    this.style();
+  };
+  Particle.prototype.integrate = function(tick, clamp) {
+    this.clock || (this.clock = tick);
+    var delta = tick - this.clock;
+    if (delta) {
+      clamp && (delta = Math.max(-16, Math.min(16, delta)));
+      this.clock = tick;
+      delta *= .001;
+      Constant.call(this);
+      Verlet.call(this, delta, 1 - this.viscosity);
+    }
   };
   Particle.prototype.matrix = function() {
     var state = this.state;

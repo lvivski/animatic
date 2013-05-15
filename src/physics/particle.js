@@ -51,18 +51,17 @@ Particle.prototype.init = function () {
 Particle.prototype.update = function (tick) {
   this.animation.run(tick)
 
-  this.clock || (this.clock = tick)
+  this.integrate(tick)
 
-  var delta = tick - this.clock
+  this.style()
+}
 
-  if (delta > 0) {
-    this.clock = tick
-
-    delta *= 0.001
-
-    this.integrate(delta)
-  }
-
+Particle.prototype.timeline = function (tick) {
+  this.clear()
+  this.animation.seek(tick)
+  
+  this.integrate(tick, true)
+  
   this.style()
 }
 
@@ -70,11 +69,22 @@ Particle.prototype.update = function (tick) {
  * Integrates particle
  * @param {number} delta
  */
-Particle.prototype.integrate = function (delta) {
-  Constant.call(this)
-  //Attraction.call(this)
+Particle.prototype.integrate = function (tick, clamp) {
+  this.clock || (this.clock = tick)
 
-  Verlet.call(this, delta, 1.0 - this.viscosity)
+  var delta = tick - this.clock
+
+  if (delta) {
+    clamp && (delta = Math.max(-16, Math.min(16, delta)))
+
+    this.clock = tick
+
+    delta *= 0.001
+
+    Constant.call(this)
+    
+    Verlet.call(this, delta, 1.0 - this.viscosity)
+  }
 }
 
 /**
