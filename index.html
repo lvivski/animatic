@@ -33,7 +33,7 @@
       </header>
       <section>
 <p>With Anima it&#8217;s easy to animate over a hundred objects at a time.<br/>
-And it&#8217;s only <strong>4k</strong> when gzipped. </p>
+And it&#8217;s only <strong>5k</strong> when gzipped. </p>
 
 <p><strong><a href="#examples" style="font-size:150%">Examples</a></strong> </p>
 
@@ -49,7 +49,7 @@ And it&#8217;s only <strong>4k</strong> when gzipped. </p>
 
 <h2 id="api">API</h2>
 
-<p><a href="#singleanimation">Single</a> | <a href="#sequentialanimations">Sequence</a> | <a href="#parallelanimations">Parallel</a> | <a href="#infiniteanimations">Infinite</a> | <a href="#takingcontrol">Control methods</a> | <a href="#animationevents">Events</a> | <a href="#timingfunctions">Easings</a> | <a href="#timeline">Timeline</a></p>
+<p><a href="#singleanimation">Single</a> | <a href="#sequentialanimations">Sequence</a> | <a href="#parallelanimations">Parallel</a> | <a href="#infiniteanimations">Infinite</a> | <a href="#takingcontrol">Control methods</a> | <a href="#animationevents">Events</a> | <a href="#timingfunctions">Easings</a> | <a href="#timeline">Timeline</a> | <a href="#physics">Physics</a></p>
 
 <p>At first you have to initialize the World, so the frame loop will start (so called <code>JS</code> mode) </p>
 
@@ -168,6 +168,20 @@ world.seek(500) // seek to 500ms
 
 <p>You can use <a href="example/timeline.html">timeline example</a> as a reference</p>
 
+<h3 id="physics">Physics</h3>
+
+<p>Each item can also have it's mass an viscosity</p>
+
+<pre><code class="js">var world = js()
+world.add(document.querySelector('.div'), {
+    mass: 0.01, // this is mass
+    viscosity: 0.07 // this is velocity (controls friction)
+})
+</code></pre>
+
+See <a href="#physics-1">physics examples</a>
+<br><br>
+
 <h2 id="examples">Examples</h2>
 
 <h3 id="requestanimationframe">requestAnimationFrame</h3>
@@ -196,6 +210,15 @@ world.seek(500) // seek to 500ms
 <ul>
 <li><a href="example/keyboard_mixed.html">keyboard control</a> (use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> and <code>W</code> <code>A</code> <code>S</code> <code>D</code> to transform)</li>
 </ul>
+
+<h3 id="physics-1">physics</h3>
+
+<ul>
+<li><a href="example/physics.html">simple translate</a></li>
+<li><a href="example/parallel_physics.html">parallel animation</a></li>
+</ul>
+
+
       </section>
     </div>
   </body>
