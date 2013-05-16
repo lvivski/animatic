@@ -5,7 +5,7 @@ With Anima it's easy to animate over a hundred objects at a time. Each item can 
 
 And it's only **5k** when gzipped.
 
-**[Examples](#examples)**
+**[Examples](#toc_14)**
 
 ### Browser support
 Chrome, Safari, Firefox, Internet Explorer 10
@@ -19,11 +19,11 @@ Anima gives you the ability to use delays and durations normally, even for pure 
 
 _**Note**: `CSS` mode is experimental for now, not everything works as expected._
 
-_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#physics)_
+_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#toc_13)_
 
 ## API
 
-[Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#taking-control) | [Events](#animation-events) | [Easings](#timing-functions) | [Timeline](#timeline) | [Physics](#physics)
+[Single](#toc_3) | [Sequence](#toc_4) | [Parallel](#toc_5) | [Infinite](#toc_6) | [Control methods](#toc_7) | [Events](#toc_10) | [Easings](#toc_11) | [Timeline](#toc_12) | [Physics](#toc_13)
 
 At first you have to initialize the World, so the frame loop will start (so called `JS` mode)
 
@@ -53,6 +53,7 @@ item.animate(...).css()
 
 ### Single animation
 Arguments:
+
 1. The map of transformations to apply. Only `translate`, `rotate`, `scale` and `opacity` are currently supported, but the list will expand.
 2. Animation duration
 3. Easing function
@@ -167,7 +168,7 @@ world.add(document.querySelector('.div'), {
 })
 ```
 
-Take a look at [physics examples](#physics-1)
+Take a look at [physics examples](#toc_18)
 
 ## Examples
 ### requestAnimationFrame
