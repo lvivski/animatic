@@ -37,7 +37,7 @@ anima.min.js: anima.js
 	@rm -f $@
 	@$(JS_COMPILER) $< -c -m -o $@ \
 		--source-map $@.map \
-		&& du -h anima.js anima.min.js
+		&& du -h $< $@
 
 deps:
 	mkdir -p node_modules
