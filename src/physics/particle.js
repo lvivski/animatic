@@ -5,19 +5,24 @@
  * @param {number=} viscosity
  * @constructor
  */
-function Particle(node, mass, viscosity) {
+function Particle(node, mass, viscosity, edge) {
   Item.call(this, node)
-
+  
   if (mass === Object(mass)) {
     viscosity = mass.viscosity
+    edge = mass.edge
     mass = mass.mass
   }
+  
+  mass /= 100
 
   mass || (mass = 0.01)
-  viscosity || (viscosity = 0.05)
+  viscosity || (viscosity = 0.1)
+  edge || (edge = false)
 
   this.mass = 1 / mass
   this.viscosity = viscosity
+  this.edge = edge
 }
 
 Particle.prototype = Object.create(Item.prototype)
@@ -80,8 +85,9 @@ Particle.prototype.integrate = function (tick, clamp) {
     this.clock = tick
 
     delta *= 0.001
-
+    
     Constant.call(this)
+    this.edge && Edge.call(this, Vector.set(0, 0, 0), Vector.set(500, 0, 0))
     
     Verlet.call(this, delta, 1.0 - this.viscosity)
   }

@@ -9,18 +9,40 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="ball" style="left: 100px;top: 200px"></div>
+  <div class="ball ball1" style="left: 100px;top: 25px"></div>
+  <div class="ball ball2" style="left: 100px;top: 250px"></div>
+  <div class="ball ball3" style="left: 100px;top: 475px"></div>
 </body>
 <script src="../anima.js"></script>
 <script>
+setTimeout(function(){
   var world = anima.js(),
-      item = world.add(document.querySelector('.ball'), {
-        mass: 0.01,
-        viscosity: 0.07
+      item1 = world.add(document.querySelector('.ball1'))
+      item2 = world.add(document.querySelector('.ball2'), {
+        mass: 1,
+        viscosity: 0.1,
+        edge: true
+      }),
+      item3 = world.add(document.querySelector('.ball3'), {
+        mass: 1,
+        viscosity: 0.1
       })
-  item
+
+  item1
     .animate({
       translate: [500, 0, 0]
-    }, 500)
+    }, 200)
+
+  item2
+    .animate({
+      translate: [500, 0, 0]
+    }, 200)
+    
+  item3
+    .animate({
+      translate: [500, 0, 0]
+    }, 200)
+}, 500)
+  
 </script>
 </html>

@@ -720,10 +720,10 @@
       this.items[i].update(tick);
     }
   };
-  World.prototype.add = function(node, mass, viscosity) {
+  World.prototype.add = function(node, mass, viscosity, edge) {
     var item;
     if (mass) {
-      item = new Particle(node, mass, viscosity);
+      item = new Particle(node, mass, viscosity, edge);
     } else {
       item = new Item(node);
     }
@@ -897,7 +897,7 @@
   };
   function Constant() {
     var force = Vector.sub(this.state.translate, this.current.position);
-    this.current.acceleration = Vector.add(this.current.acceleration, force);
+    this.current.acceleration = Vector.add(this.current.acceleration, Vector.scale(force, 1));
   }
   function Attraction(radius, strength) {
     radius || (radius = 1e3);
@@ -906,6 +906,15 @@
     if (distance < radius) {
       force = Vector.scale(Vector.norm(force), 1 - distance * distance / (radius * radius));
       this.current.acceleration = Vector.add(this.current.acceleration, Vector.scale(force, strength));
+    }
+  }
+  function Edge(min, max) {
+    min || (min = Vector.set(0, 0, 0));
+    max || (max = Vector.set(0, 0, 0));
+    for (var i = 0; i < 3; ++i) {
+      if (this.current.position[i] < min[i] || this.current.position[i] > max[i]) {
+        this.previous.position[i] = 2 * this.current.position[i] - this.previous.position[i];
+      }
     }
   }
   function Verlet(delta, drag) {
@@ -919,16 +928,20 @@
     current.position = Vector.add(current.position, Vector.add(current.velocity, Vector.scale(current.acceleration, delta * delta)));
     current.acceleration = Vector.zero();
   }
-  function Particle(node, mass, viscosity) {
+  function Particle(node, mass, viscosity, edge) {
     Item.call(this, node);
     if (mass === Object(mass)) {
       viscosity = mass.viscosity;
+      edge = mass.edge;
       mass = mass.mass;
     }
+    mass /= 100;
     mass || (mass = .01);
-    viscosity || (viscosity = .05);
+    viscosity || (viscosity = .1);
+    edge || (edge = false);
     this.mass = 1 / mass;
     this.viscosity = viscosity;
+    this.edge = edge;
   }
   Particle.prototype = Object.create(Item.prototype);
   Particle.prototype.constructor = Particle;
@@ -965,6 +978,7 @@
       this.clock = tick;
       delta *= .001;
       Constant.call(this);
+      this.edge && Edge.call(this, Vector.set(0, 0, 0), Vector.set(500, 0, 0));
       Verlet.call(this, delta, 1 - this.viscosity);
     }
   };

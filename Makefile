@@ -16,6 +16,7 @@ FILES = \
 	src/item.js \
 	src/physics/forces/constant.js \
 	src/physics/forces/attraction.js \
+	src/physics/forces/edge.js \
 	src/physics/verlet.js \
 	src/physics/particle.js \
 

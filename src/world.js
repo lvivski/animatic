@@ -44,10 +44,10 @@ World.prototype.update = function (tick) {
  * @param {number=} viscosity
  * @return {Item}
  */
-World.prototype.add = function (node, mass, viscosity) {
+World.prototype.add = function (node, mass, viscosity, edge) {
   var item
   if (mass) {
-    item = new Particle(node, mass, viscosity)
+    item = new Particle(node, mass, viscosity, edge)
   } else {
     item = new Item(node)
   }
