@@ -87,7 +87,7 @@ Particle.prototype.integrate = function (tick, clamp) {
     delta *= 0.001
     
     Constant.call(this)
-    this.edge && Edge.call(this, Vector.set(0, 0, 0), Vector.set(500, 0, 0))
+    this.edge && Edge.call(this, Vector.set(this.edge.min), Vector.set(this.edge.max), this.edge.bounce)
     
     Verlet.call(this, delta, 1.0 - this.viscosity)
   }

@@ -21,7 +21,9 @@ setTimeout(function(){
       item2 = world.add(document.querySelector('.ball2'), {
         mass: 1,
         viscosity: 0.1,
-        edge: true
+        edge: {
+          max: [500, 0, 0]
+        }
       }),
       item3 = world.add(document.querySelector('.ball3'), {
         mass: 1,

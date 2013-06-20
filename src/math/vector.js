@@ -5,6 +5,9 @@ var Vector = {
       z = x[2]
       x = x[0]
     }
+    if (x === undefined) {
+      x = 0
+    }
     if (y === undefined) {
       y = x
       z = x

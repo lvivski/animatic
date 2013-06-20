@@ -30,6 +30,9 @@
         z = x[2];
         x = x[0];
       }
+      if (x === undefined) {
+        x = 0;
+      }
       if (y === undefined) {
         y = x;
         z = x;
@@ -897,7 +900,7 @@
   };
   function Constant() {
     var force = Vector.sub(this.state.translate, this.current.position);
-    this.current.acceleration = Vector.add(this.current.acceleration, Vector.scale(force, 1));
+    this.current.acceleration = Vector.add(this.current.acceleration, force);
   }
   function Attraction(radius, strength) {
     radius || (radius = 1e3);
@@ -908,12 +911,17 @@
       this.current.acceleration = Vector.add(this.current.acceleration, Vector.scale(force, strength));
     }
   }
-  function Edge(min, max) {
-    min || (min = Vector.set(0, 0, 0));
-    max || (max = Vector.set(0, 0, 0));
+  function Edge(min, max, bounce) {
+    min || (min = Vector.set(0));
+    max || (max = Vector.set(0));
+    bounce || (bounce = true);
     for (var i = 0; i < 3; ++i) {
       if (this.current.position[i] < min[i] || this.current.position[i] > max[i]) {
-        this.previous.position[i] = 2 * this.current.position[i] - this.previous.position[i];
+        if (bounce) {
+          this.previous.position[i] = 2 * this.current.position[i] - this.previous.position[i];
+        } else {
+          this.current.position[i] = Math.max(min[i], Math.min(max[i], this.current.position[i]));
+        }
       }
     }
   }
@@ -978,7 +986,7 @@
       this.clock = tick;
       delta *= .001;
       Constant.call(this);
-      this.edge && Edge.call(this, Vector.set(0, 0, 0), Vector.set(500, 0, 0));
+      this.edge && Edge.call(this, Vector.set(this.edge.min), Vector.set(this.edge.max), this.edge.bounce);
       Verlet.call(this, delta, 1 - this.viscosity);
     }
   };
