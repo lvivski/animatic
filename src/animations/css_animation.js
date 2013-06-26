@@ -7,7 +7,7 @@
  * @param {number} delay
  * @constructor
  */
-function CssAnimation(item, animation, duration, ease, delay, infinite, generated) {
+function CssAnimation(item, animation, duration, ease, delay, generated) {
   EventEmitter.call(this)
 
   this.item = item
@@ -20,8 +20,8 @@ function CssAnimation(item, animation, duration, ease, delay, infinite, generate
   this.duration = (animation.duration || duration) | 0
   this.delay = (animation.delay || delay) | 0
   this.ease = easings.css[animation.ease] || easings.css[ease] || easings.css.linear
-  this.infinite = animation.infinite || infinite
 
+  this._infinite = false
   this._generated = generated
 }
 
@@ -39,7 +39,7 @@ CssAnimation.prototype.init = function (tick, force) {
   this.start = tick + this.delay
 
   this.item.style(_animationProperty, this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
-    this.delay + 'ms' + (this.infinite ? ' infinite' : '') + ' ' + 'forwards')
+    this.delay + 'ms' + (this._infinite ? ' infinite' : '') + ' ' + 'forwards')
 
   this.emit('start')
 }

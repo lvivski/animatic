@@ -2,11 +2,16 @@
   "use strict";
   var a = window.anima = window.a = {};
   a.world = function() {
-    return new World(true);
+    return new World();
   };
   a.timeline = function() {
     return new Timeline();
   };
+  if (typeof module === "object" && typeof module.exports === "object") {
+    module.exports = a;
+  } else if (typeof define === "function" && define.amd) {
+    define(a);
+  }
   var _requestAnimationFrame = window.requestAnimationFrame, _cancelAnimationFrame = window.cancelAnimationFrame;
   for (var i = 0, vendors = [ "webkit", "Moz", "O", "ms" ], vendor; i < vendors.length && !_requestAnimationFrame; ++i) {
     vendor = vendors[i];
@@ -433,7 +438,7 @@
     this.start = null;
     this.emit("end");
   };
-  function CssAnimation(item, animation, duration, ease, delay, infinite, generated) {
+  function CssAnimation(item, animation, duration, ease, delay, generated) {
     EventEmitter.call(this);
     this.item = item;
     this.name = animation.name || animation;
@@ -442,7 +447,7 @@
     this.duration = (animation.duration || duration) | 0;
     this.delay = (animation.delay || delay) | 0;
     this.ease = easings.css[animation.ease] || easings.css[ease] || easings.css.linear;
-    this.infinite = animation.infinite || infinite;
+    this._infinite = false;
     this._generated = generated;
   }
   CssAnimation.prototype = Object.create(EventEmitter.prototype);
@@ -450,7 +455,7 @@
   CssAnimation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick + this.delay;
-    this.item.style(_animationProperty, this.name + " " + this.duration + "ms" + " " + this.ease + " " + this.delay + "ms" + (this.infinite ? " infinite" : "") + " " + "forwards");
+    this.item.style(_animationProperty, this.name + " " + this.duration + "ms" + " " + this.ease + " " + this.delay + "ms" + (this._infinite ? " infinite" : "") + " " + "forwards");
     this.emit("start");
   };
   CssAnimation.prototype.run = function() {};
@@ -484,11 +489,11 @@
   }
   Collection.prototype = Object.create(EventEmitter.prototype);
   Collection.prototype.constructor = Collection;
-  Collection.prototype.add = function(transform, duration, ease, delay, infinite, generated) {
+  Collection.prototype.add = function(transform, duration, ease, delay, generated) {
     if (Array.isArray(transform)) {
       transform = parallel(this.item, transform);
     } else if (typeof transform == "string" || transform.name != undefined) {
-      transform = new CssAnimation(this.item, transform, duration, ease, delay, infinite, generated);
+      transform = new CssAnimation(this.item, transform, duration, ease, delay, generated);
     } else if (!(transform instanceof Collection)) {
       transform = new Animation(this.item, transform, duration, ease, delay);
     }
@@ -597,6 +602,9 @@
     var a;
     while (this.animations.length !== 0) {
       a = this.animations[0];
+      if (a instanceof CssAnimation) {
+        a._infinite = this._infinite;
+      }
       a.init(tick);
       if (a.start + a.duration <= tick) {
         if (!(this._infinite && a instanceof CssAnimation)) {
@@ -680,7 +688,7 @@
     var animation = "a" + Date.now() + "r" + Math.floor(Math.random() * 1e3);
     this.stylesheet.insertRule(this.keyframes(animation), 0);
     this.animation.empty();
-    this.animation.add(animation, this.animation.duration, "", 0, this.animation._infinite, true);
+    this.animation.add(animation, this.animation.duration, "", 0, true);
   };
   CSS.prototype.keyframes = function(name) {
     var time = 0, rule = [ "@" + _vendor + "keyframes " + name + "{" ];

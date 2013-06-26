@@ -34,6 +34,9 @@ Sequence.prototype.run = function (tick) {
   var a
   while (this.animations.length !== 0) {
     a = this.animations[0]
+    if (a instanceof CssAnimation) {
+      a._infinite = this._infinite;
+    }
     a.init(tick)
     if (a.start + a.duration <= tick) {
       if (!(this._infinite && a instanceof CssAnimation)) {

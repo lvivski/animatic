@@ -63,7 +63,7 @@ CSS.prototype.style = function () {
   this.stylesheet.insertRule(this.keyframes(animation), 0)
 
   this.animation.empty()
-  this.animation.add(animation, this.animation.duration, '', 0, this.animation._infinite, true)
+  this.animation.add(animation, this.animation.duration, '', 0, true)
 }
 
 /**

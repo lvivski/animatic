@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Infinite</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="ball" style="left: 100px"></div>
+<style>
+@-webkit-keyframes bounce {
+    0% {
+        -webkit-transform: translateY(0);
+        -webkit-animation-timing-function: cubic-bezier(0.550, 0.085, 0.680, 0.530);
+    }
+    45% {
+        -webkit-transform: translateY(300px);
+        -webkit-animation-timing-function: linear;
+    }
+    50% {
+        -webkit-transform: translateY(300px) scaleX(1.1) scaleY(.8);
+        -webkit-animation-timing-function: linear;
+    }
+    55% {
+        -webkit-transform: translateY(300px);
+        -webkit-animation-timing-function: cubic-bezier(0.250, 0.460, 0.450, 0.940);
+    }
+    100% {
+        -webkit-transform: translateY(0);
+    }
+}
+</style>
+</body>
+<script src="../anima.js"></script>
+<script>
+    var world = anima.world(),
+            item = world.add(document.querySelector('.ball'))
+
+    item.animate({
+        name: 'bounce',
+        duration: 1100
+    }).infinite()
+</script>
+</html>

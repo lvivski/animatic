@@ -23,14 +23,13 @@ Collection.prototype.constructor = Collection
  * @param duration
  * @param ease
  * @param delay
- * @param infinite
  * @param generated
  */
-Collection.prototype.add = function (transform, duration, ease, delay, infinite, generated) {
+Collection.prototype.add = function (transform, duration, ease, delay,  generated) {
   if (Array.isArray(transform)) {
     transform = parallel(this.item, transform)
   } else if (typeof transform == 'string' || transform.name != undefined) {
-    transform = new CssAnimation(this.item, transform, duration, ease, delay, infinite, generated)
+    transform = new CssAnimation(this.item, transform, duration, ease, delay, generated)
   } else if (!(transform instanceof Collection)) {
     transform = new Animation(this.item, transform, duration, ease, delay)
   }
