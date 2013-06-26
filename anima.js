@@ -594,26 +594,27 @@
     this.emit("start");
   };
   Sequence.prototype.run = function(tick) {
+    var a;
     while (this.animations.length !== 0) {
-      var first = this.animations[0];
-      first.init(tick);
-      if (first.start + first.duration <= tick) {
-        if (!(this._infinite && first instanceof CssAnimation)) {
+      a = this.animations[0];
+      a.init(tick);
+      if (a.start + a.duration <= tick) {
+        if (!(this._infinite && a instanceof CssAnimation)) {
           this.animations.shift();
-          first.end();
+          a.end();
         } else {
           break;
         }
-        if (this._infinite && !(first instanceof CssAnimation)) {
-          this.animations.push(first);
+        if (this._infinite && !(a instanceof CssAnimation)) {
+          this.animations.push(a);
         }
         continue;
       }
-      first.run(tick);
-      if (!(first instanceof CssAnimation)) {
-        this.item.style();
-      }
+      a.run(tick);
       break;
+    }
+    if (!(a instanceof CssAnimation)) {
+      this.item.style();
     }
   };
   Sequence.prototype.seek = function(tick) {

@@ -1,26 +1,12 @@
 (function($, a){
-	var worlds = {
-		js: null,
-		css: null
-	};
+	var world;
 
-	$.anima = {
-		world: function (type) {
-			return worlds[type];
-		}
-	};
-
-	$.fn.anima = function (type) {
-		if (!worlds.hasOwnProperty(type)) {
-			throw new Error('Invalid world type specified');
+	$.fn.anima = function () {
+		if (!world) {
+			world = a.world(); 
 		}
 
-		if (!worlds[type]) {
-			worlds[type] = a[type](); 
-		}
-
-		var world = worlds[type],
-		    index = world.items.indexOf(this[0]),
+		var index = world.items.indexOf(this[0]),
 		    item = index !== -1 ? world.items[index] : world.add(this[0]);
 
 		return item;
