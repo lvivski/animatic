@@ -50,6 +50,7 @@ Parallel.prototype.run = function (tick) {
     }
     a.run(tick)
   }
+  this.item.style()
 }
 
 /**

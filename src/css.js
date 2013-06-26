@@ -10,7 +10,6 @@ function CSS(item, idle) {
 
   this.item = item
   this.animation = item.animation
-  this.total = item.animation.duration
 
   !idle && this.style()
 }
@@ -27,16 +26,14 @@ CSS.prototype.createStyleSheet = function () {
  * Pauses CSS animation
  */
 CSS.prototype.pause = function () {
-  this.item.style(_animationProperty + 'PlayState','paused')
-  return this
+  this.animation.pause()
 }
 
 /**
  * Resumes CSS animation
  */
 CSS.prototype.resume = function () {
-  this.item.style(_animationProperty + 'PlayState', 'running')
-  return this
+  this.animation.resume()
 }
 
 /**
@@ -50,22 +47,11 @@ CSS.prototype.stop = function () {
       opacity = computed.opacity
 
   this.item.style(_animationProperty, '')
-  this.item.style(_transitionProperty, '')
-
   this.item.state = Matrix.decompose(Matrix.parse(transform))
   this.item.state.opacity = opacity
   this.item.style()
 
   return this
-}
-
-
-CSS.prototype.handle = function (event) {
-  var onEnd = function end() {
-        this.stop()
-        this.item.dom.removeEventListener(vendor + event, onEnd, false)
-      }.bind(this)
-  this.item.dom.addEventListener(vendor + event, onEnd, false)
 }
 
 /**
@@ -74,22 +60,10 @@ CSS.prototype.handle = function (event) {
 CSS.prototype.style = function () {
   var animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
 
-  if (this.animation.get(0) instanceof Animation &&
-    this.animation.length === 1) { // transition
-    var a = this.animation.get(0)
-    a.init()
-    this.item.style(_transitionProperty, a.duration + 'ms' + ' ' + easings.css[a.easeName] + ' ' + a.delay + 'ms')
-    a.transform(1)
-    this.handle('TransitionEnd')
-    this.item.style()
-  } else { // animation
-    this.stylesheet.insertRule(this.keyframes(animation), 0)
-    this.handle('AnimationEnd')
-    this.item.style(_animationProperty, animation + ' ' + this.total + 'ms' + ' ' +
-      (this.animation._infinite ? 'infinite' : '') + ' ' + 'forwards')
-  }
+  this.stylesheet.insertRule(this.keyframes(animation), 0)
 
   this.animation.empty()
+  this.animation.add(animation, this.animation.duration, '', 0, this.animation._infinite, true)
 }
 
 /**
@@ -148,7 +122,7 @@ CSS.prototype.keyframes = function (name) {
  * @return {string}
  */
 CSS.prototype.percent = function (time) {
-  return (time * 100 / this.total).toFixed(3)
+  return (time * 100 / this.animation.duration).toFixed(3)
 }
 
 /**

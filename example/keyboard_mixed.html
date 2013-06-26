@@ -17,15 +17,16 @@
   <div class="controls">
     <div class="controls-bg"></div>
     <div class="controls-content">
+      <input type="button" rel="pause" value="Pause" />
+      <input type="button" rel="resume" value="Play" />
       use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> to rotate and <code>W</code> <code>A</code> <code>S</code> <code>D</code> to move
     </div>
   </div>
 </body>
 <script src="../anima.js"></script>
 <script>
-var js = anima.js(),
-    css = anima.css(),
-    container = js.add(document.querySelector('.world')),
+var world = anima.world(),
+    container = world.add(document.querySelector('.world')),
     keys = {
       UP: 38,
       DOWN: 40,
@@ -61,10 +62,11 @@ for (var i = 0; i < elements.length; i++) {
   card.appendChild(el)
   card.appendChild(title)
 
-  var item = css.add(card),
-      d = Math.floor(Math.random()*(50-25))+25
-      t = Math.floor(Math.random()*(700-300))+300
+  var item = world.add(card),
+      d = Math.floor(Math.random()*(50-25))+25,
+      t = Math.floor(Math.random()*(700-300))+300,
       m = d < 37.5 ? -1 : 1
+
   item.translate([-hWidth + i*110 % width, -hHeight + Math.floor(i*110/width)*130, 0])
 
   item.animate({
@@ -131,5 +133,11 @@ function onKeyDown(e) {
     }, 500)
   }
 }
+
+[].slice.call(document.querySelectorAll('.controls input')).forEach(function(el) {
+    el.addEventListener('click', function(e){
+        world[this.getAttribute('rel')]()
+    }, false)
+})
 </script>
 </html>

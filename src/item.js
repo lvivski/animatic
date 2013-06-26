@@ -37,7 +37,6 @@ Item.prototype.init = function () {
  */
 Item.prototype.update = function (tick) {
   this.animation.run(tick)
-  this.style()
 }
 
 /**
@@ -47,7 +46,6 @@ Item.prototype.update = function (tick) {
 Item.prototype.timeline = function (tick) {
   this.clear()
   this.animation.seek(tick)
-  this.style()
 }
 
 /**

@@ -8,16 +8,8 @@ var a = window.anima = window.a = {}
  * Creates and initializes world with frame loop
  * @return {World}
  */
-a.js = function () {
+a.world = function () {
   return new World(true)
-}
-
-/**
- * Creates and initializes world without frame loop
- * @return {World}
- */
-a.css = function () {
-  return new World
 }
 
 /**

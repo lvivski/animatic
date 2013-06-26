@@ -35,12 +35,21 @@ Sequence.prototype.run = function (tick) {
     var first = this.animations[0]
     first.init(tick)
     if (first.start + first.duration <= tick) {
-      this._infinite && this.animations.push(first)
-      this.animations.shift()
-      first.end()
+      if (!(this._infinite && first instanceof CssAnimation)) {
+        this.animations.shift()
+        first.end()
+      } else {
+        break
+      }
+      if (this._infinite && !(first instanceof CssAnimation)) {
+        this.animations.push(first)
+      }
       continue
     }
     first.run(tick)
+    if(!(first instanceof CssAnimation)) {
+      this.item.style();
+    }
     break
   }
 }
@@ -61,6 +70,7 @@ Sequence.prototype.seek = function (tick) {
       continue
     }
     a.run(tick)
+    this.item.style();
     break
   }
 }

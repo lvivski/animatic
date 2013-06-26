@@ -35,7 +35,7 @@
     	height: 100%;
       border-radius: 15px;
     	-webkit-backface-visibility: hidden;
-    	
+
       box-sizing: border-box;
     }
     .face {
@@ -97,7 +97,7 @@
 </body>
 <script src="../anima.js"></script>
 <script>
-var world = anima.js(),
+var world = anima.world(),
     suits = 'spades hearts diamonds clubs'.split(' ')
     values = '2 3 4 5 6 7 8 9 10 J Q K A'.split(' ')
 
@@ -108,15 +108,15 @@ for (var j = 0; j < 13; ++j) for (var i = 0; i < 4; ++i) {
       card = document.createElement('div'),
       face = document.createElement('div'),
       back = document.createElement('div')
-  
+
   container.classList.add('container')
   card.classList.add('card')
   face.classList.add('face')
   back.classList.add('back')
-      
+
   face.setAttribute('data-suit', suits[i])
   face.innerText = values[j]
-  
+
   card.appendChild(face)
   card.appendChild(back)
   container.appendChild(card)
@@ -160,7 +160,7 @@ Array.prototype.slice.call(document.querySelectorAll('.container')).forEach(func
       }
     ], 300)
   }, false)
-  
+
   card.querySelector('.face').addEventListener('click', function(){
     item.animate([
       {

@@ -7,6 +7,7 @@ FILES = \
 	src/eventemitter.js \
 	src/animations/easings.js \
 	src/animations/animation.js \
+	src/animations/css_animation.js \
 	src/animations/collection.js \
 	src/animations/parallel.js \
 	src/animations/sequence.js \

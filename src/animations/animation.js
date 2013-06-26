@@ -50,19 +50,6 @@ Animation.prototype.init = function (tick, force) {
   this.emit('start')
 }
 
-Animation.prototype.animate = function () {
-  return this.item.animate.apply(this.item, arguments)
-}
-
-Animation.prototype.css = function () {
-  return this.item.css()
-}
-
-Animation.prototype.infinite = function () {
-  this.item.infinite = true
-  return this
-}
-
 /**
  * Runs one tick of animation
  * @param {number} tick

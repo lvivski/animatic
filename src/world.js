@@ -1,13 +1,12 @@
 /**
  * Creates new world and start frame loop
- * @param {boolean=} start
  * @constructor
  */
-function World(start) {
+function World() {
   EventEmitter.call(this)
   this.items = []
   this.frame = null
-  start && this.init()
+  this.init()
 }
 
 World.prototype = Object.create(EventEmitter.prototype)

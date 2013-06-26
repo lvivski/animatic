@@ -23,10 +23,14 @@ Collection.prototype.constructor = Collection
  * @param duration
  * @param ease
  * @param delay
+ * @param infinite
+ * @param generated
  */
-Collection.prototype.add = function (transform, duration, ease, delay) {
+Collection.prototype.add = function (transform, duration, ease, delay, infinite, generated) {
   if (Array.isArray(transform)) {
     transform = parallel(this.item, transform)
+  } else if (typeof transform == 'string' || transform.name != undefined) {
+    transform = new CssAnimation(this.item, transform, duration, ease, delay, infinite, generated)
   } else if (!(transform instanceof Collection)) {
     transform = new Animation(this.item, transform, duration, ease, delay)
   }
