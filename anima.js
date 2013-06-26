@@ -1007,6 +1007,9 @@
       Verlet.call(this, delta, 1 - this.viscosity);
     }
   };
+  Particle.prototype.css = function() {
+    throw new Error("CSS is nor supported for physics");
+  };
   Particle.prototype.matrix = function() {
     var state = this.state;
     return Matrix.compose(this.current.position, state.rotate, state.scale);

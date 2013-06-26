@@ -93,6 +93,10 @@ Particle.prototype.integrate = function (tick, clamp) {
   }
 }
 
+Particle.prototype.css = function () {
+  throw new Error('CSS is nor supported for physics');
+}
+
 /**
  * Gets particle matrix
  * @returns {Array}
