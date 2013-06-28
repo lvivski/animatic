@@ -23,9 +23,8 @@
 </body>
 <script src="https://rawgithub.com/lvivski/anima/master/anima.min.js"></script>
 <script>
-var js = anima.js(),
-    css = anima.css(),
-    container = js.add(document.querySelector('.world')),
+var world = anima.world(),
+    container = world.add(document.querySelector('.world')),
     keys = {
       UP: 38,
       DOWN: 40,
@@ -61,7 +60,7 @@ for (var i = 0; i < elements.length; i++) {
   card.appendChild(el)
   card.appendChild(title)
     
-  var item = css.add(card),
+  var item = world.add(card),
       d = Math.floor(Math.random()*(50-25))+25
       t = Math.floor(Math.random()*(700-300))+300
       m = d < 37.5 ? -1 : 1
