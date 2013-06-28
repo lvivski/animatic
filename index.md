@@ -15,9 +15,7 @@ CSS animations have some limits, the main is that you can't really have full con
 
 Another problem is calculating percents for keyframes. People create animations with time in mind, not percents. You always think of _"it should fly and rotate for a half of a second, then stand still for another second and continue flying"_, and not `0% start 50% fly 70% stop 90% fly`.
 
-Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It has two modes: `JS` and `CSS`. The first one doesn't really use CSS transitions or `@keyframes`. On the contrary, it uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. `CSS` mode allows you to generate pure CSS animations, but it has limitations for parallel animations.
-
-_**Note**: `CSS` mode is experimental for now, not everything works as expected._
+Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. Or it can generate pure CSS animations, but has limitations for parallel animations.
 
 _Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#toc_13)_
 
@@ -28,13 +26,7 @@ _Anima is the only animation framework that has elementary **physics integrated*
 At first you have to initialize the World, so the frame loop will start (so called `JS` mode)
 
 ```js
-var world = anima.js()
-```
-
-You may also get the world without frame loop for pure css animations (`CSS` mode)
-
-```js
-var world = anima.css()
+var world = anima.world()
 ```
 
 then you have to add items, you want to animate later
@@ -45,7 +37,7 @@ var item = world.add(document.querySelector("div"))
 
 so the world is looping now, waiting for item transformations to animate
 
-API remains the same in `CSS` mode, but you have to call the `.css()` method explicitly at the end of desired `.animate`'s
+If you want to generate pure CSS animation, just call the `.css()` method explicitly at the end of desired `.animate`'s
 
 ```js
 item.animate(...).css()
@@ -107,7 +99,6 @@ So you basically pass an array of transformations to create parallel animation.
 You can call `.infinite()` at the end of `.animate`'s chain, to make the animation infinite.
 
 ### Taking control
-#### `JS` mode
 Animations start automatically as soon as you call `.animate()` on the item.
 there are three control methods available
 `pause`, `resume` and `stop`
@@ -118,8 +109,7 @@ item.pause()
 world.stop()
 ```
 
-#### `CSS` mode
-To start your animations you have to call `.css()` after all you desired `.animate`'s, it will return a custom CSS object, that has `pause`, `resume` and `stop` methods.
+If you want to generate CSS, just call `.css()` after all you desired `.animate`'s, it will return a custom CSS object, that has `pause`, `resume` and `stop` methods.
 
 ```js
 var animation = item.animate(...).animate(...).css()
@@ -163,8 +153,8 @@ Each item can also have it's mass an viscosity
 ```js
 var world = anima.js()
 world.add(document.querySelector('.div'), {
-	mass: 0.01,
-	viscosity: 0.07 // velocity controls friction
+	mass: 1,
+	viscosity: 0.05 // velocity controls friction
 })
 ```
 
