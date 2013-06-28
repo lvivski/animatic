@@ -5,7 +5,7 @@ With Anima it's easy to animate over a hundred objects at a time. Each item can 
 
 And it's only **5k** when gzipped.
 
-**[Examples](#toc_14)**
+**[Examples](#toc_12)**
 
 ### Browser support
 Chrome, Safari, Firefox, Internet Explorer 10
@@ -17,11 +17,11 @@ Another problem is calculating percents for keyframes. People create animations 
 
 Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. Or it can generate pure CSS animations, but has limitations for parallel animations.
 
-_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#toc_13)_
+_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#toc_11)_
 
 ## API
 
-[Single](#toc_3) | [Sequence](#toc_4) | [Parallel](#toc_5) | [Infinite](#toc_6) | [Control methods](#toc_7) | [Events](#toc_10) | [Easings](#toc_11) | [Timeline](#toc_12) | [Physics](#toc_13)
+[Single](#toc_3) | [Sequence](#toc_4) | [Parallel](#toc_5) | [Infinite](#toc_6) | [Control methods](#toc_7) | [Events](#toc_8) | [Easings](#toc_9) | [Timeline](#toc_10) | [Physics](#toc_11)
 
 At first you have to initialize the World, so the frame loop will start (so called `JS` mode)
 
@@ -158,7 +158,7 @@ world.add(document.querySelector('.div'), {
 })
 ```
 
-Take a look at [physics examples](#toc_18)
+Take a look at [physics examples](#toc_16)
 
 ## Examples
 ### requestAnimationFrame
