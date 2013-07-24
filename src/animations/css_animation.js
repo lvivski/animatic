@@ -8,8 +8,6 @@
  * @constructor
  */
 function CssAnimation(item, animation, duration, ease, delay, generated) {
-  EventEmitter.call(this)
-
   this.item = item
 
   this.name = animation.name || animation
@@ -25,23 +23,18 @@ function CssAnimation(item, animation, duration, ease, delay, generated) {
   this._generated = generated
 }
 
-CssAnimation.prototype = Object.create(EventEmitter.prototype)
-CssAnimation.prototype.constructor = CssAnimation
-
 /**
  * Starts animation timer
  * @param {number} tick Timestamp
  * @param {boolean=} force Force initialization
- * @fires CssAnimation#start
  */
 CssAnimation.prototype.init = function (tick, force) {
   if (this.start !== null && !force) return
   this.start = tick + this.delay
 
-  this.item.style(_animationProperty, this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
+  this.item.style(_animationProperty,
+    this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
     this.delay + 'ms' + (this._infinite ? ' infinite' : '') + ' ' + 'forwards')
-
-  this.emit('start')
 }
 
 /**
@@ -67,7 +60,6 @@ CssAnimation.prototype.resume = function () {
 
 /**
  * Ends animation
- * @fires CssAnimation#end
  */
 CssAnimation.prototype.end = function () {
   if (this._generated) {
@@ -82,5 +74,4 @@ CssAnimation.prototype.end = function () {
   }
 
   this.start = null
-  this.emit('end')
 }

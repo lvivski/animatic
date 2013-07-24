@@ -378,7 +378,6 @@
     return easings;
   }();
   function Animation(item, transform, duration, ease, delay) {
-    EventEmitter.call(this);
     this.item = item;
     this.translate = transform.translate && transform.translate.map(parseFloat);
     this.rotate = transform.rotate && transform.rotate.map(parseFloat);
@@ -391,8 +390,6 @@
     this.ease = easings[transform.ease] || easings[ease] || easings.linear;
     this.easeName = ease || "linear";
   }
-  Animation.prototype = Object.create(EventEmitter.prototype);
-  Animation.prototype.constructor = Animation;
   Animation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick + this.delay;
@@ -403,7 +400,6 @@
       scale: state.scale.slice(),
       opacity: state.opacity
     };
-    this.emit("start");
   };
   Animation.prototype.run = function(tick) {
     if (tick < this.start) return;
@@ -436,10 +432,8 @@
   Animation.prototype.end = function(abort) {
     !abort && this.transform(1);
     this.start = null;
-    this.emit("end");
   };
   function CssAnimation(item, animation, duration, ease, delay, generated) {
-    EventEmitter.call(this);
     this.item = item;
     this.name = animation.name || animation;
     this.start = null;
@@ -450,13 +444,10 @@
     this._infinite = false;
     this._generated = generated;
   }
-  CssAnimation.prototype = Object.create(EventEmitter.prototype);
-  CssAnimation.prototype.constructor = CssAnimation;
   CssAnimation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick + this.delay;
     this.item.style(_animationProperty, this.name + " " + this.duration + "ms" + " " + this.ease + " " + this.delay + "ms" + (this._infinite ? " infinite" : "") + " " + "forwards");
-    this.emit("start");
   };
   CssAnimation.prototype.run = function() {};
   CssAnimation.prototype.pause = function() {
@@ -476,7 +467,6 @@
       this.item.style();
     }
     this.start = null;
-    this.emit("end");
   };
   function Collection(item) {
     EventEmitter.call(this);

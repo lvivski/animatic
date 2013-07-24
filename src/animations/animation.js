@@ -8,8 +8,6 @@
  * @constructor
  */
 function Animation(item, transform, duration, ease, delay) {
-  EventEmitter.call(this)
-
   this.item = item
 
   this.translate = transform.translate && transform.translate.map(parseFloat)
@@ -27,14 +25,10 @@ function Animation(item, transform, duration, ease, delay) {
   this.easeName = ease || 'linear'
 }
 
-Animation.prototype = Object.create(EventEmitter.prototype)
-Animation.prototype.constructor = Animation
-
 /**
  * Starts animation timer
  * @param {number} tick Timestamp
  * @param {boolean=} force Force initialization
- * @fires Animation#start
  */
 Animation.prototype.init = function (tick, force) {
   if (this.start !== null && !force) return
@@ -47,7 +41,6 @@ Animation.prototype.init = function (tick, force) {
     scale: state.scale.slice(),
     opacity: state.opacity
   }
-  this.emit('start')
 }
 
 /**
@@ -109,10 +102,8 @@ Animation.prototype.transform = function (percent) {
 /**
  * Ends animation
  * @param {boolean} abort
- * @fires Animation#end
  */
 Animation.prototype.end = function (abort) {
   !abort && this.transform(1)
   this.start = null
-  this.emit('end')
 }
