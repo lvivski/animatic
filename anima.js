@@ -562,6 +562,7 @@
     this.emit("start");
   };
   Parallel.prototype.run = function(tick) {
+    if (!this.animations.length) return;
     for (var i = 0; i < this.animations.length; ++i) {
       var a = this.animations[i];
       if (a.start + a.duration <= tick) {
@@ -572,6 +573,9 @@
       a.run(tick);
     }
     this.item.style();
+    if (!this.animations.length) {
+      this.end();
+    }
   };
   Parallel.prototype.seek = function(tick) {
     this.run(tick);
@@ -598,8 +602,8 @@
     this.animations[0].init(tick, force);
     this.emit("start");
   };
-  Sequence.prototype.run = function(tick) {
-    var a;
+  Sequence.prototype.run = function(tick, a) {
+    if (!this.animations.length) return;
     while (this.animations.length !== 0) {
       a = this.animations[0];
       if (a instanceof CssAnimation) {
@@ -623,6 +627,9 @@
     }
     if (!(a instanceof CssAnimation)) {
       this.item.style();
+    }
+    if (!this.animations.length) {
+      this.end();
     }
   };
   Sequence.prototype.seek = function(tick) {

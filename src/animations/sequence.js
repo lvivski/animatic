@@ -30,8 +30,9 @@ Sequence.prototype.init = function (tick, force) {
  * Runs one tick of animations
  * @param {number} tick
  */
-Sequence.prototype.run = function (tick) {
-  var a
+Sequence.prototype.run = function (tick, a) {
+  if (!this.animations.length) return
+
   while (this.animations.length !== 0) {
     a = this.animations[0]
     if (a instanceof CssAnimation) {
@@ -53,8 +54,13 @@ Sequence.prototype.run = function (tick) {
     a.run(tick)
     break
   }
-  if(!(a instanceof CssAnimation)) {
+
+  if (!(a instanceof CssAnimation)) {
     this.item.style();
+  }
+
+  if (!this.animations.length) {
+    this.end()
   }
 }
 

@@ -41,6 +41,8 @@ Parallel.prototype.init = function (tick, force) {
  * @param {number} tick
  */
 Parallel.prototype.run = function (tick) {
+  if (!this.animations.length) return
+
   for (var i = 0; i < this.animations.length; ++i) {
     var a = this.animations[i]
     if (a.start + a.duration <= tick) {
@@ -51,6 +53,10 @@ Parallel.prototype.run = function (tick) {
     a.run(tick)
   }
   this.item.style()
+
+  if (!this.animations.length) {
+    this.end()
+  }
 }
 
 /**
