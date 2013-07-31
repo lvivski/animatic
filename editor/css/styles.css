@@ -94,12 +94,17 @@ input[type=button]:active {
 }
 
 .panel_right input {
-  border: 1px solid #ccc;
+  border: 1px solid #fff;
   font-size: 1em;
   width: 3em;
   margin: 0 .1em;
   cursor: col-resize;
-}
+  text-align: center;
+  }
+  .panel_right input:focus {
+    outline: 0;
+    border-color: #ccc;
+  }
 
 .panel_timeline input[type=range] {
   width: 80%;

@@ -168,11 +168,16 @@ UI.Editor.prototype.init = function () {
 
   $('.panel_right input[type=text]').forEach(function(range){
     var startX = 0
-    function mouseMove(e) {
-      e.preventDefault()
-      range.value = (e.screenX - startX) * range.dataset['step']
+    
+    function changeValue(value) {
+      range.value = parseFloat(startValue) + value
       this_.timeline.items[this_.current].state[range.dataset['transform']]
         [['x','y','z'].indexOf(range.dataset['axis'])] = range.value
+    }
+    
+    function mouseMove(e) {
+      e.preventDefault()
+      changeValue((e.screenX - startX) * range.dataset['step'])
     }
     
     function mouseUp(e) {
@@ -184,11 +189,25 @@ UI.Editor.prototype.init = function () {
     function mouseDown(e) {
       e.preventDefault()
       startX = e.screenX
+      startValue = this.value
       document.on('mousemove', mouseMove)
       document.on('mouseup', mouseUp)
     }
     
     range.on('mousedown', mouseDown)
+    
+    range.on('dblclick', function (e) {
+      this.focus()
+    })
+    
+    range.on('change', function (e) {
+      changeValue(this.value)
+    })
+    
+    range.on('keydown', function (e) {
+      if (e.keyCode == 13)
+        this.blur()
+    })
   })
 }
 
