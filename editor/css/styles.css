@@ -98,6 +98,7 @@ input[type=button]:active {
   font-size: 1em;
   width: 3em;
   margin: 0 .1em;
+  cursor: col-resize;
 }
 
 .panel_timeline input[type=range] {
@@ -109,6 +110,7 @@ input[type=button]:active {
   position: relative;
   -webkit-appearance: none;
   appearance: none;
+  cursor: col-resize;
 }
 
 .panel_timeline input[type=range]::-webkit-slider-thumb {

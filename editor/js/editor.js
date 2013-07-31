@@ -1,13 +1,34 @@
 (function(){
 
 function $(selector, context) {
-  return (context || document).querySelector(selector)
+  var result = (context || document).querySelectorAll(selector)
+  return result.length > 1 ? result : result[0]
 }
 
-$.all = function (selector, context) {
-  return Array.prototype.slice.call(
-    (context || document).querySelectorAll(selector)
-  )
+window.on = Node.prototype.on = function (event, fn) {
+  this.addEventListener(event, fn, false)
+  return this
+}
+
+window.off = Node.prototype.off = function (event, fn) {
+  this.removeEventListener(event, fn)
+  return this
+}
+
+NodeList.prototype.forEach = [].forEach
+
+NodeList.prototype.on = function (event, fn) {
+  this.forEach(function (el) {
+    el.on(event, fn)
+  })
+  return this
+}
+
+NodeList.prototype.off = function (event, fn) {
+  this.forEach(function (el) {
+    el.off(event, fn)
+  })
+  return this
 }
 
 var State = {
@@ -72,10 +93,10 @@ UI.Controls = function () {
       step: 1
     },
     rotate: {
-      step: 1
+      step: .5
     },
     scale: {
-      step: .1
+      step: .01
     }
   }
 }
@@ -133,40 +154,41 @@ UI.Editor.prototype.init = function () {
     })
   }.bind(this))
 
-  $('.panel_timeline input[type=range]').addEventListener('change', function () {
+  $('.panel_timeline input[type=range]').on('change', function () {
     this_.timeline.seek(this.value)
   }, false)
 
-  $('.panel_timeline input[type=button]').addEventListener('click', function () {
+  $('.panel_timeline input[type=button]').on('click', function () {
     this_.keyframe(this_.timeline.currentTime)
   }, false)
 
-  $('.panel_timeline .code').addEventListener('click', function () {
+  $('.panel_timeline .code').on('click', function () {
     this_.stringify(this_.timeline.items[this_.current])
   }, false)
 
-  $.all('.panel_right input[type=text]').forEach(function(range){
-    range.addEventListener('keydown', function (e) {
-      e.preventDefault();
-      var prev = parseFloat(this.value),
-          step = parseFloat(this.dataset['step'])
-      switch (e.keyCode) {
-        case 37: // left
-          this.value = prev - step
-          break
-        case 38: // up
-          this.value = prev + 10 * step
-          break
-        case 39: // right
-          this.value = prev + step
-          break
-        case 40: // down
-          this.value = prev - 10 * step
-          break
-      }
-      this_.timeline.items[this_.current].state[this.dataset['transform']]
-        [['x','y','z'].indexOf(this.dataset['axis'])] = this.value
-    }, false)
+  $('.panel_right input[type=text]').forEach(function(range){
+    var startX = 0
+    function mouseMove(e) {
+      e.preventDefault()
+      range.value = (e.screenX - startX) * range.dataset['step']
+      this_.timeline.items[this_.current].state[range.dataset['transform']]
+        [['x','y','z'].indexOf(range.dataset['axis'])] = range.value
+    }
+    
+    function mouseUp(e) {
+      e.preventDefault()
+      document.off('mousemove', mouseMove)
+      document.off('mouseup', mouseUp)
+    }
+    
+    function mouseDown(e) {
+      e.preventDefault()
+      startX = e.screenX
+      document.on('mousemove', mouseMove)
+      document.on('mouseup', mouseUp)
+    }
+    
+    range.on('mousedown', mouseDown)
   })
 }
 
