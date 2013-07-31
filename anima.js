@@ -799,13 +799,14 @@
     }
   };
   Timeline.prototype.update = function(tick) {
-    for (var i = 0; i < this.items.length; ++i) {
-      if (this.changed || this.running) {
-        this.items[i].timeline(tick);
-        this.changed = false;
+    for (var i = 0, length = this.items.length; i < length; ++i) {
+      var item = this.items[i];
+      if (this.changed < length || this.running) {
+        item.timeline(tick);
+        this.changed++;
         this.emit("update", tick);
       } else {
-        this.items[i].style();
+        item.style();
       }
     }
   };
@@ -821,7 +822,7 @@
     this.running = false;
   };
   Timeline.prototype.seek = function(time) {
-    this.changed = true;
+    this.changed = 0;
     this.currentTime = time;
   };
   function Item(node) {
