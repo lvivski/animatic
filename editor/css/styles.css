@@ -58,13 +58,12 @@ input[type=button]:active {
 
 .panel {
   position: absolute;
-  font-size: 1.4em;
 }
 
 .panel_right {
   right: 0;
   top: 0;
-  width: 350px;
+  width: 18em;
 }
 
 .panel_timeline {
@@ -89,33 +88,45 @@ input[type=button]:active {
 }
 
 .panel_right span {
-  width: 90px;
+  width: 4.5em;
   display: inline-block;
 }
 
-.panel_right input {
+.panel_right input[type=text] {
   border: 1px solid #fff;
   font-size: 1em;
-  width: 3em;
+  width: 3.5em;
   margin: 0 .1em;
   cursor: col-resize;
   text-align: center;
   }
-  .panel_right input:focus {
+  .panel_right input[type=text]:focus {
     outline: 0;
     border-color: #ccc;
   }
+  .panel_right label {
+    display: inline-block;
+    text-align: center;
+    padding: 0 .4em;
+  }
+  .panel_right input[type=radio] {
+    display: block;
+    font-size: 1em;
+    margin: 0;
+  }
+  
 
 .panel_timeline input[type=range] {
   width: 80%;
   height: 1.6em;
   background: #fff;
   border: 1px solid #ccc;
-  margin-bottom: 10px;
+  margin-bottom: .5em;
   position: relative;
   -webkit-appearance: none;
   appearance: none;
   cursor: col-resize;
+  vertical-align: middle;
 }
 
 .panel_timeline input[type=range]::-webkit-slider-thumb {
@@ -151,4 +162,8 @@ input[type=button]:active {
   font: 13px/1.8 Menlo, Monaco, Mono-Space;
   white-space: pre;
   background: white;
+}
+
+.toggler {
+  padding: 10px 0;
 }

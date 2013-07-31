@@ -17,6 +17,8 @@ window.off = Node.prototype.off = function (event, fn) {
 
 NodeList.prototype.forEach = [].forEach
 
+NodeList.prototype.filter = [].filter
+
 NodeList.prototype.on = function (event, fn) {
   this.forEach(function (el) {
     el.on(event, fn)
@@ -59,11 +61,6 @@ var State = {
 }
 
 var UI = {}
-
-UI.Editor = function (timeline) {
-  this.timeline = timeline
-  this.init()
-}
 
 UI.Panel = function (type, content) {
   this.type = type
@@ -127,6 +124,23 @@ UI.Popup.prototype.hide = function () {
   $('.popup').style.display = 'none'
 }
 
+UI.Toggler = function (size) {
+  this.size = size
+}
+
+UI.Toggler.prototype.toString = function () {
+  var html = ''
+  for (var i = 0; i < this.size; ++i) {
+    html += '<label><input name="toggler" type="radio" data-index="'+ i +'" />'+ i +'</label>'
+  }
+  return '<div class="toggler">'+ html +'</div>'
+}
+
+UI.Editor = function (timeline) {
+  this.timeline = timeline
+  this.init()
+}
+
 UI.Editor.prototype.init = function () {
   this.current = 0
   this.keyframes = []
@@ -137,34 +151,43 @@ UI.Editor.prototype.init = function () {
 
   this.popup = new UI.Popup
 
-  container.innerHTML = new UI.Panel('right', new UI.Controls) + new UI.Panel('timeline', new UI.Timeline) + this.popup
+  container.innerHTML = new UI.Panel('right', new UI.Controls + new UI.Toggler(this.timeline.items.length)) + new UI.Panel('timeline', new UI.Timeline) + this.popup
 
   Array.prototype.slice.call(container.childNodes).forEach(function(div) {
     document.body.appendChild(div)
   })
-
+  
   this.timeline.on('update', function (time) {
     $('.panel_timeline input[type=range]').value = time
-
-    !['translate','rotate','scale'].forEach(function(t){
+    populateData()
+  })
+  
+  function populateData() {
+    ['translate','rotate','scale'].forEach(function (t) {
       ['x','y','z'].forEach(function(a, i) {
         $('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')
           .value = this_.timeline.items[this_.current].state[t][i]
+        })
       })
-    })
-  }.bind(this))
+  }
 
   $('.panel_timeline input[type=range]').on('change', function () {
     this_.timeline.seek(this.value)
-  }, false)
+  })
 
   $('.panel_timeline input[type=button]').on('click', function () {
     this_.keyframe(this_.timeline.currentTime)
-  }, false)
+  })
 
   $('.panel_timeline .code').on('click', function () {
     this_.stringify(this_.timeline.items[this_.current])
-  }, false)
+  })
+  
+  $('.panel_right input[type=radio]').on('click', function (e) {
+    this_.current = this.dataset['index']
+    populateData()
+  })
+  $('.panel_right input[type=radio]')[0].click()
 
   $('.panel_right input[type=text]').forEach(function(range){
     var startX = 0
@@ -247,7 +270,10 @@ UI.Editor.prototype.stringify = function (item) {
 
 anima.editor = function () {
   var timeline = anima.timeline()
-  timeline.add($('.viewport div'))
+  $('.viewport').childNodes.forEach(function (node) {
+    if (!(node instanceof Text))
+      timeline.add(node)
+  })
   new UI.Editor(timeline)
 }
 
