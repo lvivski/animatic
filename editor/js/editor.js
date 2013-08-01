@@ -81,7 +81,7 @@ UI.Timeline = function (max) {
 
 UI.Timeline.prototype.keyframes = function (keyframes) {
   var container = $('.panel_timeline .keyframes'),
-      width = $('.panel_timeline label').clientWidth - 6,
+      width = $('.panel_timeline label').clientWidth - 8,
       content = container.innerHTML = ''
 
   for (var i = 0; i < keyframes.length; ++i) {
