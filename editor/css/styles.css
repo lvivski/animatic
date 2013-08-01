@@ -55,7 +55,6 @@ input[type=button]:active {
   transform: translateZ(-99999px);
 }
 
-
 .panel {
   position: absolute;
 }
@@ -77,13 +76,13 @@ input[type=button]:active {
   left: 0;
   bottom: 0;
   height: 100%;
-  background: rgba(255,255,255,.9);
+  background: rgba(255, 255, 255, .9);
   width: 100%;
   z-index: 0;
 }
 
 .panel__controls {
-  position:relative;
+  position: relative;
   padding: 15px;
 }
 
@@ -99,22 +98,24 @@ input[type=button]:active {
   margin: 0 .1em;
   cursor: col-resize;
   text-align: center;
-  }
-  .panel_right input[type=text]:focus {
-    outline: 0;
-    border-color: #ccc;
-  }
-  .panel_right label {
-    display: inline-block;
-    text-align: center;
-    padding: 0 .4em;
-  }
-  .panel_right input[type=radio] {
-    display: block;
-    font-size: 1em;
-    margin: 0;
-  }
-  
+}
+
+.panel_right input[type=text]:focus {
+  outline: 0;
+  border-color: #ccc;
+}
+
+.panel_right label {
+  display: inline-block;
+  text-align: center;
+  padding: 0 .4em;
+}
+
+.panel_right input[type=radio] {
+  display: block;
+  font-size: 1em;
+  margin: 0;
+}
 
 .panel_timeline input[type=range] {
   width: 80%;
@@ -141,7 +142,10 @@ input[type=button]:active {
   content: '';
   display: block;
   position: absolute;
-  left: 0; right: 0; top: 0; bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   pointer-event: 0;
 }
 
@@ -152,16 +156,35 @@ input[type=button]:active {
 .popup {
   width: 70%;
   height: 70%;
-  box-shadow: 0 0 50px rgba(0,0,0,.2);
+  box-shadow: 0 0 50px rgba(0, 0, 0, .2);
   position: absolute;
   left: 15%;
   top: 15%;
   -webkit-transform: translateZ(99999px);
-  overflow: scroll;
   display: none;
   font: 13px/1.8 Menlo, Monaco, Mono-Space;
-  white-space: pre;
   background: white;
+}
+
+.popup span {
+  white-space: pre;
+  overflow: scroll;
+  height: 100%;
+  display: inline-block;
+  width: 100%;
+}
+
+.popup a {
+  position: absolute;
+  left: -1em;
+  top: -1em;
+  text-decoration: none;
+  font-size: 2em;
+  line-height: 1;
+  border: 1px solid;
+  border-radius: 1em;
+  padding: 0 .25em .1em;
+  color: inherit;
 }
 
 .toggler {

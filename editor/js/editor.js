@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
 function $(selector, context) {
   var result = (context || document).querySelectorAll(selector)
@@ -35,9 +35,9 @@ NodeList.prototype.off = function (event, fn) {
 
 var State = {
   initial: {
-    translate: [0,0,0],
-    rotate: [0,0,0],
-    scale:[1,1,1]
+    translate: [0, 0, 0],
+    rotate: [0, 0, 0],
+    scale: [1, 1, 1]
   },
   copy: function (state) {
     return {
@@ -52,6 +52,7 @@ var State = {
         return t - prev[type][i]
       }
     }
+
     return {
       translate: next.translate.map(differ('translate')),
       rotate: next.rotate.map(differ('rotate')),
@@ -69,9 +70,9 @@ UI.Panel = function (type, content) {
 
 UI.Panel.prototype.toString = function () {
   return '<div class="panel panel_' + this.type + '">\
-  <div class="panel__bg"></div>\
-  <div class="panel__controls">' + this.content + '</div>\
-  </div>'
+<div class="panel__bg"></div>\
+<div class="panel__controls">' + this.content + '</div>\
+</div>'
 }
 
 UI.Timeline = function (max) {
@@ -80,8 +81,8 @@ UI.Timeline = function (max) {
 
 UI.Timeline.prototype.toString = function () {
   return '<input type="button" value="keyframe">\
-    <input type="range" value="0" max="' + this.max + '">\
-    <input type="button" value="code" class="code">'
+  <input type="range" value="0" max="' + this.max + '">\
+  <input type="button" value="code" class="code">'
 }
 
 UI.Controls = function () {
@@ -101,22 +102,22 @@ UI.Controls = function () {
 UI.Controls.prototype.toString = function () {
   var this_ = this
   return Object.keys(this.config).map(function (t) {
-    return '<div class="' + t + '"><span>' + t + '</span>' + 
-      ['x','y','z'].map(function (a) {
-        return '<input type="text" value="' + (t === 'scale' ? 1 : 0) + '" \
-            data-step="' + this_.config[t].step + '" data-transform="' + t + '" data-axis="'+ a +'">'
-      }).join('') + '</div>'
+    return '<div class="' + t + '"><span>' + t + '</span>' +
+        ['x', 'y', 'z'].map(function (a) {
+          return '<input type="text" value="' + (t === 'scale' ? 1 : 0) + '" \
+          data-step="' + this_.config[t].step + '" data-transform="' + t + '" data-axis="' + a + '">'
+        }).join('') + '</div>'
   }).join('')
 }
 
 UI.Popup = function () {}
 
 UI.Popup.prototype.toString = function () {
-  return '<div class="popup"></div>'
+  return '<div class="popup"><a href="#">×</a><span></span></div>'
 }
 
 UI.Popup.prototype.show = function (string) {
-  $('.popup').textContent = string.replace(/([;{}])/g, '$1\n')
+  $('.popup span').textContent = string.replace(/([;{}])/g, '$1\n')
   $('.popup').style.display = 'block'
 }
 
@@ -131,9 +132,9 @@ UI.Toggler = function (size) {
 UI.Toggler.prototype.toString = function () {
   var html = ''
   for (var i = 0; i < this.size; ++i) {
-    html += '<label><input name="toggler" type="radio" data-index="'+ i +'" />'+ i +'</label>'
+    html += '<label><input name="toggler" type="radio" data-index="' + i + '" />' + i + '</label>'
   }
-  return '<div class="toggler">'+ html +'</div>'
+  return '<div class="toggler">' + html + '</div>'
 }
 
 UI.Editor = function (timeline) {
@@ -153,22 +154,22 @@ UI.Editor.prototype.init = function () {
 
   container.innerHTML = new UI.Panel('right', new UI.Controls + new UI.Toggler(this.timeline.items.length)) + new UI.Panel('timeline', new UI.Timeline) + this.popup
 
-  Array.prototype.slice.call(container.childNodes).forEach(function(div) {
+  Array.prototype.slice.call(container.childNodes).forEach(function (div) {
     document.body.appendChild(div)
   })
-  
+
   this.timeline.on('update', function (time) {
     $('.panel_timeline input[type=range]').value = time
     populateData()
   })
-  
+
   function populateData() {
-    ['translate','rotate','scale'].forEach(function (t) {
-      ['x','y','z'].forEach(function(a, i) {
-        $('.panel_right input[data-transform='+ t +'][data-axis="' + a + '"]')
-          .value = this_.timeline.items[this_.current].state[t][i]
-        })
+    ['translate', 'rotate', 'scale'].forEach(function (t) {
+      ['x', 'y', 'z'].forEach(function (a, i) {
+        $('.panel_right input[data-transform=' + t + '][data-axis="' + a + '"]')
+            .value = this_.timeline.items[this_.current].state[t][i]
       })
+    })
   }
 
   $('.panel_timeline input[type=range]').on('change', function () {
@@ -182,33 +183,33 @@ UI.Editor.prototype.init = function () {
   $('.panel_timeline .code').on('click', function () {
     this_.stringify(this_.timeline.items[this_.current])
   })
-  
+
   $('.panel_right input[type=radio]').on('click', function (e) {
     this_.current = this.dataset['index']
     populateData()
   })
   $('.panel_right input[type=radio]')[0].click()
 
-  $('.panel_right input[type=text]').forEach(function(range){
+  $('.panel_right input[type=text]').forEach(function (range) {
     var startX = 0
-    
+
     function changeValue(value) {
       range.value = parseFloat(startValue) + value
       this_.timeline.items[this_.current].state[range.dataset['transform']]
-        [['x','y','z'].indexOf(range.dataset['axis'])] = range.value
+          [['x', 'y', 'z'].indexOf(range.dataset['axis'])] = range.value
     }
-    
+
     function mouseMove(e) {
       e.preventDefault()
       changeValue((e.screenX - startX) * range.dataset['step'])
     }
-    
+
     function mouseUp(e) {
       e.preventDefault()
       document.off('mousemove', mouseMove)
       document.off('mouseup', mouseUp)
     }
-    
+
     function mouseDown(e) {
       e.preventDefault()
       startX = e.screenX
@@ -216,21 +217,25 @@ UI.Editor.prototype.init = function () {
       document.on('mousemove', mouseMove)
       document.on('mouseup', mouseUp)
     }
-    
+
     range.on('mousedown', mouseDown)
-    
+
     range.on('dblclick', function (e) {
       this.focus()
     })
-    
+
     range.on('change', function (e) {
       changeValue(this.value)
     })
-    
+
     range.on('keydown', function (e) {
       if (e.keyCode == 13)
         this.blur()
     })
+  })
+
+  $('.popup a').on('click', function () {
+    this_.popup.hide()
   })
 }
 
@@ -242,7 +247,9 @@ UI.Editor.prototype.keyframe = function (time) {
 
   keyframes[index] || (keyframes[index] = [])
   keyframes[index].push({time: time, state: state})
-  keyframes[index] = keyframes[index].sort(function(a, b) { return a.time - b.time })
+  keyframes[index] = keyframes[index].sort(function (a, b) {
+    return a.time - b.time
+  })
 
   this.animate(item)
   item.state = State.copy(state)
@@ -256,7 +263,7 @@ UI.Editor.prototype.animate = function (item) {
       prevState = State.initial,
       prevTime = 0
 
-  this.keyframes[index].forEach(function(frame) {
+  this.keyframes[index].forEach(function (frame) {
     item.animate(State.diff(prevState, frame.state), frame.time - prevTime)
     prevState = State.copy(frame.state)
     prevTime = frame.time
@@ -285,7 +292,7 @@ function bsearch(needle, stack, comparator) {
   while (low <= high) {
     middle = (low + high) >> 1
     var comparison = comparator(stack[middle], needle)
-    
+
     if (comparison > 0) {
       low = middle + 1
     } else if (comparison < 0) {
