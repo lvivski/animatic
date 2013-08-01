@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width">
 </head>
 <body>
-  <script src="../src/vector.js"></script>
-  <script src="../src/matrix.js"></script>
+  <script src="../src/math/vector.js"></script>
+  <script src="../src/math/matrix.js"></script>
   <script>
   Matrix.toTestString = function (m) {
     function clamp(n) {
@@ -35,7 +35,7 @@
     }
     return 'matrix3d(' + m.map(clamp).join(', ') + ')'
   }
-  
+
   function transform(s) {
     return new WebKitCSSMatrix(s).toString()
   }
