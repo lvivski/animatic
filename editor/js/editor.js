@@ -79,9 +79,22 @@ UI.Timeline = function (max) {
   this.max = max || 5000
 }
 
+UI.Timeline.prototype.keyframes = function (keyframes) {
+  var container = $('.panel_timeline .keyframes'),
+      width = $('.panel_timeline label').clientWidth - 6,
+      content = container.innerHTML = ''
+
+  for (var i = 0; i < keyframes.length; ++i) {
+    console.log(keyframes[i].time, width, this.max)
+    content += '<i style="left:'+ Math.round(keyframes[i].time * width / this.max) +'px"></i>'
+  }
+
+  container.innerHTML = content
+}
+
 UI.Timeline.prototype.toString = function () {
   return '<input type="button" value="keyframe">\
-      <input type="range" value="0" max="' + this.max + '">\
+      <label><input type="range" value="0" max="' + this.max + '"><span class="keyframes"></span></label>\
       <input type="button" value="code" class="code">'
 }
 
@@ -153,7 +166,9 @@ UI.Editor.prototype.init = function () {
 
   this.popup = new UI.Popup
 
-  container.innerHTML = new UI.Panel('right', new UI.Controls + new UI.Toggler(this.timeline.items.length)) + new UI.Panel('timeline', new UI.Timeline) + this.popup
+  this.bar = new UI.Timeline
+
+  container.innerHTML = new UI.Panel('right', new UI.Controls + new UI.Toggler(this.timeline.items.length)) + new UI.Panel('timeline', this.bar) + this.popup
 
   Array.prototype.slice.call(container.childNodes).forEach(function (div) {
     document.body.appendChild(div)
@@ -178,7 +193,8 @@ UI.Editor.prototype.init = function () {
   })
 
   $('.panel_timeline input[type=button]').on('click', function () {
-    this_.keyframe(this_.timeline.currentTime)
+    var keyframes = this_.keyframe(this_.timeline.currentTime)
+    this_.bar.keyframes(keyframes)
   })
 
   $('.panel_timeline .code').on('click', function () {
@@ -188,6 +204,7 @@ UI.Editor.prototype.init = function () {
   $('.panel_right input[type=radio]').on('click', function (e) {
     this_.current = this.dataset['index']
     populateData()
+    this_.bar.keyframes(this_.keyframes[this_.current])
   })
   $('.panel_right input[type=radio]')[0].click()
 
@@ -254,6 +271,8 @@ UI.Editor.prototype.keyframe = function (time) {
 
   this.animate(item)
   item.state = State.copy(state)
+
+  return keyframes[index]
 }
 
 UI.Editor.prototype.animate = function (item) {
