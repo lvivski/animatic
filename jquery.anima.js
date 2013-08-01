@@ -1,9 +1,9 @@
-(function($, a){
+(function ($, a) {
 	var world;
 
 	$.fn.anima = function () {
 		if (!world) {
-			world = a.world(); 
+			world = a.world();
 		}
 
 		var index = world.items.indexOf(this[0]),

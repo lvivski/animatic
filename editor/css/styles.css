@@ -89,10 +89,23 @@ input[type=button]:active {
 .panel_right span {
   width: 4.5em;
   display: inline-block;
+  color: #aaa;
 }
 
-.panel_right input[type=text] {
-  border: 1px solid #fff;
+.panel_right .axis {
+  margin-left: 4.5em;
+  width: auto;
+}
+
+.panel_right .axis i {
+  display: inline-block;
+  font-style: normal;
+  padding: 1px;
+}
+
+.panel_right input[type=text],
+.panel_right .axis i {
+  border: 0;
   font-size: 1em;
   width: 3.5em;
   margin: 0 .1em;
@@ -135,7 +148,7 @@ input[type=button]:active {
   appearance: none;
   height: 1.6em;
   width: 5px;
-  background: black;
+  background: #d0a000;
 }
 
 .panel_timeline input[type=range]:before {
@@ -189,4 +202,5 @@ input[type=button]:active {
 
 .toggler {
   padding: 10px 0;
+  text-align: center;
 }

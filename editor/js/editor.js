@@ -70,9 +70,9 @@ UI.Panel = function (type, content) {
 
 UI.Panel.prototype.toString = function () {
   return '<div class="panel panel_' + this.type + '">\
-<div class="panel__bg"></div>\
-<div class="panel__controls">' + this.content + '</div>\
-</div>'
+      <div class="panel__bg"></div>\
+      <div class="panel__controls">' + this.content + '</div>\
+      </div>'
 }
 
 UI.Timeline = function (max) {
@@ -81,8 +81,8 @@ UI.Timeline = function (max) {
 
 UI.Timeline.prototype.toString = function () {
   return '<input type="button" value="keyframe">\
-  <input type="range" value="0" max="' + this.max + '">\
-  <input type="button" value="code" class="code">'
+      <input type="range" value="0" max="' + this.max + '">\
+      <input type="button" value="code" class="code">'
 }
 
 UI.Controls = function () {
@@ -101,13 +101,14 @@ UI.Controls = function () {
 
 UI.Controls.prototype.toString = function () {
   var this_ = this
-  return Object.keys(this.config).map(function (t) {
-    return '<div class="' + t + '"><span>' + t + '</span>' +
-        ['x', 'y', 'z'].map(function (a) {
-          return '<input type="text" value="' + (t === 'scale' ? 1 : 0) + '" \
-          data-step="' + this_.config[t].step + '" data-transform="' + t + '" data-axis="' + a + '">'
-        }).join('') + '</div>'
-  }).join('')
+  return '<span class="axis"><i>x</i><i>y</i><i>z</i></span>' +
+      Object.keys(this.config).map(function (t) {
+        return '<div class="' + t + '"><span>' + t + '</span>' +
+            ['x', 'y', 'z'].map(function (a) {
+              return '<input type="text" value="' + (t === 'scale' ? 1 : 0) + '" \
+                data-step="' + this_.config[t].step + '" data-transform="' + t + '" data-axis="' + a + '">'
+            }).join('') + '</div>'
+      }).join('')
 }
 
 UI.Popup = function () {}
@@ -194,14 +195,14 @@ UI.Editor.prototype.init = function () {
     var startX = 0
 
     function changeValue(value) {
-      range.value = parseFloat(startValue) + value
+      range.value = value
       this_.timeline.items[this_.current].state[range.dataset['transform']]
           [['x', 'y', 'z'].indexOf(range.dataset['axis'])] = range.value
     }
 
     function mouseMove(e) {
       e.preventDefault()
-      changeValue((e.screenX - startX) * range.dataset['step'])
+      changeValue(parseFloat(startValue) + (e.screenX - startX) * range.dataset['step'])
     }
 
     function mouseUp(e) {
