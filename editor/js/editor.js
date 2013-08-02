@@ -134,12 +134,12 @@ UI.Popup.prototype.toString = function () {
 }
 
 UI.Popup.prototype.show = function (string) {
-  $('.popup span').textContent = string.replace(/([;{}])/g, '$1\n')
-  $('.popup').style.display = 'block'
+  $('.editor .popup span').textContent = string.replace(/([;{}])/g, '$1\n')
+  $('.editor .popup').style.display = 'block'
 }
 
 UI.Popup.prototype.hide = function () {
-  $('.popup').style.display = 'none'
+  $('.editor .popup').style.display = 'none'
 }
 
 UI.Toggler = function (size) {
