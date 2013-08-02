@@ -312,7 +312,7 @@ UI.Editor.prototype.stringify = function (item) {
 anima.editor = function (root) {
   var timeline = anima.timeline()
   $(root).childNodes.forEach(function (node) {
-    if (!(node instanceof Text))
+    if (node instanceof Element && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE')
       timeline.add(node)
   })
   new UI.Editor(timeline)
