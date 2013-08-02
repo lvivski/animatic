@@ -1,4 +1,5 @@
 (function () {
+'use strict';
 
 function $(selector, context) {
   var result = (context || document).querySelectorAll(selector)
@@ -80,12 +81,13 @@ UI.Timeline = function (max) {
 }
 
 UI.Timeline.prototype.keyframes = function (keyframes) {
+  keyframes || (keyframes = [])
+
   var container = $('.panel_timeline .keyframes'),
       width = $('.panel_timeline label').clientWidth - 8,
       content = container.innerHTML = ''
 
   for (var i = 0; i < keyframes.length; ++i) {
-    console.log(keyframes[i].time, width, this.max)
     content += '<i style="left:'+ Math.round(keyframes[i].time * width / this.max) +'px"></i>'
   }
 
@@ -95,7 +97,8 @@ UI.Timeline.prototype.keyframes = function (keyframes) {
 UI.Timeline.prototype.toString = function () {
   return '<input type="button" value="keyframe">\
       <label><input type="range" value="0" max="' + this.max + '"><span class="keyframes"></span></label>\
-      <input type="button" value="code" class="code">'
+      <input type="text" value="'+ this.max +'">\
+      <input type="button" value="code">'
 }
 
 UI.Controls = function () {
@@ -163,6 +166,7 @@ UI.Editor.prototype.init = function () {
   var this_ = this
 
   var container = document.createElement('div')
+  container.classList.add('editor')
 
   this.popup = new UI.Popup
 
@@ -170,9 +174,7 @@ UI.Editor.prototype.init = function () {
 
   container.innerHTML = new UI.Panel('right', new UI.Controls + new UI.Toggler(this.timeline.items.length)) + new UI.Panel('timeline', this.bar) + this.popup
 
-  Array.prototype.slice.call(container.childNodes).forEach(function (div) {
-    document.body.appendChild(div)
-  })
+  document.body.appendChild(container)
 
   this.timeline.on('update', function (time) {
     $('.panel_timeline input[type=range]').value = time
@@ -192,34 +194,22 @@ UI.Editor.prototype.init = function () {
     this_.timeline.seek(this.value)
   })
 
-  $('.panel_timeline input[type=button]').on('click', function () {
+  $('.panel_timeline input[value=keyframe]').on('click', function () {
     var keyframes = this_.keyframe(this_.timeline.currentTime)
     this_.bar.keyframes(keyframes)
   })
 
-  $('.panel_timeline .code').on('click', function () {
+  $('.panel_timeline input[value=code]').on('click', function () {
     this_.stringify(this_.timeline.items[this_.current])
   })
 
-  $('.panel_right input[type=radio]').on('click', function (e) {
-    this_.current = this.dataset['index']
-    populateData()
-    this_.bar.keyframes(this_.keyframes[this_.current])
-  })
-  $('.panel_right input[type=radio]')[0].click()
-
-  $('.panel_right input[type=text]').forEach(function (range) {
-    var startX = 0
-
-    function changeValue(value) {
-      range.value = value
-      this_.timeline.items[this_.current].state[range.dataset['transform']]
-          [['x', 'y', 'z'].indexOf(range.dataset['axis'])] = range.value
-    }
+  function bind(node, step, callback) {
+    var startX = 0,
+        startValue = node.value
 
     function mouseMove(e) {
       e.preventDefault()
-      changeValue(parseFloat(startValue) + (e.screenX - startX) * range.dataset['step'])
+      callback(parseFloat(startValue) + (e.screenX - startX) * step)
     }
 
     function mouseUp(e) {
@@ -236,19 +226,43 @@ UI.Editor.prototype.init = function () {
       document.on('mouseup', mouseUp)
     }
 
-    range.on('mousedown', mouseDown)
+    node.on('mousedown', mouseDown)
 
-    range.on('dblclick', function (e) {
+    node.on('dblclick', function () {
       this.focus()
     })
 
-    range.on('change', function (e) {
-      changeValue(this.value)
+    node.on('change', function () {
+      callback(this.value)
     })
 
-    range.on('keydown', function (e) {
+    node.on('keydown', function (e) {
       if (e.keyCode == 13)
         this.blur()
+    })
+  }
+
+  var time = $('.panel_timeline input[type=text]')
+  bind(time, 10, function (value) {
+    value = Math.max(100, value)
+    time.value = value
+    this_.bar.max = value
+    $('.panel_timeline input[type=range]').setAttribute('max', value)
+    this_.bar.keyframes(this_.keyframes[this_.current])
+  })
+
+  $('.panel_right input[type=radio]').on('click', function (e) {
+    this_.current = this.dataset['index']
+    populateData()
+    this_.bar.keyframes(this_.keyframes[this_.current])
+  })
+  $('.panel_right input[type=radio]')[0].click()
+
+  $('.panel_right input[type=text]').forEach(function (range) {
+    bind(range, range.dataset['step'], function (value) {
+      range.value = value
+      this_.timeline.items[this_.current].state[range.dataset['transform']]
+          [['x', 'y', 'z'].indexOf(range.dataset['axis'])] = value
     })
   })
 
