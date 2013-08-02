@@ -1,0 +1,213 @@
+.editor {
+  font: 16px/1.5 Arial, sans-serif;
+}
+
+.editor label {
+  display: block;
+}
+
+.editor input[type=button] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  font-size: 1em;
+  background: #fafafa;
+  border: 1px solid #999;
+  border-radius: .3em;
+  cursor: pointer;
+}
+
+.editor input[type=button]:hover {
+  background: -webkit-linear-gradient(#fff, #dfdfdf);
+  background: -moz-linear-gradient(#fff, #dfdfdf);
+  background: -ms-linear-gradient(#fff, #dfdfdf);
+  background: -o-linear-gradient(#fff, #dfdfdf);
+  background: linear-gradient(#fff, #dfdfdf);
+}
+
+.editor input[type=button]:active {
+  background: -webkit-linear-gradient(#dfdfdf, #fff);
+  background: -moz-linear-gradient(#dfdfdf, #fff);
+  background: -ms-linear-gradient(#dfdfdf, #fff);
+  background: -o-linear-gradient(#dfdfdf, #fff);
+  background: linear-gradient(#dfdfdf, #fff);
+}
+
+.editor label {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.editor input[type=text],
+.editor .axis i {
+  border: 1px solid rgba(0, 0, 0, 0);
+  font-size: 1em;
+  width: 3.5em;
+  margin: 0 .1em;
+  cursor: col-resize;
+  text-align: center;
+}
+
+.editor input[type=text]:focus {
+  outline: 0;
+  border-color: #ccc;
+}
+
+.editor input[type=radio] {
+  display: block;
+  font-size: 1em;
+  margin: 0;
+  cursor: pointer;
+}
+
+.editor input[type=range] {
+  width: 100%;
+  height: 1.6em;
+  background: #fff;
+  border: 1px solid #ccc;
+  margin: 0 0 .2em;
+  position: relative;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: col-resize;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+.editor input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2.2em;
+  width: 5px;
+  background: #d0a000;
+}
+
+.editor input[type=range]:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-event: 0;
+}
+
+.editor ::-webkit-slider-thumb {
+  cursor: col-resize;
+}
+
+.editor .panel {
+  position: absolute;
+}
+
+.editor .panel_right {
+  right: 0;
+  top: 0;
+  width: 18.5em;
+}
+
+.editor .panel_timeline {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.editor .panel__bg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, .9);
+  width: 100%;
+  z-index: 0;
+}
+
+.editor .panel__controls {
+  position: relative;
+  padding: 15px;
+}
+
+.editor .panel_right span {
+  width: 4.5em;
+  display: inline-block;
+  color: #aaa;
+}
+
+.editor .panel_right .axis {
+  margin-left: 4.5em;
+  width: auto;
+}
+
+.editor .panel_right .axis i {
+  display: inline-block;
+  font-style: normal;
+  padding: 1px;
+  cursor: auto;
+}
+
+.editor .panel_right label {
+  text-align: center;
+  padding: 0 .4em;
+}
+
+.editor .panel_timeline label {
+  width: 80%;
+  position: relative;
+}
+
+.editor .popup {
+  width: 70%;
+  height: 70%;
+  box-shadow: 0 0 50px rgba(0, 0, 0, .2);
+  position: absolute;
+  left: 15%;
+  top: 15%;
+  -webkit-transform: translateZ(99999px);
+  display: none;
+  font: 13px/1.8 Menlo, Monaco, Mono-Space;
+  background: white;
+}
+
+.editor .popup span {
+  white-space: pre;
+  overflow: scroll;
+  height: 100%;
+  display: inline-block;
+  width: 100%;
+}
+
+.editor .popup a {
+  position: absolute;
+  left: -1em;
+  top: -1em;
+  text-decoration: none;
+  font-size: 2em;
+  line-height: 1;
+  border: 1px solid;
+  border-radius: 1em;
+  padding: 0 .25em .1em;
+  color: inherit;
+}
+
+.editor .toggler {
+  padding: 10px 0;
+  text-align: center;
+}
+
+.editor .keyframes {
+  pointer-events: none;
+}
+
+.editor .keyframes i {
+  display: inline-block;
+  height: 100%;
+  width: 1px;
+  background: rgba(0, 0, 0, .5);
+  margin-left: 3px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
