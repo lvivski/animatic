@@ -309,9 +309,9 @@ UI.Editor.prototype.stringify = function (item) {
   this.popup.show(item.css(true).keyframes('animation'))
 }
 
-anima.editor = function () {
+anima.editor = function (root) {
   var timeline = anima.timeline()
-  $('.viewport').childNodes.forEach(function (node) {
+  $(root).childNodes.forEach(function (node) {
     if (!(node instanceof Text))
       timeline.add(node)
   })
