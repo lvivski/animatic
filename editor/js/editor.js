@@ -309,9 +309,9 @@ UI.Editor.prototype.stringify = function (item) {
   this.popup.show(item.css(true).keyframes('animation'))
 }
 
-anima.editor = function (root) {
+anima.editor = function (nodes) {
   var timeline = anima.timeline()
-  $(root).childNodes.forEach(function (node) {
+  $(nodes).forEach(function (node) {
     if (node instanceof Element && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE')
       timeline.add(node)
   })
