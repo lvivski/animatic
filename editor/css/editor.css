@@ -1,4 +1,9 @@
 .editor {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-transform: translateZ(99999px);
+  transform: translateZ(99999px);
   font: 16px/1.5 Arial, sans-serif;
 }
 
@@ -165,7 +170,6 @@
   position: absolute;
   left: 15%;
   top: 15%;
-  -webkit-transform: translateZ(99999px);
   display: none;
   font: 13px/1.8 Menlo, Monaco, Mono-Space;
   background: white;
