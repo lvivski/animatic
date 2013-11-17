@@ -4,14 +4,14 @@
  * @constructor
  */
 function Collection(item) {
-  EventEmitter.call(this)
+	EventEmitter.call(this)
 
-  this.start = null
-  this.item = item
-  this.delay = 0
-  this.duration = 0
-  this.easeName = 'linear'
-  this.animations = []
+	this.start = null
+	this.item = item
+	this.delay = 0
+	this.duration = 0
+	this.easeName = 'linear'
+	this.animations = []
 }
 
 Collection.prototype = Object.create(EventEmitter.prototype)
@@ -25,61 +25,61 @@ Collection.prototype.constructor = Collection
  * @param delay
  * @param generated
  */
-Collection.prototype.add = function (transform, duration, ease, delay,  generated) {
-  if (Array.isArray(transform)) {
-    transform = parallel(this.item, transform)
-  } else if (typeof transform == 'string' || transform.name != undefined) {
-    transform = new CssAnimation(this.item, transform, duration, ease, delay, generated)
-  } else if (!(transform instanceof Collection)) {
-    transform = new Animation(this.item, transform, duration, ease, delay)
-  }
+Collection.prototype.add = function (transform, duration, ease, delay, generated) {
+	if (Array.isArray(transform)) {
+		transform = parallel(this.item, transform)
+	} else if (typeof transform == 'string' || transform.name != undefined) {
+		transform = new CssAnimation(this.item, transform, duration, ease, delay, generated)
+	} else if (!(transform instanceof Collection)) {
+		transform = new Animation(this.item, transform, duration, ease, delay)
+	}
 
-  this.animations.push(transform)
+	this.animations.push(transform)
 
-  duration = this.animations.map(function (a) {
-    return a.duration + a.delay
-  })
+	duration = this.animations.map(function (a) {
+		return a.duration + a.delay
+	})
 
-  if (this instanceof Parallel) {
-    this.duration = Math.max.apply(null, duration)
-  } else {
-    this.duration = duration.reduce(function (a, b) {
-      return a + b
-    }, 0)
-  }
+	if (this instanceof Parallel) {
+		this.duration = Math.max.apply(null, duration)
+	} else {
+		this.duration = duration.reduce(function (a, b) {
+			return a + b
+		}, 0)
+	}
 
-  return this
+	return this
 
-  function sequence(item, transforms) {
-    var sequence = new Sequence(item)
+	function sequence(item, transforms) {
+		var sequence = new Sequence(item)
 
-    transforms.forEach(function (t) {
-      sequence.add(t, duration, ease, delay)
-    })
+		transforms.forEach(function (t) {
+			sequence.add(t, duration, ease, delay)
+		})
 
-    return sequence
-  }
+		return sequence
+	}
 
-  function parallel(item, transforms) {
-    var parallel = new Parallel(item)
+	function parallel(item, transforms) {
+		var parallel = new Parallel(item)
 
-    transforms.forEach(function (t) {
-      if (Array.isArray(t)) {
-	      parallel.add(sequence(item, t))
-      } else {
-	      parallel.add(t, duration, ease, delay)
-      }
-    })
+		transforms.forEach(function (t) {
+			if (Array.isArray(t)) {
+				parallel.add(sequence(item, t))
+			} else {
+				parallel.add(t, duration, ease, delay)
+			}
+		})
 
-    return parallel
-  }
+		return parallel
+	}
 }
 
 /**
  * Collection length
  */
 Collection.prototype.__defineGetter__('length', function () {
-  return this.animations.length
+	return this.animations.length
 })
 
 /**
@@ -88,14 +88,14 @@ Collection.prototype.__defineGetter__('length', function () {
  * @returns {Animation|Collection}
  */
 Collection.prototype.get = function (index) {
-  return this.animations[index]
+	return this.animations[index]
 }
 
 /**
  * Remove all elements from collection
  */
 Collection.prototype.empty = function () {
-  this.animations = []
+	this.animations = []
 }
 
 /**
@@ -104,7 +104,7 @@ Collection.prototype.empty = function () {
  * @returns {Sequence}
  */
 Collection.prototype.animate = function (transform, duration, ease, delay) {
-  return this.add(transform, duration, ease, delay)
+	return this.add(transform, duration, ease, delay)
 }
 
 /**
@@ -112,5 +112,5 @@ Collection.prototype.animate = function (transform, duration, ease, delay) {
  * @returns {CSS}
  */
 Collection.prototype.css = function () {
-  return this.item.css()
+	return this.item.css()
 }

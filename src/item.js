@@ -4,11 +4,11 @@
  * @constructor
  */
 function Item(node) {
-  EventEmitter.call(this)
+	EventEmitter.call(this)
 
-  this.dom = node
+	this.dom = node
 
-  this.init()
+	this.init()
 }
 
 Item.prototype = Object.create(EventEmitter.prototype)
@@ -18,17 +18,16 @@ Item.prototype.constructor = Item
  * Initializes item
  */
 Item.prototype.init = function () {
+	this.animation = new Sequence(this)
 
-  this.animation = new Sequence(this)
+	this.running = true
 
-  this.running = true
-
-  this.state = {
-    translate: Vector.zero(),
-    rotate: Vector.zero(),
-    scale: Vector.set(1),
-    opacity: 1
-  }
+	this.state = {
+		translate: Vector.zero(),
+		rotate: Vector.zero(),
+		scale: Vector.set(1),
+		opacity: 1
+	}
 }
 
 /**
@@ -36,7 +35,7 @@ Item.prototype.init = function () {
  * @param {number} tick
  */
 Item.prototype.update = function (tick) {
-  this.animation.run(tick)
+	this.animation.run(tick)
 }
 
 /**
@@ -44,26 +43,26 @@ Item.prototype.update = function (tick) {
  * @param {number} tick
  */
 Item.prototype.timeline = function (tick) {
-  this.clear()
-  this.animation.seek(tick)
+	this.clear()
+	this.animation.seek(tick)
 }
 
 /**
  * Pauses item animation
  */
 Item.prototype.pause = function () {
-  if (!this.running) return
-  this.animation.pause()
-  this.running = false
+	if (!this.running) return
+	this.animation.pause()
+	this.running = false
 }
 
 /**
  * Resumes item animation
  */
 Item.prototype.resume = function () {
-  if (this.running) return
-  this.animation.resume()
-  this.running = true
+	if (this.running) return
+	this.animation.resume()
+	this.running = true
 }
 
 /**
@@ -72,12 +71,12 @@ Item.prototype.resume = function () {
  * @param {string=} value
  */
 Item.prototype.style = function (property, value) {
-  if (property && value) {
-    this.dom.style[property] = value
-  } else {
-    this.dom.style[_transformProperty] = this.transform()
-    this.dom.style.opacity = this.opacity()
-  }
+	if (property && value) {
+		this.dom.style[property] = value
+	} else {
+		this.dom.style[transformProperty] = this.transform()
+		this.dom.style.opacity = this.opacity()
+	}
 }
 
 /**
@@ -85,7 +84,7 @@ Item.prototype.style = function (property, value) {
  * @return {string}
  */
 Item.prototype.transform = function () {
-  return Matrix.stringify(this.matrix())
+	return Matrix.stringify(this.matrix())
 }
 
 /**
@@ -93,10 +92,10 @@ Item.prototype.transform = function () {
  * @return {Object}
  */
 Item.prototype.matrix = function () {
-  var state = this.state
-  return Matrix.compose(
-    state.translate, state.rotate, state.scale
-  )
+	var state = this.state
+	return Matrix.compose(
+		state.translate, state.rotate, state.scale
+	)
 }
 
 /**
@@ -104,7 +103,7 @@ Item.prototype.matrix = function () {
  * @return {Object}
  */
 Item.prototype.center = function () {
-  return Matrix.decompose(Matrix.inverse(this.matrix()))
+	return Matrix.decompose(Matrix.inverse(this.matrix()))
 }
 
 /**
@@ -112,10 +111,10 @@ Item.prototype.center = function () {
  * @param {Array} vector
  */
 Item.prototype.lookAt = function (vector) {
-  var transform = Matrix.decompose(Matrix.lookAt(
-    vector, this.state.translate, Vector.set(0, 1, 0)
-  ))
-  this.state.rotate = transform.rotate
+	var transform = Matrix.decompose(Matrix.lookAt(
+		vector, this.state.translate, Vector.set(0, 1, 0)
+	))
+	this.state.rotate = transform.rotate
 }
 
 /**
@@ -123,7 +122,7 @@ Item.prototype.lookAt = function (vector) {
  * @return {string|number}
  */
 Item.prototype.opacity = function () {
-  return this.state.opacity
+	return this.state.opacity
 }
 
 /**
@@ -132,10 +131,10 @@ Item.prototype.opacity = function () {
  * @param {Array} a
  */
 Item.prototype.add = function (type, a) {
-  this.state[type][0] += a[0]
-  this.state[type][1] += a[1]
-  this.state[type][2] += a[2]
-  return this
+	this.state[type][0] += a[0]
+	this.state[type][1] += a[1]
+	this.state[type][2] += a[2]
+	return this
 }
 
 /**
@@ -144,8 +143,8 @@ Item.prototype.add = function (type, a) {
  * @param {Array} a
  */
 Item.prototype.set = function (type, a) {
-  this.state[type] = a
-  return this
+	this.state[type] = a
+	return this
 }
 
 /**
@@ -153,7 +152,7 @@ Item.prototype.set = function (type, a) {
  * @param {Array} t Coordinates
  */
 Item.prototype.translate = function (t) {
-  return this.add('translate', t)
+	return this.add('translate', t)
 }
 
 /**
@@ -161,7 +160,7 @@ Item.prototype.translate = function (t) {
  * @param {Array} r Angles in radians
  */
 Item.prototype.rotate = function (r) {
-  return this.add('rotate', r)
+	return this.add('rotate', r)
 }
 
 /**
@@ -169,17 +168,17 @@ Item.prototype.rotate = function (r) {
  * @param {Array} s Scale values
  */
 Item.prototype.scale = function (s) {
-  return this.add('scale', s)
+	return this.add('scale', s)
 }
 
 /**
  * Clears item transform
  */
 Item.prototype.clear = function () {
-  this.state.translate = Vector.zero()
-  this.state.rotate = Vector.zero()
-  this.state.scale = Vector.set(1)
-  this.state.opacity = 1
+	this.state.translate = Vector.zero()
+	this.state.rotate = Vector.zero()
+	this.state.scale = Vector.set(1)
+	this.state.opacity = 1
 }
 
 /**
@@ -191,7 +190,7 @@ Item.prototype.clear = function () {
  * @return {Sequence}
  */
 Item.prototype.animate = function (transform, duration, ease, delay) {
-  return this.animation.add(transform, duration, ease, delay)
+	return this.animation.add(transform, duration, ease, delay)
 }
 
 /**
@@ -199,15 +198,15 @@ Item.prototype.animate = function (transform, duration, ease, delay) {
  * @param {boolean} abort
  */
 Item.prototype.finish = function (abort) {
-  this.animation.end(abort)
-  return this
+	this.animation.end(abort)
+	return this
 }
 
 /**
  * Stops all Item animations
  */
 Item.prototype.stop = function () {
-  return this.finish(true)
+	return this.finish(true)
 }
 
 /**
@@ -216,5 +215,5 @@ Item.prototype.stop = function () {
  * @return {CSS}
  */
 Item.prototype.css = function (idle) {
-  return new CSS(this, idle)
+	return new CSS(this, idle)
 }

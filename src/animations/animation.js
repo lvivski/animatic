@@ -8,21 +8,21 @@
  * @constructor
  */
 function Animation(item, transform, duration, ease, delay) {
-  this.item = item
+	this.item = item
 
-  this.translate = transform.translate && transform.translate.map(parseFloat)
-  this.rotate = transform.rotate && transform.rotate.map(parseFloat)
-  this.scale = transform.scale
-  this.opacity = transform.opacity
+	this.translate = transform.translate && transform.translate.map(parseFloat)
+	this.rotate = transform.rotate && transform.rotate.map(parseFloat)
+	this.scale = transform.scale
+	this.opacity = transform.opacity
 
-  this.start = null
-  this.diff = null
+	this.start = null
+	this.diff = null
 
-  this.duration = (transform.duration || duration) | 0
-  this.delay = (transform.delay || delay) | 0
-  this.ease = easings[transform.ease] || easings[ease] || easings.linear
+	this.duration = (transform.duration || duration) | 0
+	this.delay = (transform.delay || delay) | 0
+	this.ease = easings[transform.ease] || easings[ease] || easings.linear
 
-  this.easeName = ease || 'linear'
+	this.easeName = ease || 'linear'
 }
 
 /**
@@ -31,16 +31,16 @@ function Animation(item, transform, duration, ease, delay) {
  * @param {boolean=} force Force initialization
  */
 Animation.prototype.init = function (tick, force) {
-  if (this.start !== null && !force) return
-  this.start = tick + this.delay
+	if (this.start !== null && !force) return
+	this.start = tick + this.delay
 
-  var state = this.item.state
-  this.initial = {
-    translate: state.translate.slice(),
-    rotate: state.rotate.slice(),
-    scale: state.scale.slice(),
-    opacity: state.opacity
-  }
+	var state = this.item.state
+	this.initial = {
+		translate: state.translate.slice(),
+		rotate: state.rotate.slice(),
+		scale: state.scale.slice(),
+		opacity: state.opacity
+	}
 }
 
 /**
@@ -48,26 +48,26 @@ Animation.prototype.init = function (tick, force) {
  * @param {number} tick
  */
 Animation.prototype.run = function (tick) {
-  if (tick < this.start) return
+	if (tick < this.start) return
 
-  var percent = (tick - this.start) / this.duration
-  percent = this.ease(percent)
+	var percent = (tick - this.start) / this.duration
+	percent = this.ease(percent)
 
-  this.transform(percent)
+	this.transform(percent)
 }
 
 /**
  * Pauses animation
  */
 Animation.prototype.pause = function () {
-  this.diff = Date.now() - this.start
+	this.diff = Date.now() - this.start
 }
 
 /**
  * Resumes animation
  */
 Animation.prototype.resume = function () {
-  this.start = Date.now() - this.diff
+	this.start = Date.now() - this.diff
 }
 
 /**
@@ -76,16 +76,16 @@ Animation.prototype.resume = function () {
  * @param {number} percent
  */
 Animation.prototype.set = function (type, percent) {
-  var state = this.item.state,
-      initial = this.initial
+	var state = this.item.state,
+		initial = this.initial
 
-  if (Array.isArray(this[type])) {
-    for (var i = 0; i < 3; ++i) if (this[type][i]) {
-      state[type][i] = initial[type][i] + this[type][i] * percent
-    }
-  } else if (this[type] !== undefined) {
-    state[type] = initial[type] + (this[type] - initial[type]) * percent
-  }
+	if (Array.isArray(this[type])) {
+		for (var i = 0; i < 3; ++i) if (this[type][i]) {
+			state[type][i] = initial[type][i] + this[type][i] * percent
+		}
+	} else if (this[type] !== undefined) {
+		state[type] = initial[type] + (this[type] - initial[type]) * percent
+	}
 }
 
 /**
@@ -93,10 +93,10 @@ Animation.prototype.set = function (type, percent) {
  * @param {number} percent
  */
 Animation.prototype.transform = function (percent) {
-  this.set('translate', percent)
-  this.set('rotate', percent)
-  this.set('scale', percent)
-  this.set('opacity', percent)
+	this.set('translate', percent)
+	this.set('rotate', percent)
+	this.set('scale', percent)
+	this.set('opacity', percent)
 }
 
 /**
@@ -104,6 +104,6 @@ Animation.prototype.transform = function (percent) {
  * @param {boolean} abort
  */
 Animation.prototype.end = function (abort) {
-  !abort && this.transform(1)
-  this.start = null
+	!abort && this.transform(1)
+	this.start = null
 }

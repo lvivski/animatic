@@ -2,14 +2,14 @@
  * Anima
  * @type {Object}
  */
-var a = window.anima = window.a = {}
+var a = {}
 
 /**
  * Creates and initializes world with frame loop
  * @return {World}
  */
 a.world = function () {
-  return new World
+	return new World
 }
 
 /**
@@ -17,11 +17,13 @@ a.world = function () {
  * @return {Timeline}
  */
 a.timeline = function () {
-  return new Timeline
+	return new Timeline
 }
 
 if (typeof module === 'object' && typeof module.exports === 'object') {
-  module.exports = a
+	module.exports = a
 } else if (typeof define === 'function' && define.amd) {
-  define(a)
+	define(a)
+} else {
+	window.anima = window.a = a
 }

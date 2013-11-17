@@ -4,7 +4,7 @@
  * @constructor
  */
 function Parallel(item) {
-  Collection.call(this, item)
+	Collection.call(this, item)
 }
 
 Parallel.prototype = Object.create(Collection.prototype)
@@ -15,12 +15,12 @@ Parallel.prototype.constructor = Parallel
  * @param {string} method
  */
 Parallel.prototype.all = function (method) {
-  var args = Array.prototype.slice.call(arguments, 1)
+	var args = Array.prototype.slice.call(arguments, 1)
 
-  for (var i = 0; i < this.animations.length; ++i) {
-    var a = this.animations[i]
-    a[method].apply(a, args)
-  }
+	for (var i = 0; i < this.animations.length; ++i) {
+		var a = this.animations[i]
+		a[method].apply(a, args)
+	}
 }
 
 /**
@@ -30,10 +30,10 @@ Parallel.prototype.all = function (method) {
  * @fires Parallel#start
  */
 Parallel.prototype.init = function (tick, force) {
-  if (this.start !== null && !force) return
-  this.start = tick
-  this.all('init', tick, force)
-  this.emit('start')
+	if (this.start !== null && !force) return
+	this.start = tick
+	this.all('init', tick, force)
+	this.emit('start')
 }
 
 /**
@@ -41,22 +41,22 @@ Parallel.prototype.init = function (tick, force) {
  * @param {number} tick
  */
 Parallel.prototype.run = function (tick) {
-  if (!this.animations.length) return
+	if (!this.animations.length) return
 
-  for (var i = 0; i < this.animations.length; ++i) {
-    var a = this.animations[i]
-    if (a.start + a.duration <= tick) {
-      this.animations.splice(i--, 1)
-      a.end()
-      continue
-    }
-    a.run(tick)
-  }
-  this.item.style()
+	for (var i = 0; i < this.animations.length; ++i) {
+		var a = this.animations[i]
+		if (a.start + a.duration <= tick) {
+			this.animations.splice(i--, 1)
+			a.end()
+			continue
+		}
+		a.run(tick)
+	}
+	this.item.style()
 
-  if (!this.animations.length) {
-    this.end()
-  }
+	if (!this.animations.length) {
+		this.end()
+	}
 }
 
 /**
@@ -64,21 +64,21 @@ Parallel.prototype.run = function (tick) {
  * @param {number} tick
  */
 Parallel.prototype.seek = function (tick) {
-  this.run(tick)
+	this.run(tick)
 }
 
 /**
  * Pauses animations
  */
 Parallel.prototype.pause = function () {
-  this.all('pause')
+	this.all('pause')
 }
 
 /**
  * Resumes animations
  */
 Parallel.prototype.resume = function () {
-  this.all('resume')
+	this.all('resume')
 }
 
 /**
@@ -87,6 +87,6 @@ Parallel.prototype.resume = function () {
  * @fires Parallel#end
  */
 Parallel.prototype.end = function (abort) {
-  this.all('end', abort)
-  this.emit('end')
+	this.all('end', abort)
+	this.emit('end')
 }

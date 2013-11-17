@@ -3,10 +3,10 @@
  * @constructor
  */
 function World() {
-  EventEmitter.call(this)
-  this.items = []
-  this.frame = null
-  this.init()
+	EventEmitter.call(this)
+	this.items = []
+	this.frame = null
+	this.init()
 }
 
 World.prototype = Object.create(EventEmitter.prototype)
@@ -16,14 +16,14 @@ World.prototype.constructor = World
  * Starts new frame loop
  */
 World.prototype.init = function () {
-  var self = this
+	var self = this
 
-  this.frame = _requestAnimationFrame(update)
+	this.frame = requestAnimationFrame(update)
 
-  function update(tick) {
-    self.update(tick)
-    self.frame = _requestAnimationFrame(update)
-  }
+	function update(tick) {
+		self.update(tick)
+		self.frame = requestAnimationFrame(update)
+	}
 }
 
 /**
@@ -31,9 +31,9 @@ World.prototype.init = function () {
  * @param {number} tick
  */
 World.prototype.update = function (tick) {
-  for (var i = 0; i < this.items.length; ++i) {
-    this.items[i].update(tick)
-  }
+	for (var i = 0; i < this.items.length; ++i) {
+		this.items[i].update(tick)
+	}
 }
 
 /**
@@ -44,50 +44,50 @@ World.prototype.update = function (tick) {
  * @return {Item}
  */
 World.prototype.add = function (node, mass, viscosity, edge) {
-  var item
-  if (mass) {
-    item = new Particle(node, mass, viscosity, edge)
-  } else {
-    item = new Item(node)
-  }
-  this.items.push(item)
-  return item
+	var item
+	if (mass) {
+		item = new Particle(node, mass, viscosity, edge)
+	} else {
+		item = new Item(node)
+	}
+	this.items.push(item)
+	return item
 }
 
 /**
  * Cancels next frame
  */
 World.prototype.cancel = function () {
-  this.frame && _cancelAnimationFrame(this.frame)
-  this.frame = 0
+	this.frame && cancelAnimationFrame(this.frame)
+	this.frame = 0
 }
 
 /**
  * Stops the World
  */
 World.prototype.stop = function () {
-  this.cancel()
-  for (var i = 0; i < this.items.length; ++i) {
-    this.items[i].stop()
-  }
+	this.cancel()
+	for (var i = 0; i < this.items.length; ++i) {
+		this.items[i].stop()
+	}
 }
 
 /**
  * Pauses all animations
  */
 World.prototype.pause = function () {
-  this.cancel()
-  for (var i = 0; i < this.items.length; ++i) {
-    this.items[i].pause()
-  }
+	this.cancel()
+	for (var i = 0; i < this.items.length; ++i) {
+		this.items[i].pause()
+	}
 }
 
 /**
  * Resumes all animations
  */
 World.prototype.resume = function () {
-  for (var i = 0; i < this.items.length; ++i) {
-    this.items[i].resume()
-  }
-  this.init()
+	for (var i = 0; i < this.items.length; ++i) {
+		this.items[i].resume()
+	}
+	this.init()
 }

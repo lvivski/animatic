@@ -8,19 +8,19 @@
  * @constructor
  */
 function CssAnimation(item, animation, duration, ease, delay, generated) {
-  this.item = item
+	this.item = item
 
-  this.name = animation.name || animation
+	this.name = animation.name || animation
 
-  this.start = null
-  this.diff = null
+	this.start = null
+	this.diff = null
 
-  this.duration = (animation.duration || duration) | 0
-  this.delay = (animation.delay || delay) | 0
-  this.ease = easings.css[animation.ease] || easings.css[ease] || easings.css.linear
+	this.duration = (animation.duration || duration) | 0
+	this.delay = (animation.delay || delay) | 0
+	this.ease = easings.css[animation.ease] || easings.css[ease] || easings.css.linear
 
-  this._infinite = false
-  this._generated = generated
+	this._infinite = false
+	this._generated = generated
 }
 
 /**
@@ -29,49 +29,50 @@ function CssAnimation(item, animation, duration, ease, delay, generated) {
  * @param {boolean=} force Force initialization
  */
 CssAnimation.prototype.init = function (tick, force) {
-  if (this.start !== null && !force) return
-  this.start = tick + this.delay
+	if (this.start !== null && !force) return
+	this.start = tick + this.delay
 
-  this.item.style(_animationProperty,
-    this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
-    this.delay + 'ms' + (this._infinite ? ' infinite' : '') + ' ' + 'forwards')
+	this.item.style(animationProperty,
+		this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
+		this.delay + 'ms' + (this._infinite ? ' infinite' : '') + ' ' + 'forwards')
 }
 
 /**
  * Runs one tick of animation
  */
-CssAnimation.prototype.run = function () {}
+CssAnimation.prototype.run = function () {
+}
 
 /**
  * Pauses animation
  */
 CssAnimation.prototype.pause = function () {
-  this.item.style(_animationProperty + 'PlayState', 'paused')
-  this.diff = Date.now() - this.start
+	this.item.style(animationProperty + 'PlayState', 'paused')
+	this.diff = Date.now() - this.start
 }
 
 /**
  * Resumes animation
  */
 CssAnimation.prototype.resume = function () {
-  this.item.style(_animationProperty + 'PlayState', 'running')
-  this.start = Date.now() - this.diff
+	this.item.style(animationProperty + 'PlayState', 'running')
+	this.start = Date.now() - this.diff
 }
 
 /**
  * Ends animation
  */
 CssAnimation.prototype.end = function () {
-  if (this._generated) {
-    var computed = getComputedStyle(this.item.dom, null),
-      transform = computed[_transformProperty],
-      opacity = computed.opacity
+	if (this._generated) {
+		var computed = getComputedStyle(this.item.dom, null),
+		    transform = computed[transformProperty],
+		    opacity = computed.opacity
 
-    this.item.style(_animationProperty, '')
-    this.item.state = Matrix.decompose(Matrix.parse(transform))
-    this.item.state.opacity = opacity
-    this.item.style()
-  }
+		this.item.style(animationProperty, '')
+		this.item.state = Matrix.decompose(Matrix.parse(transform))
+		this.item.state.opacity = opacity
+		this.item.style()
+	}
 
-  this.start = null
+	this.start = null
 }

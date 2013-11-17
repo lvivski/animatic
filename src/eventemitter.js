@@ -3,7 +3,7 @@
  * @constructor
  */
 function EventEmitter() {
-  this.handlers = {}
+	this.handlers = {}
 }
 
 /**
@@ -13,9 +13,9 @@ function EventEmitter() {
  * @return {EventEmitter}
  */
 EventEmitter.prototype.on = function (event, handler) {
-  (this.handlers[event] = this.handlers[event] || [])
-    .push(handler)
-  return this
+	(this.handlers[event] = this.handlers[event] || [])
+		.push(handler)
+	return this
 }
 
 /**
@@ -25,15 +25,15 @@ EventEmitter.prototype.on = function (event, handler) {
  * @return {EventEmitter}
  */
 EventEmitter.prototype.off = function (event, handler) {
-  var handlers = this.handlers[event]
+	var handlers = this.handlers[event]
 
-  if (handler) {
-    handlers.splice(handlers.indexOf(handler), 1)
-  } else {
-    delete this.handlers[event]
-  }
+	if (handler) {
+		handlers.splice(handlers.indexOf(handler), 1)
+	} else {
+		delete this.handlers[event]
+	}
 
-  return this
+	return this
 }
 
 /**
@@ -42,16 +42,16 @@ EventEmitter.prototype.off = function (event, handler) {
  * @return {EventEmitter}
  */
 EventEmitter.prototype.emit = function (event) {
-  var args = Array.prototype.slice.call(arguments, 1),
-      handlers = this.handlers[event]
+	var args = Array.prototype.slice.call(arguments, 1),
+	    handlers = this.handlers[event]
 
-  if (handlers) {
-    for (var i = 0; i < handlers.length; ++i) {
-      handlers[i].apply(this, args)
-    }
-  }
+	if (handlers) {
+		for (var i = 0; i < handlers.length; ++i) {
+			handlers[i].apply(this, args)
+		}
+	}
 
-  return this
+	return this
 }
 
 /**
@@ -60,5 +60,5 @@ EventEmitter.prototype.emit = function (event) {
  * @returns {Array}
  */
 EventEmitter.prototype.listeners = function (event) {
-  return this.handlers[event] || []
+	return this.handlers[event] || []
 }

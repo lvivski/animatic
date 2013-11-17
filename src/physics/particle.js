@@ -6,23 +6,23 @@
  * @constructor
  */
 function Particle(node, mass, viscosity, edge) {
-  Item.call(this, node)
-  
-  if (mass === Object(mass)) {
-    viscosity = mass.viscosity
-    edge = mass.edge
-    mass = mass.mass
-  }
-  
-  mass /= 100
+	Item.call(this, node)
 
-  mass || (mass = 0.01)
-  viscosity || (viscosity = 0.1)
-  edge || (edge = false)
+	if (mass === Object(mass)) {
+		viscosity = mass.viscosity
+		edge = mass.edge
+		mass = mass.mass
+	}
 
-  this.mass = 1 / mass
-  this.viscosity = viscosity
-  this.edge = edge
+	mass /= 100
+
+	mass || (mass = 0.01)
+	viscosity || (viscosity = 0.1)
+	edge || (edge = false)
+
+	this.mass = 1 / mass
+	this.viscosity = viscosity
+	this.edge = edge
 }
 
 Particle.prototype = Object.create(Item.prototype)
@@ -32,21 +32,21 @@ Particle.prototype.constructor = Particle
  * Initializes particle
  */
 Particle.prototype.init = function () {
-  Item.prototype.init.call(this)
+	Item.prototype.init.call(this)
 
-  this.current = {
-    position: Vector.zero(),
-    velocity: Vector.zero(),
-    acceleration: Vector.zero()
-  }
+	this.current = {
+		position: Vector.zero(),
+		velocity: Vector.zero(),
+		acceleration: Vector.zero()
+	}
 
-  this.previous = {
-    position: Vector.zero(),
-    velocity: Vector.zero(),
-    acceleration: Vector.zero()
-  }
+	this.previous = {
+		position: Vector.zero(),
+		velocity: Vector.zero(),
+		acceleration: Vector.zero()
+	}
 
-  this.clock = null
+	this.clock = null
 }
 
 /**
@@ -54,20 +54,20 @@ Particle.prototype.init = function () {
  * @param {number} tick
  */
 Particle.prototype.update = function (tick) {
-  this.animation.run(tick)
+	this.animation.run(tick)
 
-  this.integrate(tick)
+	this.integrate(tick)
 
-  this.style()
+	this.style()
 }
 
 Particle.prototype.timeline = function (tick) {
-  this.clear()
-  this.animation.seek(tick)
-  
-  this.integrate(tick, true)
-  
-  this.style()
+	this.clear()
+	this.animation.seek(tick)
+
+	this.integrate(tick, true)
+
+	this.style()
 }
 
 /**
@@ -75,26 +75,26 @@ Particle.prototype.timeline = function (tick) {
  * @param {number} delta
  */
 Particle.prototype.integrate = function (tick, clamp) {
-  this.clock || (this.clock = tick)
+	this.clock || (this.clock = tick)
 
-  var delta = tick - this.clock
+	var delta = tick - this.clock
 
-  if (delta) {
-    clamp && (delta = Math.max(-16, Math.min(16, delta)))
+	if (delta) {
+		clamp && (delta = Math.max(-16, Math.min(16, delta)))
 
-    this.clock = tick
+		this.clock = tick
 
-    delta *= 0.001
-    
-    Constant.call(this)
-    this.edge && Edge.call(this, Vector.set(this.edge.min), Vector.set(this.edge.max), this.edge.bounce)
-    
-    Verlet.call(this, delta, 1.0 - this.viscosity)
-  }
+		delta *= 0.001
+
+		Constant.call(this)
+		this.edge && Edge.call(this, Vector.set(this.edge.min), Vector.set(this.edge.max), this.edge.bounce)
+
+		Verlet.call(this, delta, 1.0 - this.viscosity)
+	}
 }
 
 Particle.prototype.css = function () {
-  throw new Error('CSS is nor supported for physics');
+	throw new Error('CSS is nor supported for physics');
 }
 
 /**
@@ -102,8 +102,8 @@ Particle.prototype.css = function () {
  * @returns {Array}
  */
 Particle.prototype.matrix = function () {
-  var state = this.state
-  return Matrix.compose(
-    this.current.position, state.rotate, state.scale
-  )
+	var state = this.state
+	return Matrix.compose(
+		this.current.position, state.rotate, state.scale
+	)
 }

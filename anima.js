@@ -1,6 +1,6 @@
 (function() {
   "use strict";
-  var a = window.anima = window.a = {};
+  var a = {};
   a.world = function() {
     return new World();
   };
@@ -11,19 +11,17 @@
     module.exports = a;
   } else if (typeof define === "function" && define.amd) {
     define(a);
+  } else {
+    window.anima = window.a = a;
   }
-  var _requestAnimationFrame = window.requestAnimationFrame, _cancelAnimationFrame = window.cancelAnimationFrame;
-  for (var i = 0, vendors = [ "webkit", "Moz", "O", "ms" ], vendor; i < vendors.length && !_requestAnimationFrame; ++i) {
-    vendor = vendors[i];
-    _requestAnimationFrame = window[vendor.toLowerCase() + "RequestAnimationFrame"];
-    _cancelAnimationFrame = window[vendor.toLowerCase() + "CancelAnimationFrame"] || window[vendor.toLowerCase() + "CancelRequestAnimationFrame"];
+  var requestAnimationFrame = window.requestAnimationFrame, cancelAnimationFrame = window.cancelAnimationFrame, vendors = [ "moz", "webkit", "ms" ], i = vendors.length;
+  while (--i < vendors.length && !requestAnimationFrame) {
+    requestAnimationFrame = window[vendors[i] + "RequestAnimationFrame"];
+    cancelAnimationFrame = window[vendors[i] + "CancelAnimationFrame"] || window[vendors[i] + "CancelRequestAnimationFrame"];
   }
-  if (window.chrome && !vendor) {
-    vendor = vendors[0];
-  }
-  var _vendor = vendor ? "-" + vendor.toLowerCase() + "-" : "", _transformProperty = getProperty("transform"), _animationProperty = getProperty("animation");
+  var prefix = ([].slice.call(getComputedStyle(document.documentElement, null)).join("").match(/(-(moz|webkit|ms)-)transform/) || [])[1], transformProperty = getProperty("transform"), animationProperty = getProperty("animation");
   function getProperty(name) {
-    return vendor ? vendor + name[0].toUpperCase() + name.substr(1) : name;
+    return prefix ? prefix + name : name;
   }
   var Vector = {
     set: function(x, y, z) {
@@ -447,21 +445,21 @@
   CssAnimation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick + this.delay;
-    this.item.style(_animationProperty, this.name + " " + this.duration + "ms" + " " + this.ease + " " + this.delay + "ms" + (this._infinite ? " infinite" : "") + " " + "forwards");
+    this.item.style(animationProperty, this.name + " " + this.duration + "ms" + " " + this.ease + " " + this.delay + "ms" + (this._infinite ? " infinite" : "") + " " + "forwards");
   };
   CssAnimation.prototype.run = function() {};
   CssAnimation.prototype.pause = function() {
-    this.item.style(_animationProperty + "PlayState", "paused");
+    this.item.style(animationProperty + "PlayState", "paused");
     this.diff = Date.now() - this.start;
   };
   CssAnimation.prototype.resume = function() {
-    this.item.style(_animationProperty + "PlayState", "running");
+    this.item.style(animationProperty + "PlayState", "running");
     this.start = Date.now() - this.diff;
   };
   CssAnimation.prototype.end = function() {
     if (this._generated) {
-      var computed = getComputedStyle(this.item.dom, null), transform = computed[_transformProperty], opacity = computed.opacity;
-      this.item.style(_animationProperty, "");
+      var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty], opacity = computed.opacity;
+      this.item.style(animationProperty, "");
       this.item.state = Matrix.decompose(Matrix.parse(transform));
       this.item.state.opacity = opacity;
       this.item.style();
@@ -674,8 +672,8 @@
     this.animation.resume();
   };
   CSS.prototype.stop = function() {
-    var computed = getComputedStyle(this.item.dom, null), transform = computed[_transformProperty], opacity = computed.opacity;
-    this.item.style(_animationProperty, "");
+    var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty], opacity = computed.opacity;
+    this.item.style(animationProperty, "");
     this.item.state = Matrix.decompose(Matrix.parse(transform));
     this.item.state.opacity = opacity;
     this.item.style();
@@ -688,7 +686,7 @@
     this.animation.add(animation, this.animation.duration, "", 0, true);
   };
   CSS.prototype.keyframes = function(name) {
-    var time = 0, rule = [ "@" + _vendor + "keyframes " + name + "{" ];
+    var time = 0, rule = [ "@" + getProperty("keyframes") + " " + name + "{" ];
     for (var i = 0; i < this.animation.length; ++i) {
       var a = this.animation.get(i), aNext = this.animation.get(i + 1);
       a.init();
@@ -725,7 +723,7 @@
   };
   CSS.prototype.frame = function(time, ease) {
     var percent = this.percent(time);
-    return percent + "% {" + (percent ? _vendor + "transform:" + this.item.transform() + ";" : "") + (percent ? "opacity:" + this.item.opacity() + ";" : "") + (ease ? _vendor + "animation-timing-function:" + ease + ";" : "") + "}";
+    return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + (percent ? "opacity:" + this.item.opacity() + ";" : "") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
   };
   function World() {
     EventEmitter.call(this);
@@ -737,10 +735,10 @@
   World.prototype.constructor = World;
   World.prototype.init = function() {
     var self = this;
-    this.frame = _requestAnimationFrame(update);
+    this.frame = requestAnimationFrame(update);
     function update(tick) {
       self.update(tick);
-      self.frame = _requestAnimationFrame(update);
+      self.frame = requestAnimationFrame(update);
     }
   };
   World.prototype.update = function(tick) {
@@ -759,7 +757,7 @@
     return item;
   };
   World.prototype.cancel = function() {
-    this.frame && _cancelAnimationFrame(this.frame);
+    this.frame && cancelAnimationFrame(this.frame);
     this.frame = 0;
   };
   World.prototype.stop = function() {
@@ -788,14 +786,14 @@
   Timeline.prototype = Object.create(World.prototype);
   Timeline.prototype.constructor = Timeline;
   Timeline.prototype.init = function() {
-    this.frame = _requestAnimationFrame(update);
+    this.frame = requestAnimationFrame(update);
     var self = this;
     function update(tick) {
       if (self.running) {
         self.currentTime = tick - self.start;
       }
       self.update(self.currentTime);
-      self.frame = _requestAnimationFrame(update);
+      self.frame = requestAnimationFrame(update);
     }
   };
   Timeline.prototype.update = function(tick) {
@@ -863,7 +861,7 @@
     if (property && value) {
       this.dom.style[property] = value;
     } else {
-      this.dom.style[_transformProperty] = this.transform();
+      this.dom.style[transformProperty] = this.transform();
       this.dom.style.opacity = this.opacity();
     }
   };
