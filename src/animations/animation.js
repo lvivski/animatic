@@ -77,7 +77,7 @@ Animation.prototype.resume = function () {
  */
 Animation.prototype.set = function (type, percent) {
 	var state = this.item.state,
-		initial = this.initial
+	    initial = this.initial
 
 	if (Array.isArray(this[type])) {
 		for (var i = 0; i < 3; ++i) if (this[type][i]) {
