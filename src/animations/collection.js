@@ -78,9 +78,11 @@ Collection.prototype.add = function (transform, duration, ease, delay, generated
 /**
  * Collection length
  */
-Collection.prototype.__defineGetter__('length', function () {
-	return this.animations.length
-})
+Object.defineProperty(Collection.prototype, 'length', {
+	get: function () {
+		return this.animations.length
+	}
+});
 
 /**
  * Get element by index

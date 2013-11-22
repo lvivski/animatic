@@ -516,8 +516,10 @@
       return parallel;
     }
   };
-  Collection.prototype.__defineGetter__("length", function() {
-    return this.animations.length;
+  Object.defineProperty(Collection.prototype, "length", {
+    get: function() {
+      return this.animations.length;
+    }
   });
   Collection.prototype.get = function(index) {
     return this.animations[index];
