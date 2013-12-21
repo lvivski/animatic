@@ -19,10 +19,14 @@
     requestAnimationFrame = window[vendors[i] + "RequestAnimationFrame"];
     cancelAnimationFrame = window[vendors[i] + "CancelAnimationFrame"] || window[vendors[i] + "CancelRequestAnimationFrame"];
   }
-  var prefix = ([].slice.call(getComputedStyle(document.documentElement, null)).join("").match(/(-(moz|webkit|ms)-)transform/) || [])[1], transformProperty = getProperty("transform"), animationProperty = getProperty("animation");
+  var prefix = ([].slice.call(getComputedStyle(document.documentElement, null)).join("").match(/(-(moz|webkit|ms)-)transform/) || [])[1], transformProperty = getProperty("transform"), animationProperty = getProperty("animation"), fixTick;
   function getProperty(name) {
     return prefix ? prefix + name : name;
   }
+  var performance = window.performance || Date;
+  requestAnimationFrame(function(tick) {
+    fixTick = tick > 1e12 != performance.now() > 1e12;
+  });
   var Vector = {
     set: function(x, y, z) {
       if (Array.isArray(x)) {
@@ -406,10 +410,10 @@
     this.transform(percent);
   };
   Animation.prototype.pause = function() {
-    this.diff = Date.now() - this.start;
+    this.diff = performance.now() - this.start;
   };
   Animation.prototype.resume = function() {
-    this.start = Date.now() - this.diff;
+    this.start = performance.now() - this.diff;
   };
   Animation.prototype.set = function(type, percent) {
     var state = this.item.state, initial = this.initial;
@@ -450,11 +454,11 @@
   CssAnimation.prototype.run = function() {};
   CssAnimation.prototype.pause = function() {
     this.item.style(animationProperty + "PlayState", "paused");
-    this.diff = Date.now() - this.start;
+    this.diff = performance.now() - this.start;
   };
   CssAnimation.prototype.resume = function() {
     this.item.style(animationProperty + "PlayState", "running");
-    this.start = Date.now() - this.diff;
+    this.start = performance.now() - this.diff;
   };
   CssAnimation.prototype.end = function() {
     if (this._generated) {
@@ -739,6 +743,9 @@
     var self = this;
     this.frame = requestAnimationFrame(update);
     function update(tick) {
+      if (fixTick) {
+        tick = performance.now();
+      }
       self.update(tick);
       self.frame = requestAnimationFrame(update);
     }
@@ -791,6 +798,9 @@
     this.frame = requestAnimationFrame(update);
     var self = this;
     function update(tick) {
+      if (fixTick) {
+        tick = performance.now();
+      }
       if (self.running) {
         self.currentTime = tick - self.start;
       }
@@ -812,7 +822,7 @@
   };
   Timeline.prototype.play = function() {
     this.running = true;
-    this.start = Date.now() - this.currentTime;
+    this.start = performance.now() - this.currentTime;
   };
   Timeline.prototype.pause = function() {
     this.running = false;
@@ -953,7 +963,7 @@
     var current = this.current, previous = this.previous;
     current.acceleration = Vector.scale(current.acceleration, this.mass);
     current.velocity = Vector.sub(current.position, previous.position);
-    if (drag) {
+    if (drag !== undefined) {
       current.velocity = Vector.scale(current.velocity, drag);
     }
     previous.position = current.position;

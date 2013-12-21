@@ -16,8 +16,17 @@ while (--i < vendors.length && !requestAnimationFrame) {
 var prefix = ([].slice.call(getComputedStyle(document.documentElement, null))
     	.join('').match(/(-(moz|webkit|ms)-)transform/) || [])[1],
     transformProperty = getProperty('transform'),
-    animationProperty = getProperty('animation')
+    animationProperty = getProperty('animation'),
+	fixTick
 
 function getProperty(name) {
 	return prefix ? prefix + name : name
 }
+
+var performance = window.performance || Date
+
+requestAnimationFrame(function(tick) {
+	fixTick = tick > 1e12 != performance.now() > 1e12
+})
+
+

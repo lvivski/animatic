@@ -20,6 +20,9 @@ Timeline.prototype.init = function () {
 	var self = this
 
 	function update(tick) {
+		if (fixTick) {
+			tick = performance.now()
+		}
 		if (self.running) {
 			self.currentTime = tick - self.start
 		}
@@ -51,7 +54,7 @@ Timeline.prototype.update = function (tick) {
  */
 Timeline.prototype.play = function () {
 	this.running = true
-	this.start = Date.now() - this.currentTime
+	this.start = performance.now() - this.currentTime
 }
 
 /**

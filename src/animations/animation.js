@@ -60,14 +60,14 @@ Animation.prototype.run = function (tick) {
  * Pauses animation
  */
 Animation.prototype.pause = function () {
-	this.diff = Date.now() - this.start
+	this.diff = performance.now() - this.start
 }
 
 /**
  * Resumes animation
  */
 Animation.prototype.resume = function () {
-	this.start = Date.now() - this.diff
+	this.start = performance.now() - this.diff
 }
 
 /**

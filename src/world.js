@@ -21,6 +21,9 @@ World.prototype.init = function () {
 	this.frame = requestAnimationFrame(update)
 
 	function update(tick) {
+		if (fixTick) {
+			tick = performance.now()
+		}
 		self.update(tick)
 		self.frame = requestAnimationFrame(update)
 	}
