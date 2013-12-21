@@ -13,7 +13,7 @@ function Verlet(delta, drag) {
 	current.acceleration = Vector.scale(current.acceleration, this.mass)
 	current.velocity = Vector.sub(current.position, previous.position)
 
-	if (drag) {
+	if (drag !== undefined) {
 		current.velocity = Vector.scale(current.velocity, drag)
 	}
 
