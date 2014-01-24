@@ -14,10 +14,10 @@
   } else {
     window.anima = window.a = a;
   }
-  var requestAnimationFrame = window.requestAnimationFrame, cancelAnimationFrame = window.cancelAnimationFrame, vendors = [ "moz", "webkit", "ms" ], i = vendors.length;
-  while (--i < vendors.length && !requestAnimationFrame) {
-    requestAnimationFrame = window[vendors[i] + "RequestAnimationFrame"];
-    cancelAnimationFrame = window[vendors[i] + "CancelAnimationFrame"] || window[vendors[i] + "CancelRequestAnimationFrame"];
+  var requestAnimationFrame = top.requestAnimationFrame, cancelAnimationFrame = top.cancelAnimationFrame, vendors = [ "moz", "webkit", "ms" ], i;
+  for (i = 0; i < vendors.length && !requestAnimationFrame; i++) {
+    requestAnimationFrame = top[vendors[i] + "RequestAnimationFrame"];
+    cancelAnimationFrame = top[vendors[i] + "CancelAnimationFrame"] || top[vendors[i] + "CancelRequestAnimationFrame"];
   }
   var prefix = ([].slice.call(getComputedStyle(document.documentElement, null)).join("").match(/(-(moz|webkit|ms)-)transform/) || [])[1], transformProperty = getProperty("transform"), animationProperty = getProperty("animation"), fixTick;
   function getProperty(name) {
