@@ -2,15 +2,15 @@
  * Vendor specific stuff
  */
 
-var requestAnimationFrame = window.requestAnimationFrame,
-	cancelAnimationFrame = window.cancelAnimationFrame,
+var requestAnimationFrame = top.requestAnimationFrame,
+	cancelAnimationFrame = top.cancelAnimationFrame,
 	vendors = ['moz', 'webkit', 'ms'],
-	i = vendors.length
+    i
 
-while (--i < vendors.length && !requestAnimationFrame) {
-	requestAnimationFrame = window[vendors[i] + 'RequestAnimationFrame']
-	cancelAnimationFrame = window[vendors[i] + 'CancelAnimationFrame']
-	                     || window[vendors[i] + 'CancelRequestAnimationFrame']
+for (i = 0; i < vendors.length && !requestAnimationFrame; i++) {
+	requestAnimationFrame = top[vendors[i] + 'RequestAnimationFrame']
+	cancelAnimationFrame = top[vendors[i] + 'CancelAnimationFrame']
+	                     || top[vendors[i] + 'CancelRequestAnimationFrame']
 }
 
 var prefix = ([].slice.call(getComputedStyle(document.documentElement, null))
