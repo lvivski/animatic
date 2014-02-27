@@ -23,7 +23,7 @@
   function getProperty(name) {
     return prefix ? prefix + name : name;
   }
-  var performance = window.performance || Date;
+  var performance = window.performance && performance.now ? performance : Date;
   requestAnimationFrame(function(tick) {
     fixTick = tick > 1e12 != performance.now() > 1e12;
   });
