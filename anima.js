@@ -14,8 +14,8 @@
   } else {
     window.anima = window.a = a;
   }
-  var requestAnimationFrame = top.requestAnimationFrame, cancelAnimationFrame = top.cancelAnimationFrame, vendors = [ "moz", "webkit", "ms" ], i;
-  for (i = 0; i < vendors.length && !requestAnimationFrame; i++) {
+  var requestAnimationFrame = top.requestAnimationFrame, cancelAnimationFrame = top.cancelAnimationFrame, vendors = [ "moz", "webkit", "ms" ];
+  for (var i = 0; i < vendors.length && !requestAnimationFrame; i++) {
     requestAnimationFrame = top[vendors[i] + "RequestAnimationFrame"];
     cancelAnimationFrame = top[vendors[i] + "CancelAnimationFrame"] || top[vendors[i] + "CancelRequestAnimationFrame"];
   }
