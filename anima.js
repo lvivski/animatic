@@ -687,7 +687,7 @@
   };
   CSS.prototype.style = function() {
     var animation = "a" + Date.now() + "r" + Math.floor(Math.random() * 1e3);
-    this.stylesheet.insertRule(this.keyframes(animation), 0);
+    this.stylesheet.insertRule(this.keyframes(animation), this.stylesheet.cssRules.length);
     this.animation.empty();
     this.animation.add(animation, this.animation.duration, "", 0, true);
   };
