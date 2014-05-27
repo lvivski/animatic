@@ -35,6 +35,7 @@ Item.prototype.init = function () {
  * @param {number} tick
  */
 Item.prototype.update = function (tick) {
+	if (!this.running) return
 	this.animation.run(tick)
 }
 

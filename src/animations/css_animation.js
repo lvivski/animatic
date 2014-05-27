@@ -47,7 +47,7 @@ CssAnimation.prototype.run = function () {
  * Pauses animation
  */
 CssAnimation.prototype.pause = function () {
-	this.item.style(animationProperty + 'PlayState', 'paused')
+	this.item.style(animationProperty + '-play-state', 'paused')
 	this.diff = performance.now() - this.start
 }
 
@@ -55,7 +55,7 @@ CssAnimation.prototype.pause = function () {
  * Resumes animation
  */
 CssAnimation.prototype.resume = function () {
-	this.item.style(animationProperty + 'PlayState', 'running')
+	this.item.style(animationProperty + '-play-state', 'running')
 	this.start = performance.now() - this.diff
 }
 

@@ -453,11 +453,11 @@
   };
   CssAnimation.prototype.run = function() {};
   CssAnimation.prototype.pause = function() {
-    this.item.style(animationProperty + "PlayState", "paused");
+    this.item.style(animationProperty + "-play-state", "paused");
     this.diff = performance.now() - this.start;
   };
   CssAnimation.prototype.resume = function() {
-    this.item.style(animationProperty + "PlayState", "running");
+    this.item.style(animationProperty + "-play-state", "running");
     this.start = performance.now() - this.diff;
   };
   CssAnimation.prototype.end = function() {
@@ -853,6 +853,7 @@
     };
   };
   Item.prototype.update = function(tick) {
+    if (!this.running) return;
     this.animation.run(tick);
   };
   Item.prototype.timeline = function(tick) {
