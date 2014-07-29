@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="block"></div>
+  <div class="block" style="opacity: .5"></div>
 </body>
 <script src="../anima.js"></script>
 <script>
@@ -19,7 +19,8 @@
   item
     .animate({
       translate: [200, 200, 100],
-      rotate: [0,0,5]
+      rotate: [0,0,5],
+      opacity: 1
     }, 500)
     .animate({
       translate: [100, 0, 0],

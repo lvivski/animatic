@@ -465,7 +465,7 @@
       var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty], opacity = computed.opacity;
       this.item.style(animationProperty, "");
       this.item.state = Matrix.decompose(Matrix.parse(transform));
-      this.item.state.opacity = opacity;
+      this.item.state.opacity = Number(opacity);
       this.item.style();
     }
     this.start = null;
@@ -681,7 +681,7 @@
     var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty], opacity = computed.opacity;
     this.item.style(animationProperty, "");
     this.item.state = Matrix.decompose(Matrix.parse(transform));
-    this.item.state.opacity = opacity;
+    this.item.state.opacity = Number(opacity);
     this.item.style();
     return this;
   };
@@ -845,11 +845,12 @@
   Item.prototype.init = function() {
     this.animation = new Sequence(this);
     this.running = true;
+    var opacity = getComputedStyle(this.dom, null).opacity;
     this.state = {
       translate: Vector.zero(),
       rotate: Vector.zero(),
       scale: Vector.set(1),
-      opacity: 1
+      opacity: Number(opacity)
     };
   };
   Item.prototype.update = function(tick) {

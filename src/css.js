@@ -48,7 +48,7 @@ CSS.prototype.stop = function () {
 
 	this.item.style(animationProperty, '')
 	this.item.state = Matrix.decompose(Matrix.parse(transform))
-	this.item.state.opacity = opacity
+	this.item.state.opacity = Number(opacity)
 	this.item.style()
 
 	return this

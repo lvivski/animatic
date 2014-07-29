@@ -5,6 +5,7 @@
  * @param {number} duration
  * @param {string} ease Timing function
  * @param {number} delay
+ * @param {boolean} generated
  * @constructor
  */
 function CssAnimation(item, animation, duration, ease, delay, generated) {
@@ -70,7 +71,7 @@ CssAnimation.prototype.end = function () {
 
 		this.item.style(animationProperty, '')
 		this.item.state = Matrix.decompose(Matrix.parse(transform))
-		this.item.state.opacity = opacity
+		this.item.state.opacity = Number(opacity)
 		this.item.style()
 	}
 

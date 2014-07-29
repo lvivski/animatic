@@ -22,11 +22,13 @@ Item.prototype.init = function () {
 
 	this.running = true
 
+	var opacity = getComputedStyle(this.dom, null).opacity;
+
 	this.state = {
 		translate: Vector.zero(),
 		rotate: Vector.zero(),
 		scale: Vector.set(1),
-		opacity: 1
+		opacity: Number(opacity)
 	}
 }
 
