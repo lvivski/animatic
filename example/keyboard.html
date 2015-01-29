@@ -61,6 +61,7 @@ title.className = 'name'
 
 card.appendChild(el)
 card.appendChild(title)
+container.dom.appendChild(card)
 
 var item = world.add(card),
     d = Math.floor(Math.random()*(50-25))+25
@@ -87,8 +88,6 @@ card.addEventListener('click', function(item){
     }
   }
 }(item), false)
-
-container.dom.appendChild(card)
 }
 
 addEventListener('keydown', onKeyDown, true)
