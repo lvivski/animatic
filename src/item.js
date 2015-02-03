@@ -22,7 +22,7 @@ Item.prototype.init = function () {
 
 	this.running = true
 
-	var opacity = getComputedStyle(this.dom, null).opacity
+	var opacity = getComputedStyle(this.dom, null).opacity || 1
 
 	this.state = {
 		translate: Vector.zero(),
