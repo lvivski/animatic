@@ -5,7 +5,7 @@ With Anima it's easy to animate over a hundred objects at a time. Each item can 
 
 And it's only **5k** when gzipped.
 
-**[Examples](#toc_12)**
+**[Examples](#examples)**
 
 ### Browser support
 Chrome, Safari, Firefox, Internet Explorer 10
@@ -17,11 +17,11 @@ Another problem is calculating percents for keyframes. People create animations 
 
 Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. Or it can generate pure CSS animations, but has limitations for parallel animations.
 
-_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#toc_11)_
+_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#physics)_
 
 ## API
 
-[Single](#toc_3) | [Sequence](#toc_4) | [Parallel](#toc_5) | [Infinite](#toc_6) | [Control methods](#toc_7) | [Events](#toc_8) | [Easings](#toc_9) | [Timeline](#toc_10) | [Physics](#toc_11)
+[Single](#single-animation) | [Sequence](#sequential-animations) | [Parallel](#parallel-animations) | [Infinite](#infinite-animations) | [Control methods](#taking-control) | [Events](#animation-events) | [Easings](#timing-functions) | [Timeline](#timeline) | [Physics](#physics)
 
 At first you have to initialize the World, so the frame loop will start (so called `JS` mode)
 
@@ -158,7 +158,7 @@ world.add(document.querySelector('.div'), {
 })
 ```
 
-Take a look at [physics examples](#toc_16)
+Take a look at [physics examples](#physics-examples)
 
 ## Examples
 ### requestAnimationFrame
@@ -179,6 +179,6 @@ uses both `JS` and `CSS` world at the same time
 
 - [keyboard control](example/keyboard_mixed.html) (use `↑` `↓` `←` `→` and `W` `A` `S` `D` to transform)
 
-### physics
+### physics examples
 - [simple translate](example/physics.html)
 - [parallel animation](example/parallel_physics.html)
