@@ -1,6 +1,16 @@
 {
   "name": "anima",
   "version": "0.3.8",
+  "description": "CSS/JS Animations Library with Physics support",
+  "tags": [
+    "animation",
+    "animations",
+    "transition",
+    "transitions",
+    "css",
+    "javascript",
+    "physics"
+  ],
   "devDependencies": {
     "uglify-js": "*"
   }
