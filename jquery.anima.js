@@ -6,9 +6,35 @@
 			world = a.world();
 		}
 
-		var index = world.items.indexOf(this[0]),
-		    item = index !== -1 ? world.items[index] : world.add(this[0]);
+		var context = this;
 
-		return item;
+		var items = $.map(context, function (elem) {
+			var index = world.items.indexOf(elem);
+			return index !== -1 ? world.items[index] : world.add(elem);
+		});
+
+		var fcall = function (fname, args) {
+			$.each(items, function (_, item) {
+				item[fname].apply(item, args);
+			});
+		};
+
+		return {
+			pause: function () {
+				fcall('pause', arguments);
+				return this;
+			},
+			resume: function () {
+				fcall('resume', arguments);
+				return this;
+			},
+			animate: function (transform, duration, ease, delay) {
+				fcall('animate', arguments);
+				return this;
+			},
+			exit: function () {
+				return context;
+			}
+		}
 	};
 }(jQuery, anima));

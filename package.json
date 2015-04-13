@@ -1,6 +1,6 @@
 {
   "name": "anima",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "description": "CSS/JS Animations Library with Physics support",
   "main": "anima.js",
   "keywords": [
@@ -12,8 +12,12 @@
     "javascript",
     "physics"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lvivski/anima.git"
+  },
   "devDependencies": {
-    "uglify-js": "*"
+    "uglify-js": "^2.4.19"
   },
   "license": "MIT"
 }
