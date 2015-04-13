@@ -2,7 +2,7 @@
 - physics timeline
 - edge bounce
 - fix CSS runner
-— better Editor
+- better Editor
 - initial editor bookmarklet
 - over 60 bugfixes
 
