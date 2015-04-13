@@ -1,4 +1,4 @@
-### [0.3.0](http://github.com/lvivski/anima/tree/0.4.0) / 2015-04-13 [Diff](https://github.com/lvivski/anima/compare/0.3.0...0.4.0)
+### [0.4.0](http://github.com/lvivski/anima/tree/0.4.0) / 2015-04-13 [Diff](https://github.com/lvivski/anima/compare/0.3.0...0.4.0)
 - physics timeline
 - edge bounce
 - fix CSS runner
