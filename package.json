@@ -1,8 +1,9 @@
 {
   "name": "anima",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "CSS/JS Animations Library with Physics support",
-  "tags": [
+  "main": "anima.js",
+  "keywords": [
     "animation",
     "animations",
     "transition",

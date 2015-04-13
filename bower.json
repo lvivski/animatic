@@ -1,6 +1,6 @@
 {
   "name": "anima",
-  "version": "0.3.8",
+  "version": "0.3.10",
   "main": "anima.js",
   "dependencies": {}
 }
