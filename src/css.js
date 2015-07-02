@@ -137,7 +137,7 @@ CSS.prototype.frame = function (time, ease) {
 	var percent = this.percent(time)
 	return percent + '% {' +
 		(percent ? transformProperty + ':' + this.item.transform() + ';' : '') +
-		(percent ? 'opacity:' + this.item.opacity() + ';' : '') +
+		(percent ? 'opacity:' + this.item.state.opacity + ';' : '') +
 		(ease ? getProperty('animation-timing-function') + ':' + ease + ';' : '') +
 		'}'
 }

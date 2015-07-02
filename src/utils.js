@@ -27,4 +27,3 @@ var performance = top.performance && top.performance.now ? top.performance : Dat
 requestAnimationFrame(function(tick) {
 	fixTick = tick > 1e12 != performance.now() > 1e12
 })
-

@@ -22,13 +22,10 @@ Item.prototype.init = function () {
 
 	this.running = true
 
-	var opacity = getComputedStyle(this.dom, null).opacity || 1
-
 	this.state = {
 		translate: Vector.zero(),
 		rotate: Vector.zero(),
-		scale: Vector.set(1),
-		opacity: Number(opacity)
+		scale: Vector.set(1)
 	}
 }
 
@@ -78,7 +75,9 @@ Item.prototype.style = function (property, value) {
 		this.dom.style[property] = value
 	} else {
 		this.dom.style[transformProperty] = this.transform()
-		this.dom.style.opacity = this.opacity()
+		for (var property in this.state) {
+			this.dom.style[property] = this.state[property]
+		}
 	}
 }
 
@@ -119,15 +118,6 @@ Item.prototype.lookAt = function (vector) {
 	))
 	this.state.rotate = transform.rotate
 }
-
-/**
- * Returns item opacity
- * @return {string|number}
- */
-Item.prototype.opacity = function () {
-	return this.state.opacity
-}
-
 /**
  * Adds values to state params
  * @param {string} type

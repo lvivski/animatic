@@ -10,10 +10,7 @@
 function Animation(item, transform, duration, ease, delay) {
 	this.item = item
 
-	this.translate = transform.translate && transform.translate.map(parseFloat)
-	this.rotate = transform.rotate && transform.rotate.map(parseFloat)
-	this.scale = transform.scale
-	this.opacity = transform.opacity
+	this.transformation = transform
 
 	this.start = null
 	this.diff = null
@@ -25,6 +22,19 @@ function Animation(item, transform, duration, ease, delay) {
 	this.easeName = ease || 'linear'
 }
 
+Animation.getState = function (transform, item) {
+	var initial = {},
+		computedState = getComputedStyle(item.dom, null);
+	for (var property in transform) if (transform.hasOwnProperty(property)) {
+		if (['delay','duration','ease'].indexOf(property) !== -1) continue
+		if (!item.state[property]) {
+			item.state[property] = computedState[property]
+		}
+		initial[property] = new Tween(item.state[property], transform[property], property)
+	}
+	return initial
+}
+
 /**
  * Starts animation timer
  * @param {number} tick Timestamp
@@ -34,13 +44,7 @@ Animation.prototype.init = function (tick, force) {
 	if (this.start !== null && !force) return
 	this.start = tick + this.delay
 
-	var state = this.item.state
-	this.initial = {
-		translate: new Tween(state.translate.slice()),
-		rotate: new Tween(state.rotate.slice()),
-		scale: new Tween(state.scale.slice()),
-		opacity: new Tween(state.opacity)
-	}
+	this.state = Animation.getState(this.transformation, this.item)
 }
 
 /**
@@ -71,26 +75,13 @@ Animation.prototype.resume = function () {
 }
 
 /**
- * Sets new item state
- * @param {string} type
- * @param {number} percent
- */
-Animation.prototype.set = function (type, percent) {
-	var state = this.item.state,
-	    initial = this.initial
-
-	state[type] = initial[type].interpolate(this[type], percent)
-}
-
-/**
  * Transforms item
  * @param {number} percent
  */
 Animation.prototype.transform = function (percent) {
-	this.set('translate', percent)
-	this.set('rotate', percent)
-	this.set('scale', percent)
-	this.set('opacity', percent)
+	for (var property in this.state) {
+		this.item.state[property] = this.state[property].interpolate(this.item.state[property], percent)
+	}
 }
 
 /**

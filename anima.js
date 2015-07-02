@@ -379,30 +379,79 @@
     };
     return easings;
   }();
-  function Tween(value) {
-    this.value = value;
+  function Tween(start, end, property) {
+    var type = Tween.propTypes[property] || Tween.NUMERIC;
+    this.start = Tween.parseValue(start, type);
+    this.end = Tween.parseValue(end, type);
+    this.type = type;
   }
-  Tween.prototype.interpolate = function(end, percent) {
-    if (Array.isArray(this.value)) {
-      var state = [];
-      for (var i = 0; i < 3; ++i) {
-        if (end && end[i]) {
-          state[i] = this.value[i] + end[i] * percent;
-        } else {
-          state[i] = this.value[i];
-        }
-      }
-      return state;
-    } else if (end !== undefined) {
-      return this.value + (end - this.value) * percent;
+  Tween.NUMERIC = "NUMERIC";
+  Tween.COLOR = "COLOR";
+  Tween.propTypes = {
+    color: Tween.COLOR,
+    backgroundColor: Tween.COLOR,
+    borderColor: Tween.COLOR
+  };
+  Tween.parseValue = function(value, type) {
+    return type === Tween.COLOR ? Tween.parseColor(value) : Tween.parseNumeric(value);
+  };
+  Tween.parseNumeric = function(numeric) {
+    if (!Array.isArray(numeric)) {
+      numeric = numeric.split(/\s+/);
     }
+    return Array.isArray(numeric) ? numeric.map(parseFloat) : numeric;
+  };
+  Tween.parseColor = function(color) {
+    var hex = color.match(/^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    if (hex) {
+      return {
+        r: parseInt(hex[1], 16),
+        g: parseInt(hex[2], 16),
+        b: parseInt(hex[3], 16),
+        a: 1
+      };
+    }
+    var rgb = color.match(/^rgba?\(([0-9.]*), ?([0-9.]*), ?([0-9.]*)(?:, ?([0-9.]*))?\)$/);
+    if (rgb) {
+      return {
+        r: parseFloat(rgb[1]),
+        g: parseFloat(rgb[2]),
+        b: parseFloat(rgb[3]),
+        a: parseFloat(rgb[4] != null ? rgb[4] : 1)
+      };
+    }
+  };
+  Tween.prototype.interpolate = function(state, percent) {
+    if (this.type === Tween.NUMERIC) {
+      if (Array.isArray(this.start)) {
+        for (var i = 0; i < 3; ++i) {
+          if (this.end && this.end[i]) {
+            state[i] = this.start[i] + this.end[i] * percent;
+          }
+        }
+      } else if (this.end !== undefined) {
+        state = this.start + (this.end - this.start) * percent;
+      }
+    } else if (this.type === Tween.COLOR) {
+      var rgb = {
+        r: 0,
+        g: 0,
+        b: 0
+      };
+      for (var spectra in rgb) {
+        var value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent);
+        rgb[spectra] = Math.min(255, Math.max(0, value));
+      }
+      spectra = "a";
+      value = (this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent).toFixed(5);
+      rgb[spectra] = Math.min(1, Math.max(0, value));
+      state = "rgba(" + [ rgb.r, rgb.g, rgb.b, rgb.a ] + ")";
+    }
+    return state;
   };
   function Animation(item, transform, duration, ease, delay) {
     this.item = item;
-    this.translate = transform.translate && transform.translate.map(parseFloat);
-    this.rotate = transform.rotate && transform.rotate.map(parseFloat);
-    this.scale = transform.scale;
-    this.opacity = transform.opacity;
+    this.transformation = transform;
     this.start = null;
     this.diff = null;
     this.duration = (transform.duration || duration) | 0;
@@ -410,16 +459,21 @@
     this.ease = easings[transform.ease] || easings[ease] || easings.linear;
     this.easeName = ease || "linear";
   }
+  Animation.getState = function(transform, item) {
+    var initial = {}, computedState = getComputedStyle(item.dom, null);
+    for (var property in transform) if (transform.hasOwnProperty(property)) {
+      if ([ "delay", "duration", "ease" ].indexOf(property) !== -1) continue;
+      if (!item.state[property]) {
+        item.state[property] = computedState[property];
+      }
+      initial[property] = new Tween(item.state[property], transform[property], property);
+    }
+    return initial;
+  };
   Animation.prototype.init = function(tick, force) {
     if (this.start !== null && !force) return;
     this.start = tick + this.delay;
-    var state = this.item.state;
-    this.initial = {
-      translate: new Tween(state.translate.slice()),
-      rotate: new Tween(state.rotate.slice()),
-      scale: new Tween(state.scale.slice()),
-      opacity: new Tween(state.opacity)
-    };
+    this.state = Animation.getState(this.transformation, this.item);
   };
   Animation.prototype.run = function(tick) {
     if (tick < this.start) return;
@@ -433,15 +487,10 @@
   Animation.prototype.resume = function() {
     this.start = performance.now() - this.diff;
   };
-  Animation.prototype.set = function(type, percent) {
-    var state = this.item.state, initial = this.initial;
-    state[type] = initial[type].interpolate(this[type], percent);
-  };
   Animation.prototype.transform = function(percent) {
-    this.set("translate", percent);
-    this.set("rotate", percent);
-    this.set("scale", percent);
-    this.set("opacity", percent);
+    for (var property in this.state) {
+      this.item.state[property] = this.state[property].interpolate(this.item.state[property], percent);
+    }
   };
   Animation.prototype.end = function(abort) {
     !abort && this.transform(1);
@@ -741,7 +790,7 @@
   };
   CSS.prototype.frame = function(time, ease) {
     var percent = this.percent(time);
-    return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + (percent ? "opacity:" + this.item.opacity() + ";" : "") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
+    return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + (percent ? "opacity:" + this.item.state.opacity + ";" : "") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
   };
   function World() {
     EventEmitter.call(this);
@@ -857,12 +906,10 @@
   Item.prototype.init = function() {
     this.animation = new Sequence(this);
     this.running = true;
-    var opacity = getComputedStyle(this.dom, null).opacity || 1;
     this.state = {
       translate: Vector.zero(),
       rotate: Vector.zero(),
-      scale: Vector.set(1),
-      opacity: Number(opacity)
+      scale: Vector.set(1)
     };
   };
   Item.prototype.update = function(tick) {
@@ -888,7 +935,9 @@
       this.dom.style[property] = value;
     } else {
       this.dom.style[transformProperty] = this.transform();
-      this.dom.style.opacity = this.opacity();
+      for (var property in this.state) {
+        this.dom.style[property] = this.state[property];
+      }
     }
   };
   Item.prototype.transform = function() {
@@ -904,9 +953,6 @@
   Item.prototype.lookAt = function(vector) {
     var transform = Matrix.decompose(Matrix.lookAt(vector, this.state.translate, Vector.set(0, 1, 0)));
     this.state.rotate = transform.rotate;
-  };
-  Item.prototype.opacity = function() {
-    return this.state.opacity;
   };
   Item.prototype.add = function(type, a) {
     this.state[type][0] += a[0];

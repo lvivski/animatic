@@ -64,19 +64,22 @@
     container.dom.appendChild(card)
 
     var item = world.add(card),
-        d = Math.floor(Math.random()*(50-25))+25
-        t = Math.floor(Math.random()*(700-300))+300
+        d = Math.floor(Math.random()*(50-25))+25,
+        t = Math.floor(Math.random()*(700-300))+300,
         m = d < 37.5 ? -1 : 1
     item.translate([-hWidth + i*110 % width, -hHeight + Math.floor(i*110/width)*130, 0])
 
     item.animate({
-      translate: [0,0,-d*m]
+      translate: [0,0,-d*m],
+      backgroundColor: '#FF0000'
     }, t)
     .animate({
-      translate: [0,0,d*2*m]
+      translate: [0,0,d*2*m],
+      backgroundColor: '#00FF00'
     }, t*2)
     .animate({
-      translate: [0,0,-d*m]
+      translate: [0,0,-d*m],
+      backgroundColor: '#FF0000'
     }, t)
     .infinite()
     card.addEventListener('click', function(item){
@@ -126,10 +129,10 @@
     if (container.animation.length) {
       var a = container.animation.get(0)
       a.translate = translate.map(function(t, i) {
-        return t || a.translate[i]
+        return t || a.state.translate[i]
       })
       a.rotate = rotate.map(function(r, i) {
-        return r || a.rotate[i]
+        return r || a.state.rotate[i]
       })
       a.init(Date.now(), true)
     } else {
