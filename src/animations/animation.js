@@ -36,10 +36,10 @@ Animation.prototype.init = function (tick, force) {
 
 	var state = this.item.state
 	this.initial = {
-		translate: state.translate.slice(),
-		rotate: state.rotate.slice(),
-		scale: state.scale.slice(),
-		opacity: state.opacity
+		translate: new Tween(state.translate.slice()),
+		rotate: new Tween(state.rotate.slice()),
+		scale: new Tween(state.scale.slice()),
+		opacity: new Tween(state.opacity)
 	}
 }
 
@@ -79,13 +79,7 @@ Animation.prototype.set = function (type, percent) {
 	var state = this.item.state,
 	    initial = this.initial
 
-	if (Array.isArray(this[type])) {
-		for (var i = 0; i < 3; ++i) if (this[type][i]) {
-			state[type][i] = initial[type][i] + this[type][i] * percent
-		}
-	} else if (this[type] !== undefined) {
-		state[type] = initial[type] + (this[type] - initial[type]) * percent
-	}
+	state[type] = initial[type].interpolate(this[type], percent)
 }
 
 /**

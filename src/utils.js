@@ -28,4 +28,3 @@ requestAnimationFrame(function(tick) {
 	fixTick = tick > 1e12 != performance.now() > 1e12
 })
 
-
