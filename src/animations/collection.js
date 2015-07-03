@@ -10,6 +10,7 @@ function Collection(item) {
 	this.item = item
 	this.delay = 0
 	this.duration = 0
+	this.ease = easings.linear
 	this.easeName = 'linear'
 	this.animations = []
 }

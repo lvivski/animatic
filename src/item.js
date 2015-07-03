@@ -22,10 +22,16 @@ Item.prototype.init = function () {
 
 	this.running = true
 
-	this.state = {
-		translate: Vector.zero(),
-		rotate: Vector.zero(),
-		scale: Vector.set(1)
+	var computed = getComputedStyle(this.dom, null),
+	    transform = computed[transformProperty]
+	if (transform === 'none') {
+		this.state = {
+			translate: Vector.zero(),
+			rotate: Vector.zero(),
+			scale: Vector.set(1)
+		}
+	} else {
+		this.state = Matrix.decompose(Matrix.parse(transform))
 	}
 }
 
@@ -171,7 +177,6 @@ Item.prototype.clear = function () {
 	this.state.translate = Vector.zero()
 	this.state.rotate = Vector.zero()
 	this.state.scale = Vector.set(1)
-	this.state.opacity = 1
 }
 
 /**

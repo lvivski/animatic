@@ -71,7 +71,6 @@ CssAnimation.prototype.end = function () {
 
 		this.item.style(animationProperty, '')
 		this.item.state = Matrix.decompose(Matrix.parse(transform))
-		this.item.state.opacity = Number(opacity)
 		this.item.style()
 	}
 

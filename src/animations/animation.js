@@ -19,18 +19,22 @@ function Animation(item, transform, duration, ease, delay) {
 	this.delay = (transform.delay || delay) | 0
 	this.ease = easings[transform.ease] || easings[ease] || easings.linear
 
-	this.easeName = ease || 'linear'
+	this.easeName = transform.ease || ease || 'linear'
 }
 
 Animation.getState = function (transform, item) {
 	var initial = {},
-		computedState = getComputedStyle(item.dom, null);
-	for (var property in transform) if (transform.hasOwnProperty(property)) {
-		if (['delay','duration','ease'].indexOf(property) !== -1) continue
-		if (!item.state[property]) {
-			item.state[property] = computedState[property]
+	    computed = getComputedStyle(item.dom, null),
+	    skip = {duration:null, delay:null, ease:null}
+
+	for (var property in transform) {
+		if (property in skip) continue
+		if (transform.hasOwnProperty(property)) {
+			if (item.state[property] == null) {
+				item.state[property] = computed[property]
+			}
+			initial[property] = new Tween(item.state[property], transform[property], property)
 		}
-		initial[property] = new Tween(item.state[property], transform[property], property)
 	}
 	return initial
 }

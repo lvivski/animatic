@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Custom properties animation</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/main.css">
+	<style></style>
+</head>
+<body>
+<div class="block" style="border: 2px solid;background-clip: content-box;color:green">SOME TEXT</div>
+</body>
+<script src="../anima.js"></script>
+<script>
+	var world = anima.world(),
+	    item = world.add(document.querySelector('.block'))
+
+	item.
+		animate({
+			translate: [100, 200],
+			backgroundColor: 'rgba(255,128,0,.5)',
+			color: 'rgb(0,0,255)',
+			width: 500,
+			height: 500,
+			padding: 50,
+			duration: 5000
+		})
+</script>
+</html>

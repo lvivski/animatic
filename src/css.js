@@ -43,12 +43,10 @@ CSS.prototype.resume = function () {
  */
 CSS.prototype.stop = function () {
 	var computed = getComputedStyle(this.item.dom, null),
-		transform = computed[transformProperty],
-		opacity = computed.opacity
+		transform = computed[transformProperty]
 
 	this.item.style(animationProperty, '')
 	this.item.state = Matrix.decompose(Matrix.parse(transform))
-	this.item.state.opacity = Number(opacity)
 	this.item.style()
 
 	return this
@@ -91,7 +89,8 @@ CSS.prototype.keyframes = function (name) {
 			rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
 		} else { // Parallel (it doesn't work with custom easings for now)
 			var frames = []
-			a.animations.forEach(function (a) {
+			a.animations.forEach(function frame(a) {
+				a.animations && a.animations.forEach(frame)
 				a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay)
 				a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration)
 			})
@@ -137,7 +136,6 @@ CSS.prototype.frame = function (time, ease) {
 	var percent = this.percent(time)
 	return percent + '% {' +
 		(percent ? transformProperty + ':' + this.item.transform() + ';' : '') +
-		(percent ? 'opacity:' + this.item.state.opacity + ';' : '') +
 		(ease ? getProperty('animation-timing-function') + ':' + ease + ';' : '') +
 		'}'
 }

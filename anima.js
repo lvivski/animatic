@@ -381,9 +381,14 @@
   }();
   function Tween(start, end, property) {
     var type = Tween.propTypes[property] || Tween.NUMERIC;
+    this.type = type;
     this.start = Tween.parseValue(start, type);
     this.end = Tween.parseValue(end, type);
-    this.type = type;
+    this.suffix = Tween.px.indexOf(property) !== -1 ? "px" : "";
+    if (this.suffix) {
+      this.start && (this.start = this.start[0]);
+      this.end && (this.end = this.end[0]);
+    }
   }
   Tween.NUMERIC = "NUMERIC";
   Tween.COLOR = "COLOR";
@@ -392,12 +397,13 @@
     backgroundColor: Tween.COLOR,
     borderColor: Tween.COLOR
   };
+  Tween.px = "margin,marginTop,marginLeft,marginBottom,marginRight,padding,paddingTop,paddingLeft,paddingBottom,paddingRight,top,left,bottom,right,width,height,maxWidth,maxHeight,minWidth,minHeight,borderRadius,borderWidth".split(",");
   Tween.parseValue = function(value, type) {
     return type === Tween.COLOR ? Tween.parseColor(value) : Tween.parseNumeric(value);
   };
   Tween.parseNumeric = function(numeric) {
     if (!Array.isArray(numeric)) {
-      numeric = numeric.split(/\s+/);
+      numeric = String(numeric).split(/\s+/);
     }
     return Array.isArray(numeric) ? numeric.map(parseFloat) : numeric;
   };
@@ -426,11 +432,11 @@
       if (Array.isArray(this.start)) {
         for (var i = 0; i < 3; ++i) {
           if (this.end && this.end[i]) {
-            state[i] = this.start[i] + this.end[i] * percent;
+            state[i] = this.start[i] + this.end[i] * percent + this.suffix;
           }
         }
       } else if (this.end !== undefined) {
-        state = this.start + (this.end - this.start) * percent;
+        state = this.start + (this.end - this.start) * percent + this.suffix;
       }
     } else if (this.type === Tween.COLOR) {
       var rgb = {
@@ -457,16 +463,22 @@
     this.duration = (transform.duration || duration) | 0;
     this.delay = (transform.delay || delay) | 0;
     this.ease = easings[transform.ease] || easings[ease] || easings.linear;
-    this.easeName = ease || "linear";
+    this.easeName = transform.ease || ease || "linear";
   }
   Animation.getState = function(transform, item) {
-    var initial = {}, computedState = getComputedStyle(item.dom, null);
-    for (var property in transform) if (transform.hasOwnProperty(property)) {
-      if ([ "delay", "duration", "ease" ].indexOf(property) !== -1) continue;
-      if (!item.state[property]) {
-        item.state[property] = computedState[property];
+    var initial = {}, computed = getComputedStyle(item.dom, null), skip = {
+      duration: null,
+      delay: null,
+      ease: null
+    };
+    for (var property in transform) {
+      if (property in skip) continue;
+      if (transform.hasOwnProperty(property)) {
+        if (item.state[property] == null) {
+          item.state[property] = computed[property];
+        }
+        initial[property] = new Tween(item.state[property], transform[property], property);
       }
-      initial[property] = new Tween(item.state[property], transform[property], property);
     }
     return initial;
   };
@@ -526,7 +538,6 @@
       var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty], opacity = computed.opacity;
       this.item.style(animationProperty, "");
       this.item.state = Matrix.decompose(Matrix.parse(transform));
-      this.item.state.opacity = Number(opacity);
       this.item.style();
     }
     this.start = null;
@@ -537,6 +548,7 @@
     this.item = item;
     this.delay = 0;
     this.duration = 0;
+    this.ease = easings.linear;
     this.easeName = "linear";
     this.animations = [];
   }
@@ -739,10 +751,9 @@
     this.animation.resume();
   };
   CSS.prototype.stop = function() {
-    var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty], opacity = computed.opacity;
+    var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty];
     this.item.style(animationProperty, "");
     this.item.state = Matrix.decompose(Matrix.parse(transform));
-    this.item.state.opacity = Number(opacity);
     this.item.style();
     return this;
   };
@@ -764,7 +775,8 @@
         rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]));
       } else {
         var frames = [];
-        a.animations.forEach(function(a) {
+        a.animations.forEach(function frame(a) {
+          a.animations && a.animations.forEach(frame);
           a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay);
           a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration);
         });
@@ -790,7 +802,7 @@
   };
   CSS.prototype.frame = function(time, ease) {
     var percent = this.percent(time);
-    return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + (percent ? "opacity:" + this.item.state.opacity + ";" : "") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
+    return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
   };
   function World() {
     EventEmitter.call(this);
@@ -906,11 +918,16 @@
   Item.prototype.init = function() {
     this.animation = new Sequence(this);
     this.running = true;
-    this.state = {
-      translate: Vector.zero(),
-      rotate: Vector.zero(),
-      scale: Vector.set(1)
-    };
+    var computed = getComputedStyle(this.dom, null), transform = computed[transformProperty];
+    if (transform === "none") {
+      this.state = {
+        translate: Vector.zero(),
+        rotate: Vector.zero(),
+        scale: Vector.set(1)
+      };
+    } else {
+      this.state = Matrix.decompose(Matrix.parse(transform));
+    }
   };
   Item.prototype.update = function(tick) {
     if (!this.running) return;
@@ -977,7 +994,6 @@
     this.state.translate = Vector.zero();
     this.state.rotate = Vector.zero();
     this.state.scale = Vector.set(1);
-    this.state.opacity = 1;
   };
   Item.prototype.animate = function(transform, duration, ease, delay) {
     return this.animation.add(transform, duration, ease, delay);

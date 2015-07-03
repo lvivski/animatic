@@ -1,8 +1,15 @@
 function Tween(start, end, property) {
 	var type = Tween.propTypes[property] || Tween.NUMERIC
+	this.type = type
+
 	this.start = Tween.parseValue(start, type)
 	this.end = Tween.parseValue(end, type)
-	this.type = type
+	
+	this.suffix = Tween.px.indexOf(property) !== -1 ? 'px' : ''
+	if (this.suffix) {
+		this.start && (this.start = this.start[0])
+		this.end && (this.end = this.end[0])
+	}
 }
 
 Tween.NUMERIC = 'NUMERIC'
@@ -14,13 +21,20 @@ Tween.propTypes = {
 	borderColor: Tween.COLOR
 }
 
+Tween.px = '\
+margin,marginTop,marginLeft,marginBottom,marginRight,\
+padding,paddingTop,paddingLeft,paddingBottom,paddingRight,\
+top,left,bottom,right,\
+width,height,maxWidth,maxHeight,minWidth,minHeight,\
+borderRadius,borderWidth'.split(',')
+
 Tween.parseValue = function (value, type) {
 	return type === Tween.COLOR ? Tween.parseColor(value) : Tween.parseNumeric(value)
 }
 
 Tween.parseNumeric = function (numeric) {
 	if (!Array.isArray(numeric)) {
-		numeric = numeric.split(/\s+/)
+		numeric = String(numeric).split(/\s+/)
 	}
 	return Array.isArray(numeric) ? numeric.map(parseFloat) : numeric
 }
@@ -47,16 +61,16 @@ Tween.parseColor = function (color) {
 	}
 }
 
-Tween.prototype.interpolate = function (state,percent) {
+Tween.prototype.interpolate = function (state, percent) {
 	if (this.type === Tween.NUMERIC) {
 		if (Array.isArray(this.start)) {
 			for (var i = 0; i < 3; ++i) {
 				if (this.end && this.end[i]) {
-					state[i] = this.start[i] + this.end[i] * percent
+					state[i] = this.start[i] + this.end[i] * percent + this.suffix
 				}
 			}
 		} else if (this.end !== undefined) {
-			state = this.start + (this.end - this.start) * percent
+			state = this.start + (this.end - this.start) * percent + this.suffix
 		}
 	} else if (this.type === Tween.COLOR) {
 		var rgb = {r:0,g:0,b:0}
