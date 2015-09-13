@@ -17,8 +17,8 @@ function Animation(item, transform, duration, ease, delay) {
 
 	this.duration = (transform.duration || duration) | 0
 	this.delay = (transform.delay || delay) | 0
-	this.ease = easings[transform.ease] || easings[ease] || easings.linear
-
+	ease = transform.ease || ease
+	this.ease = easings[ease] || easings.linear
 	this.easeName = transform.ease || ease || 'linear'
 }
 
@@ -93,6 +93,6 @@ Animation.prototype.transform = function (percent) {
  * @param {boolean} abort
  */
 Animation.prototype.end = function (abort) {
-	!abort && this.transform(1)
+	!abort && this.transform(this.ease(1))
 	this.start = null
 }

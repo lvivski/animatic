@@ -462,7 +462,8 @@
     this.diff = null;
     this.duration = (transform.duration || duration) | 0;
     this.delay = (transform.delay || delay) | 0;
-    this.ease = easings[transform.ease] || easings[ease] || easings.linear;
+    ease = transform.ease || ease;
+    this.ease = easings[ease] || easings.linear;
     this.easeName = transform.ease || ease || "linear";
   }
   Animation.getState = function(transform, item) {
@@ -505,7 +506,7 @@
     }
   };
   Animation.prototype.end = function(abort) {
-    !abort && this.transform(1);
+    !abort && this.transform(this.ease(1));
     this.start = null;
   };
   function CssAnimation(item, animation, duration, ease, delay, generated) {
@@ -535,7 +536,7 @@
   };
   CssAnimation.prototype.end = function() {
     if (this._generated) {
-      var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty], opacity = computed.opacity;
+      var computed = getComputedStyle(this.item.dom, null), transform = computed[transformProperty];
       this.item.style(animationProperty, "");
       this.item.state = Matrix.decompose(Matrix.parse(transform));
       this.item.style();

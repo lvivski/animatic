@@ -66,8 +66,7 @@ CssAnimation.prototype.resume = function () {
 CssAnimation.prototype.end = function () {
 	if (this._generated) {
 		var computed = getComputedStyle(this.item.dom, null),
-		    transform = computed[transformProperty],
-		    opacity = computed.opacity
+		    transform = computed[transformProperty]
 
 		this.item.style(animationProperty, '')
 		this.item.state = Matrix.decompose(Matrix.parse(transform))
