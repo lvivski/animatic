@@ -66,24 +66,34 @@ Tween.prototype.interpolate = function (state, percent) {
 		if (Array.isArray(this.start)) {
 			for (var i = 0; i < 3; ++i) {
 				if (this.end && this.end[i]) {
-					state[i] = this.start[i] + this.end[i] * percent + this.suffix
+					state[i] = this.start[i] + this.end[i] * percent
+					if (this.suffix) {
+						state[i] += this.suffix
+					}
 				}
 			}
 		} else if (this.end !== undefined) {
-			state = this.start + (this.end - this.start) * percent + this.suffix
+			state = this.start + (this.end - this.start) * percent
+			if (this.suffix) {
+				state += this.suffix
+			}
 		}
 	} else if (this.type === Tween.COLOR) {
 		var rgb = {r:0,g:0,b:0}
 		for (var spectra in rgb) {
 			var value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent)
-			rgb[spectra] = Math.min(255, Math.max(0, value))
+			rgb[spectra] = clamp(value, 0, 255)
 		}
 		spectra = 'a'
-		value = (this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent).toFixed(5)
-		rgb[spectra] = Math.min(1, Math.max(0, value))
+		value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent)
+		rgb[spectra] = clamp(value, 0, 1)
 		state = 'rgba(' + [rgb.r, rgb.g, rgb.b, rgb.a] + ')'
 	}
 	return state
+}
+
+function clamp(value, min, max) {
+	return Math.min(max, Math.max(min, value));
 }
 
 

@@ -36,7 +36,7 @@ Sequence.prototype.run = function (tick, a) {
 	while (this.animations.length !== 0) {
 		a = this.animations[0]
 		if (a instanceof CssAnimation) {
-			a._infinite = this._infinite;
+			a._infinite = this._infinite
 		}
 		a.init(tick)
 		if (a.start + a.duration <= tick) {
@@ -56,7 +56,7 @@ Sequence.prototype.run = function (tick, a) {
 	}
 
 	if (!(a instanceof CssAnimation)) {
-		this.item.style();
+		this.item.style()
 	}
 
 	if (!this.animations.length) {
@@ -75,12 +75,12 @@ Sequence.prototype.seek = function (tick) {
 		var a = this.animations[i]
 		a.init(time, true)
 		if (a.start + a.duration <= tick) {
-			a.end()
 			time += a.delay + a.duration
-			continue
+			a.end()
+		} else {
+			a.run(tick)
 		}
-		a.run(tick)
-		this.item.style();
+		this.item.style()
 		break
 	}
 }

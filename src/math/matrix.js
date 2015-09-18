@@ -188,10 +188,10 @@ var Matrix = {
 	parse: function (s) {
 		var m = s.match(/\((.+)\)/)[1].split(/,\s?/)
 		if (m.length === 6) {
-			m.splice(2, 0, '0', '0')
-			m.splice(6, 0, '0', '0')
-			m.splice(8, 0, '0', '0', '1', '0')
-			m.push('0', '1')
+			m.splice(2, 0, 0, 0)
+			m.splice(6, 0, 0, 0)
+			m.splice(8, 0, 0, 0, 1, 0)
+			m.push(0, 1)
 		}
 
 		return m
@@ -345,8 +345,9 @@ var Matrix = {
 		return a
 	},
 	stringify: function (m) {
-		for (var i = 0; i < m.length; ++i)
-			if (Math.abs(m[i]) < 0.000001) m[i] = 0
+		for (var i = 0; i < m.length; ++i) {
+			if (Math.abs(m[i]) < 1e-5) m[i] = 0
+		}
 		return 'matrix3d(' + m.join() + ')'
 	}
 }
