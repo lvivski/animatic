@@ -1119,4 +1119,4 @@
     var state = this.state;
     return Matrix.compose(this.current.position, state.rotate, state.scale);
   };
-})(Function("return this"));
+})(Function("return this")());
