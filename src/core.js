@@ -25,5 +25,5 @@ if (typeof module === 'object' && typeof module.exports === 'object') {
 } else if (typeof define === 'function' && define.amd) {
 	define(a)
 } else {
-	window.anima = window.a = a
+	root.anima = root.a = a
 }

@@ -28,10 +28,10 @@ all: \
 
 anima.js: ${FILES}
 	@rm -f $@
-	@echo "(function(){" > $@.tmp
+	@echo "(function(root){" > $@.tmp
 	@echo "'use strict'" >> $@.tmp
 	@cat $(filter %.js,$^) >> $@.tmp
-	@echo "}())" >> $@.tmp
+	@echo "}(Function('return this')))" >> $@.tmp
 	@$(JS_COMPILER) $@.tmp -b indent-level=2 -o $@
 	@rm $@.tmp
 	@chmod a-w $@
