@@ -170,10 +170,10 @@
     parse: function(s) {
       var m = s.match(/\((.+)\)/)[1].split(/,\s?/);
       if (m.length === 6) {
-        m.splice(2, 0, "0", "0");
-        m.splice(6, 0, "0", "0");
-        m.splice(8, 0, "0", "0", "1", "0");
-        m.push("0", "1");
+        m.splice(2, 0, 0, 0);
+        m.splice(6, 0, 0, 0);
+        m.splice(8, 0, 0, 0, 1, 0);
+        m.push(0, 1);
       }
       return m;
     },
@@ -276,7 +276,9 @@
       return a;
     },
     stringify: function(m) {
-      for (var i = 0; i < m.length; ++i) if (Math.abs(m[i]) < 1e-6) m[i] = 0;
+      for (var i = 0; i < m.length; ++i) {
+        if (Math.abs(m[i]) < 1e-5) m[i] = 0;
+      }
       return "matrix3d(" + m.join() + ")";
     }
   };
@@ -432,11 +434,17 @@
       if (Array.isArray(this.start)) {
         for (var i = 0; i < 3; ++i) {
           if (this.end && this.end[i]) {
-            state[i] = this.start[i] + this.end[i] * percent + this.suffix;
+            state[i] = this.start[i] + this.end[i] * percent;
+            if (this.suffix) {
+              state[i] += this.suffix;
+            }
           }
         }
       } else if (this.end !== undefined) {
-        state = this.start + (this.end - this.start) * percent + this.suffix;
+        state = this.start + (this.end - this.start) * percent;
+        if (this.suffix) {
+          state += this.suffix;
+        }
       }
     } else if (this.type === Tween.COLOR) {
       var rgb = {
@@ -446,15 +454,18 @@
       };
       for (var spectra in rgb) {
         var value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent);
-        rgb[spectra] = Math.min(255, Math.max(0, value));
+        rgb[spectra] = clamp(value, 0, 255);
       }
       spectra = "a";
-      value = (this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent).toFixed(5);
-      rgb[spectra] = Math.min(1, Math.max(0, value));
+      value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent);
+      rgb[spectra] = clamp(value, 0, 1);
       state = "rgba(" + [ rgb.r, rgb.g, rgb.b, rgb.a ] + ")";
     }
     return state;
   };
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
   function Animation(item, transform, duration, ease, delay) {
     this.item = item;
     this.transformation = transform;
@@ -707,11 +718,11 @@
       var a = this.animations[i];
       a.init(time, true);
       if (a.start + a.duration <= tick) {
-        a.end();
         time += a.delay + a.duration;
-        continue;
+        a.end();
+      } else {
+        a.run(tick);
       }
-      a.run(tick);
       this.item.style();
       break;
     }
