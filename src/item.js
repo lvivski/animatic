@@ -24,6 +24,7 @@ Item.prototype.init = function () {
 
 	var computed = getComputedStyle(this.dom, null),
 	    transform = computed[transformProperty]
+
 	if (transform === 'none') {
 		this.state = {
 			translate: Vector.zero(),

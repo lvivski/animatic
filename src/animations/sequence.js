@@ -76,13 +76,14 @@ Sequence.prototype.seek = function (tick) {
 		a.init(time, true)
 		if (a.start + a.duration <= tick) {
 			time += a.delay + a.duration
-			a.end()
+			a.end(false, true)
+			continue
 		} else {
-			a.run(tick)
+			a.run(tick, true)
 		}
-		this.item.style()
 		break
 	}
+	this.item.style()
 }
 
 /**

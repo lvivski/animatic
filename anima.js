@@ -387,10 +387,6 @@
     this.start = Tween.parseValue(start, type);
     this.end = Tween.parseValue(end, type);
     this.suffix = Tween.px.indexOf(property) !== -1 ? "px" : "";
-    if (this.suffix) {
-      this.start && (this.start = this.start[0]);
-      this.end && (this.end = this.end[0]);
-    }
   }
   Tween.NUMERIC = "NUMERIC";
   Tween.COLOR = "COLOR";
@@ -407,7 +403,7 @@
     if (!Array.isArray(numeric)) {
       numeric = String(numeric).split(/\s+/);
     }
-    return Array.isArray(numeric) ? numeric.map(parseFloat) : numeric;
+    return Array.isArray(numeric) ? numeric.map(parseFloat) : Number(numeric);
   };
   Tween.parseColor = function(color) {
     var hex = color.match(/^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
@@ -431,8 +427,8 @@
   };
   Tween.prototype.interpolate = function(state, percent) {
     if (this.type === Tween.NUMERIC) {
-      if (Array.isArray(this.start)) {
-        for (var i = 0; i < 3; ++i) {
+      if (Array.isArray(state)) {
+        for (var i = 0; i < state.length; ++i) {
           if (this.end && this.end[i]) {
             state[i] = this.start[i] + this.end[i] * percent;
             if (this.suffix) {
@@ -441,7 +437,7 @@
           }
         }
       } else if (this.end !== undefined) {
-        state = this.start + (this.end - this.start) * percent;
+        state = Number(this.start) + (Number(this.end) - Number(this.start)) * percent;
         if (this.suffix) {
           state += this.suffix;
         }
@@ -477,14 +473,15 @@
     this.ease = easings[ease] || easings.linear;
     this.easeName = transform.ease || ease || "linear";
   }
+  Animation.skip = {
+    duration: null,
+    delay: null,
+    ease: null
+  };
   Animation.getState = function(transform, item) {
-    var initial = {}, computed = getComputedStyle(item.dom, null), skip = {
-      duration: null,
-      delay: null,
-      ease: null
-    };
+    var computed = getComputedStyle(item.dom, null), initial = {};
     for (var property in transform) {
-      if (property in skip) continue;
+      if (property in Animation.skip) continue;
       if (transform.hasOwnProperty(property)) {
         if (item.state[property] == null) {
           item.state[property] = computed[property];
@@ -494,15 +491,20 @@
     }
     return initial;
   };
-  Animation.prototype.init = function(tick, force) {
-    if (this.start !== null && !force) return;
+  Animation.prototype.init = function(tick, seek) {
+    if (this.start !== null && !seek) return;
+    if (this.start === null) {
+      this.state = Animation.getState(this.transformation, this.item);
+    }
     this.start = tick + this.delay;
-    this.state = Animation.getState(this.transformation, this.item);
   };
-  Animation.prototype.run = function(tick) {
-    if (tick < this.start) return;
-    var percent = (tick - this.start) / this.duration;
-    percent = this.ease(percent);
+  Animation.prototype.run = function(tick, seek) {
+    if (tick < this.start && !seek) return;
+    var percent = 0;
+    if (tick >= this.start) {
+      percent = (tick - this.start) / this.duration;
+      percent = this.ease(percent);
+    }
     this.transform(percent);
   };
   Animation.prototype.pause = function() {
@@ -516,9 +518,9 @@
       this.item.state[property] = this.state[property].interpolate(this.item.state[property], percent);
     }
   };
-  Animation.prototype.end = function(abort) {
+  Animation.prototype.end = function(abort, seek) {
     !abort && this.transform(this.ease(1));
-    this.start = null;
+    !seek && (this.start = null);
   };
   function CssAnimation(item, animation, duration, ease, delay, generated) {
     this.item = item;
@@ -719,13 +721,14 @@
       a.init(time, true);
       if (a.start + a.duration <= tick) {
         time += a.delay + a.duration;
-        a.end();
+        a.end(false, true);
+        continue;
       } else {
-        a.run(tick);
+        a.run(tick, true);
       }
-      this.item.style();
       break;
     }
+    this.item.style();
   };
   Sequence.prototype.infinite = function() {
     this._infinite = true;
@@ -752,6 +755,11 @@
     this.animation = item.animation;
     !idle && this.style();
   }
+  CSS.skip = {
+    translate: null,
+    rotate: null,
+    scale: null
+  };
   CSS.prototype.createStyleSheet = function() {
     var style = document.createElement("style");
     document.getElementsByTagName("head")[0].appendChild(style);
@@ -813,8 +821,12 @@
     return (time * 100 / this.animation.duration).toFixed(3);
   };
   CSS.prototype.frame = function(time, ease) {
-    var percent = this.percent(time);
-    return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
+    var percent = this.percent(time), props = [];
+    for (var property in this.item.state) {
+      if (property in CSS.skip) continue;
+      props.push(percent ? property + ":" + this.item.state[property] + ";" : "");
+    }
+    return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + props.join("") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
   };
   function World() {
     EventEmitter.call(this);

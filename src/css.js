@@ -14,6 +14,8 @@ function CSS(item, idle) {
 	!idle && this.style()
 }
 
+CSS.skip = {translate: null, rotate: null, scale: null};
+
 /**
  * Creates new stylesheet and adds it to HEAD
  */
@@ -133,9 +135,15 @@ CSS.prototype.percent = function (time) {
  * @return {string}
  */
 CSS.prototype.frame = function (time, ease) {
-	var percent = this.percent(time)
+	var percent = this.percent(time),
+		props = []
+	for (var property in this.item.state) {
+		if (property in CSS.skip) continue
+		props.push(percent ? property + ':' + this.item.state[property] + ';' : '')
+	}
 	return percent + '% {' +
 		(percent ? transformProperty + ':' + this.item.transform() + ';' : '') +
+		(props.join('')) +
 		(ease ? getProperty('animation-timing-function') + ':' + ease + ';' : '') +
 		'}'
 }

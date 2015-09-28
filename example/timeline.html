@@ -105,7 +105,7 @@
     document.querySelector('.timeline').value = time
   })
       
-  document.querySelector('.timeline').addEventListener('change', function(e) {
+  document.querySelector('.timeline').addEventListener('input', function(e) {
     timeline.seek(this.value)
   }, false)
   

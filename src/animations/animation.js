@@ -22,13 +22,14 @@ function Animation(item, transform, duration, ease, delay) {
 	this.easeName = transform.ease || ease || 'linear'
 }
 
+Animation.skip = {duration: null, delay: null, ease: null};
+
 Animation.getState = function (transform, item) {
-	var initial = {},
-	    computed = getComputedStyle(item.dom, null),
-	    skip = {duration:null, delay:null, ease:null}
+	var computed = getComputedStyle(item.dom, null),
+		initial = {}
 
 	for (var property in transform) {
-		if (property in skip) continue
+		if (property in Animation.skip) continue
 		if (transform.hasOwnProperty(property)) {
 			if (item.state[property] == null) {
 				item.state[property] = computed[property]
@@ -42,24 +43,29 @@ Animation.getState = function (transform, item) {
 /**
  * Starts animation timer
  * @param {number} tick Timestamp
- * @param {boolean=} force Force initialization
+ * @param {boolean=} seek Is used in seek mode
  */
-Animation.prototype.init = function (tick, force) {
-	if (this.start !== null && !force) return
+Animation.prototype.init = function (tick, seek) {
+	if (this.start !== null && !seek) return
+	if (this.start === null) {
+		this.state = Animation.getState(this.transformation, this.item)
+	}
 	this.start = tick + this.delay
-
-	this.state = Animation.getState(this.transformation, this.item)
 }
 
 /**
  * Runs one tick of animation
  * @param {number} tick
+ * @param {boolean} seek Is used in seek mode
  */
-Animation.prototype.run = function (tick) {
-	if (tick < this.start) return
+Animation.prototype.run = function (tick, seek) {
+	if (tick < this.start && !seek) return
+	var percent = 0
 
-	var percent = (tick - this.start) / this.duration
-	percent = this.ease(percent)
+	if (tick >= this.start) {
+		percent = (tick - this.start) / this.duration
+		percent = this.ease(percent)
+	}
 
 	this.transform(percent)
 }
@@ -91,8 +97,9 @@ Animation.prototype.transform = function (percent) {
 /**
  * Ends animation
  * @param {boolean} abort
+ * @param {boolean} seek Is used in seek mode
  */
-Animation.prototype.end = function (abort) {
+Animation.prototype.end = function (abort, seek) {
 	!abort && this.transform(this.ease(1))
-	this.start = null
+	!seek && (this.start = null)
 }

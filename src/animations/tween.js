@@ -6,10 +6,6 @@ function Tween(start, end, property) {
 	this.end = Tween.parseValue(end, type)
 	
 	this.suffix = Tween.px.indexOf(property) !== -1 ? 'px' : ''
-	if (this.suffix) {
-		this.start && (this.start = this.start[0])
-		this.end && (this.end = this.end[0])
-	}
 }
 
 Tween.NUMERIC = 'NUMERIC'
@@ -36,7 +32,7 @@ Tween.parseNumeric = function (numeric) {
 	if (!Array.isArray(numeric)) {
 		numeric = String(numeric).split(/\s+/)
 	}
-	return Array.isArray(numeric) ? numeric.map(parseFloat) : numeric
+	return Array.isArray(numeric) ? numeric.map(parseFloat) : Number(numeric)
 }
 
 Tween.parseColor = function (color) {
@@ -63,8 +59,8 @@ Tween.parseColor = function (color) {
 
 Tween.prototype.interpolate = function (state, percent) {
 	if (this.type === Tween.NUMERIC) {
-		if (Array.isArray(this.start)) {
-			for (var i = 0; i < 3; ++i) {
+		if (Array.isArray(state)) {
+			for (var i = 0; i < state.length; ++i) {
 				if (this.end && this.end[i]) {
 					state[i] = this.start[i] + this.end[i] * percent
 					if (this.suffix) {
@@ -73,7 +69,7 @@ Tween.prototype.interpolate = function (state, percent) {
 				}
 			}
 		} else if (this.end !== undefined) {
-			state = this.start + (this.end - this.start) * percent
+			state = Number(this.start) + (Number(this.end) - Number(this.start)) * percent
 			if (this.suffix) {
 				state += this.suffix
 			}
