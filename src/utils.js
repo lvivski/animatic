@@ -27,3 +27,20 @@ var performance = root.performance && root.performance.now ? root.performance : 
 requestAnimationFrame(function(tick) {
 	fixTick = tick > 1e12 != performance.now() > 1e12
 })
+
+function merge(obj) {
+	var i = 1
+	while (i < arguments.length) {
+		var source = arguments[i++]
+		for (var property in source) if (source.hasOwnProperty(property)) {
+			if (Array.isArray(source[property])) {
+				obj[property] = source[property].map(function (value, index) {
+					return value || obj[property][index]
+				})
+			} else {
+				obj[property] = source[property]
+			}
+		}
+	}
+	return obj
+}

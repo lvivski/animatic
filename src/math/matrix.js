@@ -7,9 +7,9 @@ var radians = Math.PI / 180
 var Matrix = {
 	identity: function () {
 		return [1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1]
+		        0, 1, 0, 0,
+		        0, 0, 1, 0,
+		        0, 0, 0, 1]
 	},
 	multiply: function multiply(a, b) { // doesn't work for perspective
 		var c = this.identity()
@@ -42,19 +42,21 @@ var Matrix = {
 		tz || (tz = 0)
 
 		return [1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			tx, ty, tz, 1]
+		        0, 1, 0, 0,
+		        0, 0, 1, 0,
+		        tx, ty, tz, 1]
 	},
-	/* translateX: function translateX(t) {
-	 return this.translate(t, 0, 0)
-	 },
-	 translateY: function translateY(t) {
-	 return this.translate(0, t, 0)
-	 },
-	 translateZ: function translateZ(t) {
-	 return this.translate(0, 0, t)
-	 }, */
+	/*
+	translateX: function translateX(t) {
+		return this.translate(t, 0, 0)
+	},
+	translateY: function translateY(t) {
+		return this.translate(0, t, 0)
+	},
+	translateZ: function translateZ(t) {
+		return this.translate(0, 0, t)
+	},
+	*/
 	scale: function (sx, sy, sz) {
 		if (!(sx || sy || sz)) return this.identity()
 
@@ -63,19 +65,21 @@ var Matrix = {
 		sz || (sz = 1)
 
 		return [sx, 0, 0, 0,
-			0, sy, 0, 0,
-			0, 0, sz, 0,
-			0, 0, 0, 1]
+		        0, sy, 0, 0,
+		        0, 0, sz, 0,
+		        0, 0, 0, 1]
 	},
-	/* scaleX: function scaleX(s) {
-	 return this.scale(s, 0, 0)
-	 },
-	 scaleY: function scaleY(s) {
-	 return this.scale(0, s, 0)
-	 },
-	 scaleZ: function scaleZ(s) {
-	 return this.scale(0, 0, s)
-	 }, */
+	/*
+	scaleX: function scaleX(s) {
+		return this.scale(s, 0, 0)
+	},
+	scaleY: function scaleY(s) {
+		return this.scale(0, s, 0)
+	},
+	scaleZ: function scaleZ(s) {
+		return this.scale(0, 0, s)
+	},
+	*/
 	rotate: function (ax, ay, az) {
 		if (!(ax || ay || az)) return this.identity()
 
@@ -88,52 +92,54 @@ var Matrix = {
 		az *= radians
 
 		var sx = Math.sin(ax),
-			cx = Math.cos(ax),
+		    cx = Math.cos(ax),
 
-			sy = Math.sin(ay),
-			cy = Math.cos(ay),
+		    sy = Math.sin(ay),
+		    cy = Math.cos(ay),
 
-			sz = Math.sin(az),
-			cz = Math.cos(az)
+		    sz = Math.sin(az),
+		    cz = Math.cos(az)
 
 		return [cy * cz, cx * sz + sx * sy * cz, sx * sz - cx * sy * cz, 0,
-			-cy * sz, cx * cz - sx * sy * sz, sx * cz + cx * sy * sz, 0,
-			sy, -sx * cy, cx * cy, 0,
-			0, 0, 0, 1]
+		       -cy * sz, cx * cz - sx * sy * sz, sx * cz + cx * sy * sz, 0,
+		        sy, -sx * cy, cx * cy, 0,
+		        0, 0, 0, 1]
 	},
-	/* rotateX: function rotateX(a) {
-	 a *= radians
+	/*
+	rotateX: function rotateX(a) {
+		a *= radians
 
-	 var s = Math.sin(a),
-	 c = Math.cos(a)
+		var s = Math.sin(a),
+		    c = Math.cos(a)
 
-	 return [1, 0, 0, 0,
-	 0, c, s, 0,
-	 0, -s, c, 0,
-	 0, 0, 0, 1]
-	 },
-	 rotateY: function rotateY(a) {
-	 a *= radians
+		return [1, 0, 0, 0,
+		        0, c, s, 0,
+		        0, -s, c, 0,
+		        0, 0, 0, 1]
+		},
+	rotateY: function rotateY(a) {
+		a *= radians
 
-	 var s = Math.sin(a),
-	 c = Math.cos(a)
+		var s = Math.sin(a),
+		    c = Math.cos(a)
 
-	 return [c, 0, -s, 0,
-	 0, 1, 0, 0,
-	 s, 0, c, 0,
-	 0, 0, 0, 1]
-	 },
-	 rotateZ: function rotateZ(a) {
-	 a *= radians
+		return [c, 0, -s, 0,
+		        0, 1, 0, 0,
+		        s, 0, c, 0,
+		        0, 0, 0, 1]
+	},
+	rotateZ: function rotateZ(a) {
+		a *= radians
 
-	 var s = Math.sin(a),
-	 c = Math.cos(a)
+		var s = Math.sin(a),
+		    c = Math.cos(a)
 
-	 return [c, s, 0, 0,
-	 -s, c, 0, 0,
-	 0, 0, 1, 0,
-	 0, 0, 0, 1]
-	 }, */
+	 	return [c, s, 0, 0,
+		       -s, c, 0, 0,
+		        0, 0, 1, 0,
+		        0, 0, 0, 1]
+	},
+	*/
 	rotate3d: function (x, y, z, a) {
 		a || (a = 0)
 
@@ -171,12 +177,14 @@ var Matrix = {
 			0, 0, 1, 0,
 			0, 0, 0, 1]
 	},
-	/* skewX: function skewX(a) {
-	 return this.skew(a, 0)
-	 },
-	 skewY: function skewY(a) {
-	 return this.skew(0, a)
-	 }, */
+	/*
+	skewX: function skewX(a) {
+		return this.skew(a, 0)
+	},
+	skewY: function skewY(a) {
+		return this.skew(0, a)
+	},
+	*/
 	perspective: function (p) {
 		p = -1 / p
 
@@ -199,19 +207,19 @@ var Matrix = {
 	inverse: function (m) {
 		var a = this.identity(),
 
-			inv0 = m[5] * m[10] - m[6] * m[9],
-			inv1 = m[1] * m[10] - m[2] * m[9],
-			inv2 = m[1] * m[6] - m[2] * m[5],
+		    inv0 = m[5] * m[10] - m[6] * m[9],
+		    inv1 = m[1] * m[10] - m[2] * m[9],
+		    inv2 = m[1] * m[6] - m[2] * m[5],
 
-			inv4 = m[4] * m[10] - m[6] * m[8],
-			inv5 = m[0] * m[10] - m[2] * m[8],
-			inv6 = m[0] * m[6] - m[2] * m[4],
+		    inv4 = m[4] * m[10] - m[6] * m[8],
+		    inv5 = m[0] * m[10] - m[2] * m[8],
+		    inv6 = m[0] * m[6] - m[2] * m[4],
 
-			inv8 = m[4] * m[9] - m[5] * m[8],
-			inv9 = m[0] * m[9] - m[1] * m[8],
-			inv10 = m[0] * m[5] - m[1] * m[4],
+		    inv8 = m[4] * m[9] - m[5] * m[8],
+		    inv9 = m[0] * m[9] - m[1] * m[8],
+		    inv10 = m[0] * m[5] - m[1] * m[4],
 
-			det = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8)
+		    det = 1 / (m[0] * inv0 - m[1] * inv4 + m[2] * inv8)
 
 		a[0] = det * inv0
 		a[1] = -det * inv1
@@ -262,12 +270,12 @@ var Matrix = {
 	},
 	decompose: function (m) { // supports only scale*rotate*translate matrix
 		var sX = Vector.length(m[0], m[1], m[2]),
-			sY = Vector.length(m[4], m[5], m[6]),
-			sZ = Vector.length(m[8], m[9], m[10])
+		    sY = Vector.length(m[4], m[5], m[6]),
+		    sZ = Vector.length(m[8], m[9], m[10])
 
 		var rX = Math.atan2(-m[9] / sZ, m[10] / sZ) / radians,
-			rY = Math.asin(m[8] / sZ) / radians,
-			rZ = Math.atan2(-m[4] / sY, m[0] / sX) / radians
+		    rY = Math.asin(m[8] / sZ) / radians,
+		    rZ = Math.atan2(-m[4] / sY, m[0] / sX) / radians
 
 		if (m[4] === 1 || m[4] === -1) {
 			rX = 0
@@ -276,8 +284,8 @@ var Matrix = {
 		}
 
 		var tX = m[12],
-			tY = m[13],
-			tZ = m[14]
+		    tY = m[13],
+		    tZ = m[14]
 
 		return {
 			translate: [tX, tY, tZ],

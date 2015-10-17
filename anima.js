@@ -27,6 +27,22 @@
   requestAnimationFrame(function(tick) {
     fixTick = tick > 1e12 != performance.now() > 1e12;
   });
+  function merge(obj) {
+    var i = 1;
+    while (i < arguments.length) {
+      var source = arguments[i++];
+      for (var property in source) if (source.hasOwnProperty(property)) {
+        if (Array.isArray(source[property])) {
+          obj[property] = source[property].map(function(value, index) {
+            return value || obj[property][index];
+          });
+        } else {
+          obj[property] = source[property];
+        }
+      }
+    }
+    return obj;
+  }
   var Vector = {
     set: function(x, y, z) {
       if (Array.isArray(x)) {
@@ -478,18 +494,45 @@
     delay: null,
     ease: null
   };
+  Animation.transform = {
+    translate: null,
+    rotate: null,
+    scale: null
+  };
   Animation.getState = function(transform, item) {
-    var computed = getComputedStyle(item.dom, null), initial = {};
+    var initial = {}, computed;
     for (var property in transform) {
       if (property in Animation.skip) continue;
       if (transform.hasOwnProperty(property)) {
-        if (item.state[property] == null) {
-          item.state[property] = computed[property];
+        if (item.get(property) == null) {
+          if (!computed) {
+            computed = getComputedStyle(item.dom, null);
+          }
+          Animation.setItemState(item, property, computed);
         }
-        initial[property] = new Tween(item.state[property], transform[property], property);
+        initial[property] = new Tween(item.get(property), transform[property], property);
       }
     }
     return initial;
+  };
+  Animation.setItemState = function(item, property, computed) {
+    if (property in Animation.transform) {
+      var value = computed[transformProperty];
+      if (value === "none") {
+        value = {
+          translate: Vector.zero(),
+          rotate: Vector.zero(),
+          scale: Vector.set(1)
+        };
+      } else {
+        value = Matrix.decompose(Matrix.parse(value));
+      }
+      item.set("translate", value.translate);
+      item.set("rotate", value.rotate);
+      item.set("scale", value.scale);
+    } else {
+      item.set(property, computed[property]);
+    }
   };
   Animation.prototype.init = function(tick, seek) {
     if (this.start !== null && !seek) return;
@@ -497,6 +540,18 @@
       this.state = Animation.getState(this.transformation, this.item);
     }
     this.start = tick + this.delay;
+  };
+  Animation.prototype.merge = function(transform, duration, ease, delay) {
+    this.duration = (transform.duration || duration) | 0;
+    this.delay = (transform.delay || delay) | 0;
+    ease = transform.ease || ease;
+    this.ease = easings[ease] || easings.linear;
+    this.easeName = transform.ease || ease || "linear";
+    merge(this.transformation, transform);
+    this.start = null;
+  };
+  Animation.prototype.get = function(type) {
+    return this.state[type];
   };
   Animation.prototype.run = function(tick, seek) {
     if (tick < this.start && !seek) return;
@@ -513,9 +568,12 @@
   Animation.prototype.resume = function() {
     this.start = performance.now() - this.diff;
   };
+  Animation.prototype.interpolate = function(property, percent) {
+    return this.get(property).interpolate(this.item.get(property), percent);
+  };
   Animation.prototype.transform = function(percent) {
     for (var property in this.state) {
-      this.item.state[property] = this.state[property].interpolate(this.item.state[property], percent);
+      this.item.set(property, this.interpolate(property, percent));
     }
   };
   Animation.prototype.end = function(abort, seek) {
@@ -779,7 +837,8 @@
   };
   CSS.prototype.style = function() {
     var animation = "a" + Date.now() + "r" + Math.floor(Math.random() * 1e3);
-    this.stylesheet.insertRule(this.keyframes(animation), this.stylesheet.cssRules.length);
+    var cssRules = this.stylesheet.cssRules;
+    this.stylesheet.insertRule(this.keyframes(animation), cssRules ? cssRules.length : 0);
     this.animation.empty();
     this.animation.add(animation, this.animation.duration, "", 0, true);
   };
@@ -824,7 +883,7 @@
     var percent = this.percent(time), props = [];
     for (var property in this.item.state) {
       if (property in CSS.skip) continue;
-      props.push(percent ? property + ":" + this.item.state[property] + ";" : "");
+      props.push(percent ? property.replace(/([A-Z])/g, "-$1") + ":" + this.item.get(property) + ";" : "");
     }
     return percent + "% {" + (percent ? transformProperty + ":" + this.item.transform() + ";" : "") + props.join("") + (ease ? getProperty("animation-timing-function") + ":" + ease + ";" : "") + "}";
   };
@@ -942,16 +1001,7 @@
   Item.prototype.init = function() {
     this.animation = new Sequence(this);
     this.running = true;
-    var computed = getComputedStyle(this.dom, null), transform = computed[transformProperty];
-    if (transform === "none") {
-      this.state = {
-        translate: Vector.zero(),
-        rotate: Vector.zero(),
-        scale: Vector.set(1)
-      };
-    } else {
-      this.state = Matrix.decompose(Matrix.parse(transform));
-    }
+    this.state = {};
   };
   Item.prototype.update = function(tick) {
     if (!this.running) return;
@@ -972,12 +1022,13 @@
     this.running = true;
   };
   Item.prototype.style = function(property, value) {
+    var style = this.dom.style;
     if (property && value) {
-      this.dom.style[property] = value;
+      style[property] = value;
     } else {
-      this.dom.style[transformProperty] = this.transform();
+      style[transformProperty] = this.transform();
       for (var property in this.state) {
-        this.dom.style[property] = this.state[property];
+        style[property] = this.get(property);
       }
     }
   };
@@ -992,27 +1043,15 @@
     return Matrix.decompose(Matrix.inverse(this.matrix()));
   };
   Item.prototype.lookAt = function(vector) {
-    var transform = Matrix.decompose(Matrix.lookAt(vector, this.state.translate, Vector.set(0, 1, 0)));
-    this.state.rotate = transform.rotate;
-  };
-  Item.prototype.add = function(type, a) {
-    this.state[type][0] += a[0];
-    this.state[type][1] += a[1];
-    this.state[type][2] += a[2];
-    return this;
+    var transform = Matrix.decompose(Matrix.lookAt(vector, this.get("translate"), Vector.set(0, 1, 0)));
+    this.set("rotate", transform.rotate);
   };
   Item.prototype.set = function(type, a) {
     this.state[type] = a;
     return this;
   };
-  Item.prototype.translate = function(t) {
-    return this.add("translate", t);
-  };
-  Item.prototype.rotate = function(r) {
-    return this.add("rotate", r);
-  };
-  Item.prototype.scale = function(s) {
-    return this.add("scale", s);
+  Item.prototype.get = function(type) {
+    return this.state[type];
   };
   Item.prototype.clear = function() {
     this.state.translate = Vector.zero();
@@ -1021,6 +1060,13 @@
   };
   Item.prototype.animate = function(transform, duration, ease, delay) {
     return this.animation.add(transform, duration, ease, delay);
+  };
+  Item.prototype.alternate = function(transform, duration, ease, delay) {
+    if (this.animation.length) {
+      this.animation.get(0).merge(transform, duration, ease, delay);
+    } else {
+      this.animate.call(this, transform, duration, ease, delay);
+    }
   };
   Item.prototype.finish = function(abort) {
     this.animation.end(abort);

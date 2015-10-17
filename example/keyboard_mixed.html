@@ -1,143 +1,148 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Keyboard mixed</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" href="css/main.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Keyboard</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="viewport">
+<div class="viewport">
     <div class="world">
     </div>
-  </div>
+</div>
 
-  <div class="controls">
+<div class="controls">
     <div class="controls-bg"></div>
     <div class="controls-content">
-      <input type="button" rel="pause" value="Pause" />
-      <input type="button" rel="resume" value="Play" />
-      use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> to rotate and <code>W</code> <code>A</code> <code>S</code> <code>D</code> to move
+        <input type="button" rel="pause" value="Pause"/>
+        <input type="button" rel="resume" value="Play"/>
+        (use <code>↑</code> <code>↓</code> <code>←</code> <code>→</code> to rotate and <code>W</code> <code>A</code>
+        <code>S</code> <code>D</code> to move)
     </div>
-  </div>
+</div>
 </body>
 <script src="../anima.js"></script>
 <script>
-var world = anima.world(),
-    container = world.add(document.querySelector('.world')),
-    keys = {
-      UP: 38,
-      DOWN: 40,
-      LEFT: 37,
-      RIGHT: 39,
-      w: 87,
-      s: 83,
-      d: 65,
-      a: 68
+    var world = anima.world(),
+            container = world.add(document.querySelector('.world')),
+            keys = {
+                UP: 38,
+                DOWN: 40,
+                LEFT: 37,
+                RIGHT: 39,
+                w: 87,
+                s: 83,
+                d: 65,
+                a: 68
+            }
+
+    var elements = 'H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Rv Fl Uup Lv Uus Ur'.split(' ')
+    var names = 'Hydrogen Helium Lithium Beryllium Boron Carbon Nitrogen Oxygen Fluorine Neon Sodium Magnesium Aluminium Silicon Phosphorus Sulfur Chlorine Argon Potassium Calcium Scandium Titanium Vanadium Chromium Manganese Iron Cobalt Nickel Copper Zinc Gallium Germanium Arsenic Selenium Bromine Krypton Rubidium Strontium Yttrium Zirconium Niobium Molybdenum Technetium Ruthenium Rhodium Palladium Silver Cadmium Indium Tin Antimony Tellurium Iodine Xenon Cesium Barium Lanthanum Cerium Praseodymium Neodymium Promethium Samarium Europium Gadolinium Terbium Dysprosium Holmium Erbium Thulium Ytterbium Lutetium Hafnium Tantalum Tungsten Rhenium Osmium Iridium Platinum Gold Mercury Thallium Lead Bismuth Polonium Astatine Radon Francium Radium Actinium Thorium Protactinium Uranium Neptunium Plutonium Americium Curium Berkelium Californium Einsteinium Fermium Mendelevium Nobelium Lawrencium Rutherfordium Dubnium Seaborgium Bohrium Hassium Meitnerium Darmstadtium Roentgenium Copernicium Ravikantium Flerovium Ununpentium Livermorium Ununseptium Urasium'.split(' ')
+
+    var width = window.innerWidth,
+            height = window.innerHeight,
+            hWidth = width >> 1,
+            hHeight = height >> 1
+
+    for (var i = 0; i < elements.length; i++) {
+        var card = document.createElement('div'),
+                el = document.createElement('div'),
+                title = document.createElement('div')
+
+        card.className = 'card'
+
+        el.textContent = elements[i]
+        el.className = 'element'
+
+        title.textContent = names[i]
+        title.className = 'name'
+
+        card.appendChild(el)
+        card.appendChild(title)
+        container.dom.appendChild(card)
+
+        var item = world.add(card),
+                d = Math.floor(Math.random() * (50 - 25)) + 25,
+                t = Math.floor(Math.random() * (700 - 300)) + 300,
+                m = d < 37.5 ? -1 : 1
+//        item.animate({
+//            translate: [-hWidth + i * 110 % width, -hHeight + Math.floor(i * 110 / width) * 130, 0]
+//        }, 0)
+
+        var prefix = ([].slice.call(getComputedStyle(document.documentElement, null))
+                        .join('').match(/(-(moz|webkit|ms)-)transform/) || [])[1],
+                transformProperty = getProperty('transform')
+
+        function getProperty(name) {
+            return prefix ? prefix + name : name
+        }
+
+        card.style[transformProperty] = 'translate3d(' + [-hWidth + i * 110 % width, -hHeight + Math.floor(i * 110 / width) * 130, 0].map(function (v) {return v+'px'})+ ')';
+
+        item.animate({
+                    translate: [0, 0, -d * m],
+//                    backgroundColor: '#FF0000'
+                }, t)
+                .animate({
+                    translate: [0, 0, d * 2 * m],
+//                    backgroundColor: '#00FF00'
+                }, t * 2)
+                .animate({
+                    translate: [0, 0, -d * m],
+//                    backgroundColor: '#FF0000'
+                }, t)
+                .infinite()
+                .css()
     }
 
-var width = window.innerWidth,
-    height = window.innerHeight,
-    hWidth = width >> 1,
-    hHeight = height >> 1
+    addEventListener('keydown', onKeyDown, true)
+    addEventListener('keyup', function () {
+        container.stop()
+    }, true)
 
-var elements = 'H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Rv Fl Uup Lv Uus Ur'.split(' ')
-var names = 'Hydrogen Helium Lithium Beryllium Boron Carbon Nitrogen Oxygen Fluorine Neon Sodium Magnesium Aluminium Silicon Phosphorus Sulfur Chlorine Argon Potassium Calcium Scandium Titanium Vanadium Chromium Manganese Iron Cobalt Nickel Copper Zinc Gallium Germanium Arsenic Selenium Bromine Krypton Rubidium Strontium Yttrium Zirconium Niobium Molybdenum Technetium Ruthenium Rhodium Palladium Silver Cadmium Indium Tin Antimony Tellurium Iodine Xenon Cesium Barium Lanthanum Cerium Praseodymium Neodymium Promethium Samarium Europium Gadolinium Terbium Dysprosium Holmium Erbium Thulium Ytterbium Lutetium Hafnium Tantalum Tungsten Rhenium Osmium Iridium Platinum Gold Mercury Thallium Lead Bismuth Polonium Astatine Radon Francium Radium Actinium Thorium Protactinium Uranium Neptunium Plutonium Americium Curium Berkelium Californium Einsteinium Fermium Mendelevium Nobelium Lawrencium Rutherfordium Dubnium Seaborgium Bohrium Hassium Meitnerium Darmstadtium Roentgenium Copernicium Ravikantium Flerovium Ununpentium Livermorium Ununseptium Urasium'.split(' ')
+    function onKeyDown(e) {
+        var rotate = [0, 0, 0],
+                translate = [0, 0, 0]
 
-for (var i = 0; i < elements.length; i++) {
-  var card = document.createElement('div'),
-      el = document.createElement('div'),
-      title = document.createElement('div')
+        switch (e.keyCode) {
+            case keys.UP:
+                rotate[0] = 50
+                break
+            case keys.DOWN:
+                rotate[0] = -50
+                break
+            case keys.LEFT:
+                rotate[1] = -50
+                break
+            case keys.RIGHT:
+                rotate[1] = 50
+                break
+            case keys.w:
+                translate[1] = 200
+                break
+            case keys.s:
+                translate[1] = -200
+                break
+            case keys.a:
+                translate[0] = -200
+                break
+            case keys.d:
+                translate[0] = 200
+                break
+        }
+        container.alternate({
+            translate: translate,
+            rotate: rotate
+        }, 500)
+    }
 
-  card.className = 'card'
-
-  el.textContent = elements[i]
-  el.className = 'element'
-
-  title.textContent = names[i]
-  title.className = 'name'
-
-  card.appendChild(el)
-  card.appendChild(title)
-
-  container.dom.appendChild(card)
-
-  var item = world.add(card),
-      d = Math.floor(Math.random()*(50-25))+25,
-      t = Math.floor(Math.random()*(700-300))+300,
-      m = d < 37.5 ? -1 : 1
-
-  item.translate([-hWidth + i*110 % width, -hHeight + Math.floor(i*110/width)*130, 0])
-
-  item.animate({
-    translate: [0,0,-d*m]
-  }, t)
-  .animate({
-    translate: [0,0,d*2*m]
-  }, t*2)
-  .animate({
-    translate: [0,0,-d*m]
-  }, t)
-  .infinite()
-  .css()
-}
-
-addEventListener('keydown', onKeyDown, true)
-addEventListener('keyup', function(){ container.stop() }, true)
-
-function onKeyDown(e) {
-  var rotate = [0, 0, 0],
-      translate = [0, 0, 0]
-
-  switch(e.keyCode) {
-    case keys.UP:
-      rotate[0] = 50
-      break
-    case keys.DOWN:
-      rotate[0] = -50
-      break
-    case keys.LEFT:
-      rotate[1] = -50
-      break
-    case keys.RIGHT:
-      rotate[1] = 50
-      break
-    case keys.w:
-      translate[1] = 200
-      break
-    case keys.s:
-      translate[1] = -200
-      break
-    case keys.a:
-      translate[0] = -200
-      break
-    case keys.d:
-      translate[0] = 200
-      break
-  }
-  if (container.animation.length) {
-    var a = container.animation.get(0)
-    a.translate = translate.map(function(t, i) {
-      return t || a.translate[i]
+    [].slice.call(document.querySelectorAll('.controls input')).forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            world[this.getAttribute('rel')]()
+        }, false)
     })
-    a.rotate = rotate.map(function(r, i) {
-      return r || a.rotate[i]
-    })
-    a.init(Date.now(), true)
-  } else {
-    container.animate({
-      translate: translate,
-      rotate: rotate
-    }, 500)
-  }
-}
-
-[].slice.call(document.querySelectorAll('.controls input')).forEach(function(el) {
-    el.addEventListener('click', function(e){
-        world[this.getAttribute('rel')]()
-    }, false)
-})
 </script>
 </html>

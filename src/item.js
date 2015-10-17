@@ -21,19 +21,7 @@ Item.prototype.init = function () {
 	this.animation = new Sequence(this)
 
 	this.running = true
-
-	var computed = getComputedStyle(this.dom, null),
-	    transform = computed[transformProperty]
-
-	if (transform === 'none') {
-		this.state = {
-			translate: Vector.zero(),
-			rotate: Vector.zero(),
-			scale: Vector.set(1)
-		}
-	} else {
-		this.state = Matrix.decompose(Matrix.parse(transform))
-	}
+	this.state = {}
 }
 
 /**
@@ -78,12 +66,13 @@ Item.prototype.resume = function () {
  * @param {string=} value
  */
 Item.prototype.style = function (property, value) {
+	var style = this.dom.style;
 	if (property && value) {
-		this.dom.style[property] = value
+		style[property] = value
 	} else {
-		this.dom.style[transformProperty] = this.transform()
+		style[transformProperty] = this.transform()
 		for (var property in this.state) {
-			this.dom.style[property] = this.state[property]
+			style[property] = this.get(property)
 		}
 	}
 }
@@ -121,26 +110,16 @@ Item.prototype.center = function () {
  */
 Item.prototype.lookAt = function (vector) {
 	var transform = Matrix.decompose(Matrix.lookAt(
-		vector, this.state.translate, Vector.set(0, 1, 0)
+		vector, this.get('translate'), Vector.set(0, 1, 0)
 	))
-	this.state.rotate = transform.rotate
-}
-/**
- * Adds values to state params
- * @param {string} type
- * @param {Array} a
- */
-Item.prototype.add = function (type, a) {
-	this.state[type][0] += a[0]
-	this.state[type][1] += a[1]
-	this.state[type][2] += a[2]
-	return this
+	this.set('rotate', transform.rotate)
 }
 
 /**
  * Sets values to state params
  * @param {string} type
  * @param {Array} a
+ * @return {Item}
  */
 Item.prototype.set = function (type, a) {
 	this.state[type] = a
@@ -148,27 +127,11 @@ Item.prototype.set = function (type, a) {
 }
 
 /**
- * Translates item in XYZ axis
- * @param {Array} t Coordinates
+ * Gets values from state params
+ * @param {string} type
  */
-Item.prototype.translate = function (t) {
-	return this.add('translate', t)
-}
-
-/**
- * Rotates item in XYZ
- * @param {Array} r Angles in radians
- */
-Item.prototype.rotate = function (r) {
-	return this.add('rotate', r)
-}
-
-/**
- * Scale item in XYZ
- * @param {Array} s Scale values
- */
-Item.prototype.scale = function (s) {
-	return this.add('scale', s)
+Item.prototype.get = function (type) {
+	return this.state[type]
 }
 
 /**
@@ -190,6 +153,21 @@ Item.prototype.clear = function () {
  */
 Item.prototype.animate = function (transform, duration, ease, delay) {
 	return this.animation.add(transform, duration, ease, delay)
+}
+
+/**
+ * Alternates current animation
+ * @param {Object|Array} transform
+ * @param {number} duration
+ * @param {string} ease
+ * @param {number} delay
+ */
+Item.prototype.alternate = function (transform, duration, ease, delay) {
+	if (this.animation.length) {
+		this.animation.get(0).merge(transform, duration, ease, delay)
+	} else {
+		this.animate.call(this, transform, duration, ease, delay)
+	}
 }
 
 /**

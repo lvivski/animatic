@@ -58,15 +58,15 @@ var Vector = {
 	},
 	dist: function (a, b) {
 		var dx = a[0] - b[0],
-			dy = a[1] - b[1],
-			dz = a[2] - b[2]
+		    dy = a[1] - b[1],
+		    dz = a[2] - b[2]
 
 		return Math.sqrt(dx * dx + dy * dy + dz + dz)
 	},
 	cross: function (a, b) {
 		var x = a[1] * b[2] - a[2] * b[1],
-			y = a[2] * b[0] - a[0] * b[2],
-			z = a[1] * b[1] - a[1] * b[0]
+		    y = a[2] * b[0] - a[0] * b[2],
+		    z = a[1] * b[1] - a[1] * b[0]
 
 		return [x, y, z]
 	},

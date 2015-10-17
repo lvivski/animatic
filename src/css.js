@@ -60,7 +60,8 @@ CSS.prototype.stop = function () {
 CSS.prototype.style = function () {
 	var animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
 
-	this.stylesheet.insertRule(this.keyframes(animation), this.stylesheet.cssRules.length)
+	var cssRules = this.stylesheet.cssRules
+	this.stylesheet.insertRule(this.keyframes(animation), cssRules ? cssRules.length : 0)
 
 	this.animation.empty()
 	this.animation.add(animation, this.animation.duration, '', 0, true)
@@ -139,7 +140,7 @@ CSS.prototype.frame = function (time, ease) {
 		props = []
 	for (var property in this.item.state) {
 		if (property in CSS.skip) continue
-		props.push(percent ? property + ':' + this.item.state[property] + ';' : '')
+		props.push(percent ? property.replace(/([A-Z])/g, '-$1') + ':' + this.item.get(property) + ';' : '')
 	}
 	return percent + '% {' +
 		(percent ? transformProperty + ':' + this.item.transform() + ';' : '') +
