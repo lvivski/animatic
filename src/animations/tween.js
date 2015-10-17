@@ -57,35 +57,49 @@ Tween.parseColor = function (color) {
 	}
 }
 
-Tween.prototype.interpolate = function (state, percent) {
+Tween.prototype.interpolate = function (percent) {
 	if (this.type === Tween.NUMERIC) {
-		if (Array.isArray(state)) {
-			for (var i = 0; i < state.length; ++i) {
-				if (this.end && this.end[i]) {
-					state[i] = this.start[i] + this.end[i] * percent
-					if (this.suffix) {
-						state[i] += this.suffix
-					}
-				}
-			}
+		if (Array.isArray(this.end)) {
+			return this.array(percent)
 		} else if (this.end !== undefined) {
-			state = Number(this.start) + (Number(this.end) - Number(this.start)) * percent
-			if (this.suffix) {
-				state += this.suffix
-			}
+			return this.absolute(percent)
 		}
 	} else if (this.type === Tween.COLOR) {
-		var rgb = {r:0,g:0,b:0}
-		for (var spectra in rgb) {
-			var value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent)
-			rgb[spectra] = clamp(value, 0, 255)
-		}
-		spectra = 'a'
-		value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent)
-		rgb[spectra] = clamp(value, 0, 1)
-		state = 'rgba(' + [rgb.r, rgb.g, rgb.b, rgb.a] + ')'
+		return this.color(percent)
 	}
-	return state
+}
+
+Tween.prototype.array = function (percent) {
+	var value = []
+	for (var i = 0; i < this.end.length; ++i) {
+		if (this.end[i]) {
+			value[i] = this.start[i] + this.end[i] * percent
+			if (this.suffix) {
+				value[i] += this.suffix
+			}
+		}
+	}
+	return value
+}
+
+Tween.prototype.absolute = function (percent) {
+	var value = Number(this.start) + (Number(this.end) - Number(this.start)) * percent
+	if (this.suffix) {
+		value += this.suffix
+	}
+	return value
+}
+
+Tween.prototype.color = function (percent) {
+	var rgb = {r:0,g:0,b:0}
+	for (var spectra in rgb) {
+		var value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent)
+		rgb[spectra] = clamp(value, 0, 255)
+	}
+	spectra = 'a'
+	value = Math.round(this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent)
+	rgb[spectra] = clamp(value, 0, 1)
+	return 'rgba(' + [rgb.r, rgb.g, rgb.b, rgb.a] + ')'
 }
 
 function clamp(value, min, max) {

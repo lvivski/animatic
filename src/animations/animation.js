@@ -136,7 +136,7 @@ Animation.prototype.resume = function () {
 }
 
 Animation.prototype.interpolate = function (property, percent) {
-	return this.get(property).interpolate(this.item.get(property), percent)
+	return this.get(property).interpolate(percent)
 }
 
 /**

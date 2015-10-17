@@ -118,11 +118,21 @@ Item.prototype.lookAt = function (vector) {
 /**
  * Sets values to state params
  * @param {string} type
- * @param {Array} a
+ * @param {Array|Number|String} value
  * @return {Item}
  */
-Item.prototype.set = function (type, a) {
-	this.state[type] = a
+Item.prototype.set = function (type, value) {
+	if (Array.isArray(value)) {
+		this.state[type] || (this.state[type] = [])
+		for (var i in value) {
+			if (value[i] !== undefined) {
+				this.state[type][i] = value[i]
+			}
+		}
+	} else {
+		this.state[type] = value
+	}
+
 	return this
 }
 
