@@ -902,11 +902,11 @@
     EventEmitter.call(this);
     this.items = [];
     this.frame = null;
-    this.init();
+    this.run();
   }
   World.prototype = Object.create(EventEmitter.prototype);
   World.prototype.constructor = World;
-  World.prototype.init = function() {
+  World.prototype.run = function() {
     var self = this;
     this.frame = requestAnimationFrame(update);
     function update(tick) {
@@ -952,7 +952,7 @@
     for (var i = 0; i < this.items.length; ++i) {
       this.items[i].resume();
     }
-    this.init();
+    this.run();
   };
   function Timeline() {
     World.call(this, true);
@@ -961,7 +961,7 @@
   }
   Timeline.prototype = Object.create(World.prototype);
   Timeline.prototype.constructor = Timeline;
-  Timeline.prototype.init = function() {
+  Timeline.prototype.run = function() {
     this.frame = requestAnimationFrame(update);
     var self = this;
     function update(tick) {
@@ -1005,15 +1005,12 @@
   function Item(node) {
     EventEmitter.call(this);
     this.dom = node;
-    this.init();
-  }
-  Item.prototype = Object.create(EventEmitter.prototype);
-  Item.prototype.constructor = Item;
-  Item.prototype.init = function() {
     this.animation = new Sequence(this);
     this.running = true;
     this.state = {};
-  };
+  }
+  Item.prototype = Object.create(EventEmitter.prototype);
+  Item.prototype.constructor = Item;
   Item.prototype.update = function(tick) {
     if (!this.running) return;
     this.animation.run(tick);
@@ -1150,11 +1147,6 @@
     this.mass = 1 / mass;
     this.viscosity = viscosity;
     this.edge = edge;
-  }
-  Particle.prototype = Object.create(Item.prototype);
-  Particle.prototype.constructor = Particle;
-  Particle.prototype.init = function() {
-    Item.prototype.init.call(this);
     this.current = {
       position: Vector.zero(),
       velocity: Vector.zero(),
@@ -1166,7 +1158,9 @@
       acceleration: Vector.zero()
     };
     this.clock = null;
-  };
+  }
+  Particle.prototype = Object.create(Item.prototype);
+  Particle.prototype.constructor = Particle;
   Particle.prototype.update = function(tick) {
     this.animation.run(tick);
     this.integrate(tick);

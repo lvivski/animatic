@@ -8,21 +8,14 @@ function Item(node) {
 
 	this.dom = node
 
-	this.init()
-}
-
-Item.prototype = Object.create(EventEmitter.prototype)
-Item.prototype.constructor = Item
-
-/**
- * Initializes item
- */
-Item.prototype.init = function () {
 	this.animation = new Sequence(this)
 
 	this.running = true
 	this.state = {}
 }
+
+Item.prototype = Object.create(EventEmitter.prototype)
+Item.prototype.constructor = Item
 
 /**
  * Updates item on frame

@@ -14,7 +14,7 @@ Timeline.prototype.constructor = Timeline
 /**
  * Starts new frame loop
  */
-Timeline.prototype.init = function () {
+Timeline.prototype.run = function () {
 	this.frame = requestAnimationFrame(update)
 
 	var self = this

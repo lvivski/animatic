@@ -6,7 +6,7 @@ function World() {
 	EventEmitter.call(this)
 	this.items = []
 	this.frame = null
-	this.init()
+	this.run()
 }
 
 World.prototype = Object.create(EventEmitter.prototype)
@@ -15,7 +15,7 @@ World.prototype.constructor = World
 /**
  * Starts new frame loop
  */
-World.prototype.init = function () {
+World.prototype.run = function () {
 	var self = this
 
 	this.frame = requestAnimationFrame(update)
@@ -92,5 +92,5 @@ World.prototype.resume = function () {
 	for (var i = 0; i < this.items.length; ++i) {
 		this.items[i].resume()
 	}
-	this.init()
+	this.run()
 }

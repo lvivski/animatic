@@ -23,16 +23,6 @@ function Particle(node, mass, viscosity, edge) {
 	this.mass = 1 / mass
 	this.viscosity = viscosity
 	this.edge = edge
-}
-
-Particle.prototype = Object.create(Item.prototype)
-Particle.prototype.constructor = Particle
-
-/**
- * Initializes particle
- */
-Particle.prototype.init = function () {
-	Item.prototype.init.call(this)
 
 	this.current = {
 		position: Vector.zero(),
@@ -48,6 +38,9 @@ Particle.prototype.init = function () {
 
 	this.clock = null
 }
+
+Particle.prototype = Object.create(Item.prototype)
+Particle.prototype.constructor = Particle
 
 /**
  * Updates particle and applies integration
