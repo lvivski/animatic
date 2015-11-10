@@ -1,6 +1,6 @@
 {
-  "name": "anima",
-  "version": "0.4.0",
-  "main": "anima.js",
+  "name": "animatic",
+  "version": "1.0.0",
+  "main": "animatic.js",
   "dependencies": {}
 }

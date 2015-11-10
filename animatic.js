@@ -12,7 +12,7 @@
   } else if (typeof define === "function" && define.amd) {
     define(a);
   } else {
-    root.anima = root.a = a;
+    root.animatic = root.a = a;
   }
   var requestAnimationFrame = root.requestAnimationFrame, cancelAnimationFrame = root.cancelAnimationFrame, vendors = [ "moz", "webkit", "ms" ];
   for (var i = 0; i < vendors.length && !requestAnimationFrame; i++) {
@@ -31,11 +31,14 @@
     var i = 1;
     while (i < arguments.length) {
       var source = arguments[i++];
-      for (var property in source) if (source.hasOwnProperty(property)) {
+      for (var property in source) {
         if (Array.isArray(source[property])) {
-          obj[property] = source[property].map(function(value, index) {
-            return value || obj[property][index];
-          });
+          for (var j = 0; j < source[property].length; ++j) {
+            var value = source[property][j];
+            if (value) {
+              obj[property][j] = value;
+            }
+          }
         } else {
           obj[property] = source[property];
         }
@@ -1057,7 +1060,7 @@
   Item.prototype.set = function(type, value) {
     if (Array.isArray(value)) {
       this.state[type] || (this.state[type] = []);
-      for (var i in value) {
+      for (var i = 0; i < value.length; ++i) {
         if (value[i] !== undefined) {
           this.state[type][i] = value[i];
         }

@@ -117,7 +117,7 @@ Item.prototype.lookAt = function (vector) {
 Item.prototype.set = function (type, value) {
 	if (Array.isArray(value)) {
 		this.state[type] || (this.state[type] = [])
-		for (var i in value) {
+		for (var i = 0; i < value.length; ++i) {
 			if (value[i] !== undefined) {
 				this.state[type][i] = value[i]
 			}

@@ -1,5 +1,5 @@
 /**
- * Anima
+ * Animatic
  * @type {Object}
  */
 var a = {}
@@ -25,5 +25,5 @@ if (typeof module === 'object' && typeof module.exports === 'object') {
 } else if (typeof define === 'function' && define.amd) {
 	define(a)
 } else {
-	root.anima = root.a = a
+	root.animatic = root.a = a
 }

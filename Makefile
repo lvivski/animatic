@@ -23,10 +23,10 @@ FILES = \
 	src/physics/particle.js \
 
 all: \
-	anima.js \
-	anima.min.js
+	animatic.js \
+	animatic.min.js
 
-anima.js: ${FILES}
+animatic.js: ${FILES}
 	@rm -f $@
 	@echo "(function(root){" > $@.tmp
 	@echo "'use strict'" >> $@.tmp
@@ -36,7 +36,7 @@ anima.js: ${FILES}
 	@rm $@.tmp
 	@chmod a-w $@
 
-anima.min.js: anima.js
+animatic.min.js: animatic.js
 	@rm -f $@
 	@$(JS_COMPILER) $< -c -m -o $@ \
 		--source-map $@.map \
@@ -47,4 +47,4 @@ deps:
 	npm install
 
 clean:
-	rm -f anima*.js*
+	rm -f animatic*.js*

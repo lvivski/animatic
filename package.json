@@ -1,8 +1,8 @@
 {
-  "name": "anima",
-  "version": "0.4.0",
+  "name": "animatic",
+  "version": "1.0.0",
   "description": "CSS/JS Animations Library with Physics support",
-  "main": "anima.js",
+  "main": "animatic.js",
   "keywords": [
     "animation",
     "animations",
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/lvivski/anima.git"
+    "url": "https://github.com/lvivski/animatic.git"
   },
   "devDependencies": {
     "uglify-js": "^2.4.19"
