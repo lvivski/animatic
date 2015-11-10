@@ -184,13 +184,14 @@ UI.Editor.prototype.init = function () {
   function populateData() {
     ['translate', 'rotate', 'scale'].forEach(function (t) {
       ['x', 'y', 'z'].forEach(function (a, i) {
-        $('.panel_right input[data-transform=' + t + '][data-axis="' + a + '"]')
+        if (this_.timeline.items[this_.current].state[t])
+          $('.panel_right input[data-transform=' + t + '][data-axis="' + a + '"]')
             .value = this_.timeline.items[this_.current].state[t][i]
       })
     })
   }
 
-  $('.panel_timeline input[type=range]').on('change', function () {
+  $('.panel_timeline input[type=range]').on('input', function () {
     this_.timeline.seek(this.value)
   })
 
@@ -261,8 +262,9 @@ UI.Editor.prototype.init = function () {
   $('.panel_right input[type=text]').forEach(function (range) {
     bind(range, range.dataset['step'], function (value) {
       range.value = value
-      this_.timeline.items[this_.current].state[range.dataset['transform']]
-          [['x', 'y', 'z'].indexOf(range.dataset['axis'])] = value
+      this_.timeline.items[this_.current].set(range.dataset['transform'], [undefined, undefined, undefined].map(function(_, i) {
+        return (i === ['x', 'y', 'z'].indexOf(range.dataset['axis']) ? value : _
+      }))
     })
   })
 
@@ -312,8 +314,11 @@ UI.Editor.prototype.stringify = function (item) {
 animatic.editor = function (nodes) {
   var timeline = animatic.timeline()
   $(nodes).forEach(function (node) {
-    if (node instanceof Element && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE')
-      timeline.add(node)
+    if (node instanceof Element && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE') {
+      var item = timeline.add(node)
+      item.clear()
+    }
+
   })
   new UI.Editor(timeline)
 }
