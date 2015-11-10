@@ -1,9 +1,9 @@
 ---
 layout: main
 ---
-With Anima it's easy to animate over a hundred objects at a time. Each item can have it's mass and viscosity to emulate reallife objects!
+With Animatic it's easy to animate over a hundred objects at a time. Each item can have it's mass and viscosity to emulate reallife objects!
 
-And it's only **5k** when gzipped.
+And it's only **7k** when gzipped.
 
 **[Examples](#examples)**
 
@@ -15,9 +15,9 @@ CSS animations have some limits, the main is that you can't really have full con
 
 Another problem is calculating percents for keyframes. People create animations with time in mind, not percents. You always think of _"it should fly and rotate for a half of a second, then stand still for another second and continue flying"_, and not `0% start 50% fly 70% stop 90% fly`.
 
-Anima gives you the ability to use delays and durations normally, even for pure CSS animations. It uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. Or it can generate pure CSS animations, but has limitations for parallel animations.
+Animatic gives you the ability to use delays and durations normally, even for pure CSS animations. It uses CSS transforms and 3d-transforms together with Javascript to create animation. You have full control over the flow, so you can start, stop, cancel animations and even create event-based stuff. Or it can generate pure CSS animations, but has limitations for parallel animations.
 
-_Anima is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#physics)_
+_Animatic is the only animation framework that has elementary **physics integrated**. Now you can create lifelike animations with ease! See [Physics API section](#physics)_
 
 ## API
 
@@ -26,7 +26,7 @@ _Anima is the only animation framework that has elementary **physics integrated*
 At first you have to initialize the World, so the frame loop will start (so called `JS` mode)
 
 ```js
-var world = anima.world()
+var world = animatic.world()
 ```
 
 then you have to add items, you want to animate later
@@ -140,7 +140,7 @@ You can learn more about them at [easings.net](http://easings.net)
 Timeline is a separate `world` that is useful for debug and development. It has `play` `pause` and `stop` methods available like other worlds, but add `seek` method to seek animations.
 
 ```js
-var world = anima.timeline()
+var world = animatic.timeline()
 world.add(...)
 world.seek(500) // seek to 500ms
 ```
@@ -151,7 +151,7 @@ You can use [timeline example](example/timeline.html) as a reference
 Each item can also have it's mass an viscosity
 
 ```js
-var world = anima.js()
+var world = animatic.js()
 world.add(document.querySelector('.div'), {
 	mass: 1,
 	viscosity: 0.05 // velocity controls friction

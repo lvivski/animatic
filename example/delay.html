@@ -3,36 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Matrix</title>
+  <title>Delay</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="block"></div>
+  <div class="block" style="opacity: .5"></div>
 </body>
-<script src="https://rawgithub.com/lvivski/anima/master/anima.min.js"></script>
+<script src="https://rawgithub.com/lvivski/animatic/master/animatic.min.js"></script>
 <script>
-  var world = anima.world(),
+  var world = animatic.world(),
       item = world.add(document.querySelector('.block'))
 
   item
     .animate({
       translate: [200, 200, 100],
-      rotate: [0,0,5]
+      rotate: [20,10,5],
+      opacity: 1
     }, 500)
     .animate({
       translate: [100, 0, 0],
       opacity: 0.5
     }, 500, 'linear', 500)
-</script>
-<script>
-  var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
-  !function() {
-    var ga = document.createElement('script')
-    ga.type = 'text/javascript';ga.async = true
-    ga.src = '//www.google-analytics.com/ga.js'
-    document.getElementsByTagName('head')[0].appendChild(ga)
-  }()
 </script>
 </html>

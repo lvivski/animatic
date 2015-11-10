@@ -9,27 +9,42 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="ball" style="left: 100px;top: 200px"></div>
+  <div class="ball ball1" style="left: 100px;top: 25px"></div>
+  <div class="ball ball2" style="left: 100px;top: 250px"></div>
+  <div class="ball ball3" style="left: 100px;top: 475px"></div>
 </body>
-<script src="https://rawgithub.com/lvivski/anima/master/anima.min.js"></script>
+<script src="https://rawgithub.com/lvivski/animatic/master/animatic.min.js"></script>
 <script>
-  var world = anima.world(),
-      item = world.add(document.querySelector('.ball'), {
+setTimeout(function(){
+  var world = animatic.world(),
+      item1 = world.add(document.querySelector('.ball1'))
+      item2 = world.add(document.querySelector('.ball2'), {
         mass: 1,
-        viscosity: 0.07
+        viscosity: 0.1,
+        edge: {
+          max: [500, 0, 0]
+        }
+      }),
+      item3 = world.add(document.querySelector('.ball3'), {
+        mass: 1,
+        viscosity: 0.1
       })
-  item
+
+  item1
     .animate({
       translate: [500, 0, 0]
-    }, 500)
-</script>
-<script>
-  var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
-  !function() {
-    var ga = document.createElement('script')
-    ga.type = 'text/javascript';ga.async = true
-    ga.src = '//www.google-analytics.com/ga.js'
-    document.getElementsByTagName('head')[0].appendChild(ga)
-  }()
+    }, 200)
+
+  item2
+    .animate({
+      translate: [500, 0, 0]
+    }, 200)
+
+  item3
+    .animate({
+      translate: [500, 0, 0]
+    }, 200)
+}, 500)
+
 </script>
 </html>

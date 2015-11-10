@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Matrix</title>
+  <title>Bounce</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="css/main.css">
@@ -11,11 +11,11 @@
 <body>
   <div class="ball" style="left: 100px"></div>
 </body>
-<script src="https://rawgithub.com/lvivski/anima/master/anima.min.js"></script>
+<script src="https://rawgithub.com/lvivski/animatic/master/animatic.min.js"></script>
 <script>
-  var world = anima.world(),
+  var world = animatic.world(),
       item = world.add(document.querySelector('.ball'))
-  
+
   item
     .animate({
       translate: [0, 300, 0]
@@ -56,14 +56,5 @@
     .animate({
       translate: [0, 50, 0]
     }, 150, 'ease-in-quad')
-</script>
-<script>
-  var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
-  !function() {
-    var ga = document.createElement('script')
-    ga.type = 'text/javascript';ga.async = true
-    ga.src = '//www.google-analytics.com/ga.js'
-    document.getElementsByTagName('head')[0].appendChild(ga)
-  }()
 </script>
 </html>

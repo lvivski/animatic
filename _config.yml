@@ -1,7 +1,7 @@
 markdown: redcarpet
-title: "Anima — CSS animations with a soul"
+title: "Animatic — CSS animations library"
 redcarpet:
   extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
 github:
   username: "lvivski"
-  project: "anima"
+  project: "animatic"

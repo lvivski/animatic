@@ -20,9 +20,9 @@
     </div>
   </div>
 </body>
-<script src="https://rawgithub.com/lvivski/anima/master/anima.min.js"></script>
+<script src="https://rawgithub.com/lvivski/animatic/master/animatic.min.js"></script>
 <script>
-  var timeline = anima.timeline(),
+  var timeline = animatic.timeline(),
       item = timeline.add(document.querySelector('.ball'))
 
   item
@@ -105,7 +105,7 @@
     document.querySelector('.timeline').value = time
   })
       
-  document.querySelector('.timeline').addEventListener('change', function(e) {
+  document.querySelector('.timeline').addEventListener('input', function(e) {
     timeline.seek(this.value)
   }, false)
   
@@ -114,14 +114,5 @@
       timeline[this.getAttribute('rel')]()
     }, false)
   })
-</script>
-<script>
-  var _gaq = [['_setAccount', 'UA-38504491-1'], ['_trackPageview']]
-  !function() {
-    var ga = document.createElement('script')
-    ga.type = 'text/javascript';ga.async = true
-    ga.src = '//www.google-analytics.com/ga.js'
-    document.getElementsByTagName('head')[0].appendChild(ga)
-  }()
 </script>
 </html>
