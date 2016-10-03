@@ -1,0 +1,5 @@
+.*
+/src
+/test
+/Makefile
+/bower.json
