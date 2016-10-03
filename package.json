@@ -12,6 +12,9 @@
     "javascript",
     "physics"
   ],
+  "scripts": {
+    "prepublish": "make -B"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/lvivski/animatic.git"
