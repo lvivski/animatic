@@ -262,8 +262,8 @@ UI.Editor.prototype.init = function () {
   $('.panel_right input[type=text]').forEach(function (range) {
     bind(range, range.dataset['step'], function (value) {
       range.value = value
-      this_.timeline.items[this_.current].set(range.dataset['transform'], [undefined, undefined, undefined].map(function(_, i) {
-        return (i === ['x', 'y', 'z'].indexOf(range.dataset['axis']) ? value : _
+      this_.timeline.items[this_.current].set(range.dataset['transform'], Array.apply(null, Array(3)).map(function(_, i) {
+        return i === ['x', 'y', 'z'].indexOf(range.dataset['axis']) ? value : _
       }))
     })
   })
