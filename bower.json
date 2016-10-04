@@ -1,6 +1,15 @@
 {
   "name": "animatic",
   "version": "1.0.0",
-  "main": "animatic.js",
+  "main": [
+    "animatic.js"
+  ],
+  "ignore": [
+    ".*",
+    "src",
+    "test",
+    "Makefile",
+    "package.json"
+  ],
   "dependencies": {}
 }
