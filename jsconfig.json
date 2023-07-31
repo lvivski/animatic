@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "module": "ES2020",
+    "moduleResolution": "nodenext"
+  }
+}

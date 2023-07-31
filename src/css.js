@@ -1,150 +1,158 @@
-/**
- * CSSify animations
- * @param {Item} item
- * @param {boolean=} idle
- * @constructor
- */
-function CSS(item, idle) {
-	!document.styleSheets.length && this.createStyleSheet()
-	this.stylesheet = document.styleSheets[0]
+import { Collection } from "./animations/collection.js"
+import { easings } from "./animations/easings.js"
+import { Item } from "./item.js"
+import { Matrix } from "./math/matrix.js"
+import { animationProperty, getProperty, transformProperty } from "./utils.js"
 
-	this.item = item
-	this.animation = item.animation
+export class CSS {
+  /**
+   * CSSify animations
+   * @param {Item} item
+   * @param {boolean=} idle
+   * @constructor
+   */
+  constructor(item, idle) {
+    !document.styleSheets.length && this.createStyleSheet()
+    this.stylesheet = document.styleSheets[0]
 
-	!idle && this.style()
-}
+    this.item = item
+    this.animation = item.animation
 
-CSS.skip = {translate: null, rotate: null, scale: null};
+    !idle && this.style()
+  }
 
-/**
- * Creates new stylesheet and adds it to HEAD
- */
-CSS.prototype.createStyleSheet = function () {
-	var style = document.createElement('style')
-	document.getElementsByTagName('head')[0].appendChild(style)
-}
+  static skip = { translate: null, rotate: null, scale: null };
 
-/**
- * Pauses CSS animation
- */
-CSS.prototype.pause = function () {
-	this.animation.pause()
-}
+  /**
+   * Creates new stylesheet and adds it to HEAD
+   */
+  createStyleSheet() {
+    const style = document.createElement('style')
+    document.getElementsByTagName('head')[0].appendChild(style)
+  }
 
-/**
- * Resumes CSS animation
- */
-CSS.prototype.resume = function () {
-	this.animation.resume()
-}
+  /**
+   * Pauses CSS animation
+   */
+  pause() {
+    this.animation.pause()
+  }
 
-/**
- * Stops CSS animation
- * parses current transformation matrix
- * extracts values and sets item state
- */
-CSS.prototype.stop = function () {
-	var computed = getComputedStyle(this.item.dom, null),
-		transform = computed[transformProperty]
+  /**
+   * Resumes CSS animation
+   */
+  resume() {
+    this.animation.resume()
+  }
 
-	this.item.style(animationProperty, '')
-	this.item.state = Matrix.decompose(Matrix.parse(transform))
-	this.item.style()
+  /**
+   * Stops CSS animation
+   * parses current transformation matrix
+   * extracts values and sets item state
+   */
+  stop() {
+    const computed = getComputedStyle(this.item.dom, null),
+      transform = computed[transformProperty]
 
-	return this
-}
+    this.item.style(animationProperty, '')
+    this.item.state = Matrix.decompose(Matrix.parse(transform))
+    this.item.style()
 
-/**
- * Applies animations and sets item style
- */
-CSS.prototype.style = function () {
-	var animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
+    return this
+  }
 
-	var cssRules = this.stylesheet.cssRules
-	this.stylesheet.insertRule(this.keyframes(animation), cssRules ? cssRules.length : 0)
+  /**
+   * Applies animations and sets item style
+   */
+  style() {
+    const animation = 'a' + Date.now() + 'r' + Math.floor(Math.random() * 1000)
 
-	this.animation.empty()
-	this.animation.add(animation, this.animation.duration, '', 0, true)
-}
+    const cssRules = this.stylesheet.cssRules
+    this.stylesheet.insertRule(this.keyframes(animation), cssRules ? cssRules.length : 0)
 
-/**
- * Generates @keyframes based on animations
- * @param {string} name Animation name
- * @return {string}
- */
-CSS.prototype.keyframes = function (name) {
-	var time = 0,
-		rule = ['@' + getProperty('keyframes') + ' ' + name + '{']
+    this.animation.empty()
+    this.animation.add(animation, this.animation.duration, '', 0, true)
+  }
 
-	for (var i = 0; i < this.animation.length; ++i) {
-		var a = this.animation.get(i),
-		    aNext = this.animation.get(i + 1)
+  /**
+   * Generates @keyframes based on animations
+   * @param {string} name Animation name
+   * @return {string}
+   */
+  keyframes(name) {
+    let time = 0
+    const rule = ['@' + getProperty('keyframes') + ' ' + name + '{']
 
-		a.init()
+    for (let i = 0; i < this.animation.length; ++i) {
+      const a = this.animation.get(i)
+      const aNext = this.animation.get(i + 1)
 
-		if (a instanceof Animation) { // Single
-			i === 0 && rule.push(this.frame(0, easings.css[a.easeName]))
+      a.init(time)
 
-			a.delay && rule.push(this.frame(time += a.delay))
+      if (a instanceof Animation) { // Single
+        i === 0 && rule.push(this.frame(0, easings.css[a.easeName]))
 
-			a.transform(1)
+        a.delay && rule.push(this.frame(time += a.delay))
 
-			rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
-		} else { // Parallel (it doesn't work with custom easings for now)
-			var frames = []
-			a.animations.forEach(function frame(a) {
-				a.animations && a.animations.forEach(frame)
-				a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay)
-				a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration)
-			})
+        a.transform(1)
 
-			frames = frames.sort(function (a, b) {
-				return a - b
-			})
+        rule.push(this.frame(time += a.duration, aNext && easings.css[aNext.easeName]))
+      } else if (a instanceof Collection) { // Parallel (it doesn't work with custom easings for now)
+        let frames = []
+        a.animations.forEach(function frame(a) {
+          a.animations && a.animations.forEach(frame)
+          a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay)
+          a.duration && frames.indexOf(a.delay + a.duration) === -1 && frames.push(a.delay + a.duration)
+        })
 
-			for (var k = 0; k < frames.length; ++k) {
-				var frame = frames[k]
-				for (var j = 0; j < a.animations.length; ++j) {
-					var pa = a.animations[j]
-					// it's animation start or it's already ended
-					if (pa.delay >= frame || pa.delay + pa.duration < frame)
-						continue
-					pa.transform(pa.ease((frame - pa.delay) / pa.duration))
-				}
+        frames = frames.sort(function (a, b) {
+          return a - b
+        })
 
-				rule.push(this.frame(time += frame))
-			}
-		}
-	}
-	rule.push('}')
-	return rule.join('')
-}
+        for (let k = 0; k < frames.length; ++k) {
+          const frame = frames[k]
+          for (let j = 0; j < a.animations.length; ++j) {
+            const pa = a.animations[j]
+            // it's animation start or it's already ended
+            if (pa.delay >= frame || pa.delay + pa.duration < frame)
+              continue
+            pa.transform(pa.ease((frame - pa.delay) / pa.duration))
+          }
 
-/**
- * Calcuates percent for keyframes
- * @param {number} time
- * @return {string}
- */
-CSS.prototype.percent = function (time) {
-	return (time * 100 / this.animation.duration).toFixed(3)
-}
+          rule.push(this.frame(time += frame))
+        }
+      }
+    }
+    rule.push('}')
+    return rule.join('')
+  }
 
-/**
- * Generates one frame for @keyframes
- * @param {number} time
- * @param {string=} ease
- * @return {string}
- */
-CSS.prototype.frame = function (time, ease) {
-	var percent = this.percent(time),
-		props = []
-	for (var property in this.item.state) {
-		if (property in CSS.skip) continue
-		props.push(percent ? property.replace(/([A-Z])/g, '-$1') + ':' + this.item.get(property) + ';' : '')
-	}
-	return percent + '% {' +
-		(percent ? transformProperty + ':' + this.item.transform() + ';' : '') +
-		(props.join('')) +
-		(ease ? getProperty('animation-timing-function') + ':' + ease + ';' : '') +
-		'}'
+  /**
+   * Calcuates percent for keyframes
+   * @param {number} time
+   * @return {string}
+   */
+  percent(time) {
+    return (time * 100 / this.animation.duration).toFixed(3)
+  }
+
+  /**
+   * Generates one frame for @keyframes
+   * @param {number} time
+   * @param {string=} ease
+   * @return {string}
+   */
+  frame(time, ease) {
+    const percent = this.percent(time)
+    const props = []
+    for (const property in this.item.state) {
+      if (property in CSS.skip) continue
+      props.push(percent ? property.replace(/([A-Z])/g, '-$1') + ':' + this.item.get(property) + ';' : '')
+    }
+    return percent + '% {' +
+      (percent ? transformProperty + ':' + this.item.transform() + ';' : '') +
+      (props.join('')) +
+      (ease ? getProperty('animation-timing-function') + ':' + ease + ';' : '') +
+      '}'
+  }
 }

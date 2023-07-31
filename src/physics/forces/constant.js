@@ -1,9 +1,13 @@
+import { Vector } from "../../math/vector"
+import { Particle } from "../particle"
+
 /**
  * Constant force
+ * @param {Particle} item
  * @constructor
  */
-function Constant() {
-	var force = Vector.sub(this.state.translate, this.current.position)
+export function Constant(item) {
+  const force = Vector.sub(item.state.translate, item.current.position)
 
-	this.current.acceleration = Vector.add(this.current.acceleration, force)
+  item.current.acceleration = Vector.add(item.current.acceleration, force)
 }

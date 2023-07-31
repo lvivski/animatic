@@ -1,77 +1,84 @@
-/**
- * Creates new animation
- * @param {Item} item Object to animate
- * @param {Object || string} animation
- * @param {number} duration
- * @param {string} ease Timing function
- * @param {number} delay
- * @param {boolean} generated
- * @constructor
- */
-function CssAnimation(item, animation, duration, ease, delay, generated) {
-	this.item = item
+import { Item } from "../item.js"
+import { easings } from "./easings.js"
+import { Matrix } from "../math/matrix.js"
+import { animationProperty, transformProperty } from "../utils.js"
 
-	this.name = animation.name || animation
+export class CssAnimation {
+  /**
+   * Creates new animation
+   * @param {Item} item Object to animate
+   * @param {Object | string} animation
+   * @param {number} duration
+   * @param {string} ease Timing function
+   * @param {number} delay
+   * @param {boolean} generated
+   * @constructor
+   */
+  constructor(item, animation, duration, ease, delay, generated) {
+    this.item = item
 
-	this.start = null
-	this.diff = null
+    this.name = animation.name || animation
 
-	this.duration = (animation.duration || duration) | 0
-	this.delay = (animation.delay || delay) | 0
-	this.ease = easings.css[animation.ease] || easings.css[ease] || easings.css.linear
+    this.start = null
+    this.diff = null
 
-	this._infinite = false
-	this._generated = generated
-}
+    this.duration = (animation.duration || duration) | 0
+    this.delay = (animation.delay || delay) | 0
+    this.ease = easings.css[animation.ease] || easings.css[ease] || easings.css.linear
 
-/**
- * Starts animation timer
- * @param {number} tick Timestamp
- * @param {boolean=} force Force initialization
- */
-CssAnimation.prototype.init = function (tick, force) {
-	if (this.start !== null && !force) return
-	this.start = tick + this.delay
+    this._infinite = false
+    this._generated = generated
+  }
 
-	this.item.style(animationProperty,
-		this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
-		this.delay + 'ms' + (this._infinite ? ' infinite' : '') + ' ' + 'forwards')
-}
+  /**
+   * Starts animation timer
+   * @param {number} tick Timestamp
+   * @param {boolean=} force Force initialization
+   */
+  init(tick, force) {
+    if (this.start !== null && !force) return
+    this.start = tick + this.delay
 
-/**
- * Runs one tick of animation
- */
-CssAnimation.prototype.run = function () {
-}
+    this.item.style(animationProperty,
+      this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
+      this.delay + 'ms' + (this._infinite ? ' infinite' : '') + ' ' + 'forwards')
+  }
 
-/**
- * Pauses animation
- */
-CssAnimation.prototype.pause = function () {
-	this.item.style(animationProperty + '-play-state', 'paused')
-	this.diff = performance.now() - this.start
-}
+  /**
+   * Runs one tick of animation
+   */
+  run() {
+  }
 
-/**
- * Resumes animation
- */
-CssAnimation.prototype.resume = function () {
-	this.item.style(animationProperty + '-play-state', 'running')
-	this.start = performance.now() - this.diff
-}
+  /**
+   * Pauses animation
+   */
+  pause() {
+    this.item.style(animationProperty + '-play-state', 'paused')
+    this.diff = performance.now() - this.start
+  }
 
-/**
- * Ends animation
- */
-CssAnimation.prototype.end = function () {
-	if (this._generated) {
-		var computed = getComputedStyle(this.item.dom, null),
-		    transform = computed[transformProperty]
+  /**
+   * Resumes animation
+   */
+  resume() {
+    this.item.style(animationProperty + '-play-state', 'running')
+    this.start = performance.now() - this.diff
+  }
 
-		this.item.style(animationProperty, '')
-		this.item.state = Matrix.decompose(Matrix.parse(transform))
-		this.item.style()
-	}
+  /**
+   * Ends animation
+   */
+  end() {
+    if (this._generated) {
+      const computed = getComputedStyle(this.item.dom, null)
+      const transform = computed[transformProperty]
 
-	this.start = null
+      this.item.style(animationProperty, '')
+      this.item.state = Matrix.decompose(Matrix.parse(transform))
+      this.item.style()
+    }
+
+    this.start = null
+  }
 }

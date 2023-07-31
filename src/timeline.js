@@ -1,82 +1,85 @@
-/**
- * Creates new Timeline and start frame loop
- * @constructor
- */
-function Timeline() {
-	World.call(this, true)
-	this.currentTime = 0
-	this.start = 0
-}
+import { fixTick } from "./utils.js"
+import { World } from "./world.js"
 
-Timeline.prototype = Object.create(World.prototype)
-Timeline.prototype.constructor = Timeline
+export class Timeline extends World {
 
-/**
- * Starts new frame loop
- */
-Timeline.prototype.run = function () {
-	this.frame = requestAnimationFrame(update)
+  /**
+   * Creates new Timeline and start frame loop
+   * @constructor
+   */
+  constructor() {
+    super()
+    this.currentTime = 0
+    this.start = 0
+  }
 
-	var self = this
+  /**
+   * Starts new frame loop
+   */
+  run() {
+    this.frame = requestAnimationFrame(update)
 
-	function update(tick) {
-		if (fixTick) {
-			tick = performance.now()
-		}
-		if (self.running) {
-			self.currentTime = tick - self.start
-		}
-		self.update(self.currentTime)
-		self.frame = requestAnimationFrame(update)
-	}
-}
+    const self = this
 
-/**
- * Updates Items in Timeline
- * @param {number} tick
- * @fires Timeline#update
- */
-Timeline.prototype.update = function (tick) {
-	for (var i = 0, length = this.items.length; i < length; ++i) {
-		var item = this.items[i]
-		if (this.changed < length || this.running) {
-			item.timeline(tick)
-			this.changed++
-			this.emit('update', tick)
-		} else {
-			item.style()
-		}
-	}
-}
+    function update(tick) {
+      if (fixTick) {
+        tick = performance.now()
+      }
+      if (self.running) {
+        self.currentTime = tick - self.start
+      }
+      self.update(self.currentTime)
+      self.frame = requestAnimationFrame(update)
+    }
+  }
 
-/**
- * Plays/Resumes Timeline
- */
-Timeline.prototype.play = function () {
-	this.running = true
-	this.start = performance.now() - this.currentTime
-}
+  /**
+   * Updates Items in Timeline
+   * @param {number} tick
+   * @fires Timeline#update
+   */
+  update(tick) {
+    for (let i = 0, length = this.items.length; i < length; ++i) {
+      const item = this.items[i]
+      if (this.changed < length || this.running) {
+        item.timeline(tick)
+        this.changed++
+        this.emit('update', tick)
+      } else {
+        item.style()
+      }
+    }
+  }
 
-/**
- * Pauses Timeline
- */
-Timeline.prototype.pause = function () {
-	this.running = false
-}
+  /**
+   * Plays/Resumes Timeline
+   */
+  play() {
+    this.running = true
+    this.start = performance.now() - this.currentTime
+  }
 
-/**
- * Stops Timeline
- */
-Timeline.prototype.stop = function () {
-	this.currentTime = 0
-	this.running = false
-}
+  /**
+   * Pauses Timeline
+   */
+  pause() {
+    this.running = false
+  }
 
-/**
- * Sets Timeline time
- * @param {number} time
- */
-Timeline.prototype.seek = function (time) {
-	this.changed = 0
-	this.currentTime = time
+  /**
+   * Stops Timeline
+   */
+  stop() {
+    this.currentTime = 0
+    this.running = false
+  }
+
+  /**
+   * Sets Timeline time
+   * @param {number} time
+   */
+  seek(time) {
+    this.changed = 0
+    this.currentTime = time
+  }
 }

@@ -1,160 +1,170 @@
-/**
- * Creates new animation
- * @param {Item} item Object to animate
- * @param {Object} transform
- * @param {number} duration
- * @param {string} ease Timing function
- * @param {number} delay
- * @constructor
- */
-function Animation(item, transform, duration, ease, delay) {
-	this.item = item
+import { Item } from '../item.js'
+import { easings } from './easings.js'
+import { Vector } from '../math/vector.js'
+import { Matrix } from '../math/matrix.js'
+import { Tween } from './tween.js'
+import { merge, transformProperty } from '../utils.js'
 
-	this.transformation = transform
+export class Animation {
+  /**
+   * Creates new animation
+   * @param {Item} item Object to animate
+   * @param {Object} transform
+   * @param {number} duration
+   * @param {string} ease Timing function
+   * @param {number} delay
+   * @constructor
+   */
+  constructor(item, transform, duration, ease, delay) {
+    this.item = item
 
-	this.start = null
-	this.diff = null
+    this.transformation = transform
 
-	this.duration = (transform.duration || duration) | 0
-	this.delay = (transform.delay || delay) | 0
-	ease = transform.ease || ease
-	this.ease = easings[ease] || easings.linear
-	this.easeName = transform.ease || ease || 'linear'
-}
+    this.start = null
+    this.diff = null
 
-Animation.skip = {duration: null, delay: null, ease: null}
-Animation.transform = {translate: null, rotate: null, scale: null}
+    this.duration = (transform.duration || duration) | 0
+    this.delay = (transform.delay || delay) | 0
+    ease = transform.ease || ease
+    this.ease = easings[ease] || easings.linear
+    this.easeName = transform.ease || ease || 'linear'
+  }
 
-Animation.getState = function (transform, item) {
-	var initial = {},
-		computed
-		
-	for (var property in transform) {
-		if (property in Animation.skip) continue
-		if (transform.hasOwnProperty(property)) {
-			if (item.get(property) == null) {
-				if (!computed) {
-					computed = getComputedStyle(item.dom, null)
-				}
-				Animation.setItemState(item, property, computed)
-			}
-			initial[property] = new Tween(item.get(property), transform[property], property)
-		}
-	}
-	return initial
-}
+  static skip = { duration: null, delay: null, ease: null }
+  static transform = { translate: null, rotate: null, scale: null }
 
-Animation.setItemState = function (item, property, computed) {
-	if (property in Animation.transform) {
-		var value = computed[transformProperty]
-		if (value === 'none') {
-			value = {
-				translate: Vector.zero(),
-				rotate: Vector.zero(),
-				scale: Vector.set(1)
-			}
-		} else {
-			value = Matrix.decompose(Matrix.parse(value))
-		}
-		item.set('translate', value.translate)
-		item.set('rotate', value.rotate)
-		item.set('scale', value.scale)
-	} else {
-		item.set(property, computed[property])
-	}
-}
+  static getState(transform, item) {
+    const initial = {}
+    let computed
 
-/**
- * Starts animation timer
- * @param {number} tick Timestamp
- * @param {boolean=} seek Is used in seek mode
- */
-Animation.prototype.init = function (tick, seek) {
-	if (this.start !== null && !seek) return
-	if (this.start === null) {
-		this.state = Animation.getState(this.transformation, this.item)
-	}
-	this.start = tick + this.delay
-}
+    for (const property in transform) {
+      if (property in Animation.skip) continue
+      if (transform.hasOwnProperty(property)) {
+        if (item.get(property) == null) {
+          if (!computed) {
+            computed = getComputedStyle(item.dom, null)
+          }
+          Animation.setItemState(item, property, computed)
+        }
+        initial[property] = new Tween(item.get(property), transform[property], property)
+      }
+    }
+    return initial
+  }
 
-/**
- * Merges animation values
- * @param {Object} transform
- * @param {number} duration
- * @param {string} ease Timing function
- * @param {number} delay
- */
-Animation.prototype.merge = function (transform, duration, ease, delay) {
-	this.duration = (transform.duration || duration) | 0
-	this.delay = (transform.delay || delay) | 0
-	ease = transform.ease || ease
-	this.ease = easings[ease] || easings.linear
-	this.easeName = transform.ease || ease || 'linear'
+  static setItemState = function (item, property, computed) {
+    if (property in Animation.transform) {
+      let value = computed[transformProperty]
+      if (value === 'none') {
+        value = {
+          translate: Vector.zero(),
+          rotate: Vector.zero(),
+          scale: Vector.set(1)
+        }
+      } else {
+        value = Matrix.decompose(Matrix.parse(value))
+      }
+      item.set('translate', value.translate)
+      item.set('rotate', value.rotate)
+      item.set('scale', value.scale)
+    } else {
+      item.set(property, computed[property])
+    }
+  }
 
-	merge(this.transformation, transform)
+  /**
+   * Starts animation timer
+   * @param {number} tick Timestamp
+   * @param {boolean=} seek Is used in seek mode
+   */
+  init(tick, seek = false) {
+    if (this.start !== null && !seek) return
+    if (this.start === null) {
+      this.state = Animation.getState(this.transformation, this.item)
+    }
+    this.start = tick + this.delay
+  }
 
-	this.start = null
-}
+  /**
+   * Merges animation values
+   * @param {Object} transform
+   * @param {number} duration
+   * @param {string} ease Timing function
+   * @param {number} delay
+   */
+  merge(transform, duration, ease, delay) {
+    this.duration = (transform.duration || duration) | 0
+    this.delay = (transform.delay || delay) | 0
+    ease = transform.ease || ease
+    this.ease = easings[ease] || easings.linear
+    this.easeName = transform.ease || ease || 'linear'
 
-/**
- * Gets values from state params
- * @param {string} type
- */
-Animation.prototype.get = function (type) {
-	return this.state[type]
-}
+    merge(this.transformation, transform)
 
-/**
- * Runs one tick of animation
- * @param {number} tick
- * @param {boolean} seek Is used in seek mode
- */
-Animation.prototype.run = function (tick, seek) {
-	if (tick < this.start && !seek) return
-	var percent = 0
+    this.start = null
+  }
 
-	if (tick >= this.start) {
-		percent = (tick - this.start) / this.duration
-		percent = this.ease(percent)
-	}
+  /**
+   * Gets values from state params
+   * @param {string} type
+   */
+  get(type) {
+    return this.state[type]
+  }
 
-	this.transform(percent)
-}
+  /**
+   * Runs one tick of animation
+   * @param {number} tick
+   * @param {boolean} seek Is used in seek mode
+   */
+  run(tick, seek) {
+    if (tick < this.start && !seek) return
+    let percent = 0
 
-/**
- * Pauses animation
- */
-Animation.prototype.pause = function () {
-	this.diff = performance.now() - this.start
-}
+    if (tick >= this.start) {
+      percent = (tick - this.start) / this.duration
+      percent = this.ease(percent)
+    }
 
-/**
- * Resumes animation
- */
-Animation.prototype.resume = function () {
-	this.start = performance.now() - this.diff
-}
+    this.transform(percent)
+  }
 
-Animation.prototype.interpolate = function (property, percent) {
-	return this.get(property).interpolate(percent)
-}
+  /**
+   * Pauses animation
+   */
+  pause() {
+    this.diff = performance.now() - this.start
+  }
 
-/**
- * Transforms item
- * @param {number} percent
- */
-Animation.prototype.transform = function (percent) {
-	for (var property in this.state) {
-		this.item.set(property, this.interpolate(property, percent))
-	}
-}
+  /**
+   * Resumes animation
+   */
+  resume() {
+    this.start = performance.now() - this.diff
+  }
 
-/**
- * Ends animation
- * @param {boolean} abort
- * @param {boolean} seek Is used in seek mode
- */
-Animation.prototype.end = function (abort, seek) {
-	!abort && this.transform(this.ease(1))
-	!seek && (this.start = null)
+  interpolate(property, percent) {
+    return this.get(property).interpolate(percent)
+  }
+
+  /**
+   * Transforms item
+   * @param {number} percent
+   */
+  transform(percent) {
+    for (const property in this.state) {
+      this.item.set(property, this.interpolate(property, percent))
+    }
+  }
+
+  /**
+   * Ends animation
+   * @param {boolean} abort
+   * @param {boolean} seek Is used in seek mode
+   */
+  end(abort, seek) {
+    !abort && this.transform(this.ease(1))
+    !seek && (this.start = null)
+  }
+
 }
