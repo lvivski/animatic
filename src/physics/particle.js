@@ -5,40 +5,55 @@ import { Verlet } from "./verlet.js"
 import { Matrix } from "../math/matrix.js"
 import { Vector } from "../math/vector.js"
 
+/** @typedef {import("../item.js").ItemStateValue} PhysicsStateValue */
+/** @typedef {import("../item.js").ItemState & {translate: Array<number>}} PhysicsState */
+/** @typedef {{position: Array<number>, velocity: Array<number>, acceleration: Array<number>}} PhysicsKinematics */
+/** @typedef {{min?: number|Array<number>, max?: number|Array<number>, bounce?: boolean}|null} PhysicsEdge */
+/** @typedef {{mass: number, viscosity: number, edge: PhysicsEdge, state: PhysicsState, current: PhysicsKinematics, previous: PhysicsKinematics}} PhysicsBody */
+/** @typedef {{mass?: number, viscosity?: number, edge?: NonNullable<PhysicsEdge>, physics?: string}} ParticleOptions */
+
 export class Particle extends Item {
   /**
    * Creates particle with physics
    * @param {HTMLElement} node
-   * @param {number | {mass:number, viscosity:number, edge: {min: number, max: number, bounce: boolean}}} mass
-   * @param {number} viscosity
-   * @param {null | {min: number, max: number, bounce: boolean}} edge
+  * @param {number | ParticleOptions} mass
+  * @param {number=} viscosity
+  * @param {PhysicsEdge=} edge
    * @constructor
    */
   constructor(node, mass, viscosity, edge) {
     super(node)
+    let physicsMode
+    let particleMass
 
     if (typeof mass === "object") {
-      viscosity = mass.viscosity
-      edge = mass.edge
-      mass = mass.mass
+      physicsMode = mass.physics
+      viscosity = mass.viscosity || viscosity
+      edge = mass.edge || edge
+      particleMass = mass.mass
     } else {
-      mass /= 100
+      particleMass = mass / 100
     }
 
-    mass ||= 0.01
+    particleMass ||= 0.01
     viscosity ||= 0.1
     edge ||= null
 
-    this.mass = 1 / mass
+    /** @type {number} */
+    this.mass = 1 / particleMass
+    /** @type {number} */
     this.viscosity = viscosity
+    /** @type {PhysicsEdge} */
     this.edge = edge
 
+    /** @type {PhysicsKinematics} */
     this.current = {
       position: Vector.zero(),
       velocity: Vector.zero(),
       acceleration: Vector.zero()
     }
 
+    /** @type {PhysicsKinematics} */
     this.previous = {
       position: Vector.zero(),
       velocity: Vector.zero(),
@@ -46,6 +61,8 @@ export class Particle extends Item {
     }
 
     this.clock = null
+    this.physicsMode = physicsMode || "auto"
+    this.nativeAnimations = this.physicsMode !== "live"
   }
 
   /**
@@ -53,14 +70,21 @@ export class Particle extends Item {
    * @param {number} tick
    */
   update(tick) {
+    if (this.animation.native.handlesPlayback()) return
     this.animation.run(tick)
+    if (this.animation.native.handlesPlayback()) return
 
     this.integrate(tick)
 
     this.style()
   }
 
+  /**
+   * Updates particle on timeline
+   * @param {number} tick
+   */
   timeline(tick) {
+    if (this.animation.native.seek(tick)) return
     this.clear()
     this.animation.seek(tick)
 
@@ -75,28 +99,43 @@ export class Particle extends Item {
    * @param {boolean=} clamp
    */
   integrate(tick, clamp) {
-    this.clock ||= tick
+    this.clock ??= tick
 
     let delta = tick - this.clock
 
     if (delta) {
-      clamp && (delta = Math.max(-16, Math.min(16, delta)))
+      if (clamp) {
+        delta = Math.max(-16, Math.min(16, delta))
+      }
 
       this.clock = tick
 
       delta *= 0.001
 
-      Constant.call(null, this)
-      this.edge &&
+      const body = /** @type {PhysicsBody} */ (/** @type {unknown} */ (this))
+
+      Constant.call(null, body)
+      if (this.edge) {
         Edge.call(
           null,
-          this,
+          body,
           Vector.set(this.edge.min),
           Vector.set(this.edge.max),
           this.edge.bounce
         )
+      }
 
-      Verlet.call(null, this, delta, 1.0 - this.viscosity)
+      Verlet.call(null, body, delta, 1.0 - this.viscosity)
+
+      if (this.edge) {
+        Edge.call(
+          null,
+          body,
+          Vector.set(this.edge.min),
+          Vector.set(this.edge.max),
+          this.edge.bounce
+        )
+      }
     }
   }
 
@@ -109,10 +148,10 @@ export class Particle extends Item {
 
   /**
    * Gets particle matrix
-   * @returns {Array}
+   * @returns {number[]}
    */
   matrix() {
-    const state = this.state
+    const state = /** @type {{ rotate: number[], scale: number[] }} */ (this.state)
     return Matrix.compose(this.current.position, state.rotate, state.scale)
   }
 }

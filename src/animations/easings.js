@@ -1,37 +1,52 @@
+/** @typedef {(percent: number) => number} EasingFunction */
+/** @typedef {Record<string, EasingFunction> & {css: Record<string, string>}} EasingMap */
+
 /**
  * Different timing functions
  * used for Animations
- * @type {Object}
+ * @type {EasingMap}
  */
 export const easings = (function () {
+  /** @type {Record<string, EasingFunction>} */
   const fn = {
+    /** @param {number} p */
     quad: function (p) {
       return Math.pow(p, 2)
     },
+    /** @param {number} p */
     cubic: function (p) {
       return Math.pow(p, 3)
     },
+    /** @param {number} p */
     quart: function (p) {
       return Math.pow(p, 4)
     },
+    /** @param {number} p */
     quint: function (p) {
       return Math.pow(p, 5)
     },
+    /** @param {number} p */
     expo: function (p) {
       return Math.pow(p, 6)
     },
+    /** @param {number} p */
     sine: function (p) {
       return 1 - Math.cos((p * Math.PI) / 2)
     },
+    /** @param {number} p */
     circ: function (p) {
       return 1 - Math.sqrt(1 - p * p)
     },
+    /** @param {number} p */
     back: function (p) {
       return p * p * (3 * p - 2)
     }
   }
 
+  /** @type {EasingMap} */
   const easings = {
+    css: {},
+    /** @param {number} p */
     linear: function (p) {
       return p
     }

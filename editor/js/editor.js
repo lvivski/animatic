@@ -81,7 +81,9 @@ UI.Timeline = function (max) {
 }
 
 UI.Timeline.prototype.keyframes = function (keyframes) {
-  keyframes || (keyframes = [])
+  if (!keyframes) {
+    keyframes = []
+  }
 
   var container = $('.panel_timeline .keyframes'),
       width = $('.panel_timeline label').clientWidth - 8,
@@ -252,7 +254,7 @@ UI.Editor.prototype.init = function () {
     this_.bar.keyframes(this_.keyframes[this_.current])
   })
 
-  $('.panel_right input[type=radio]').on('click', function (e) {
+  $('.panel_right input[type=radio]').on('click', function () {
     this_.current = this.dataset['index']
     populateData()
     this_.bar.keyframes(this_.keyframes[this_.current])
@@ -279,7 +281,10 @@ UI.Editor.prototype.keyframe = function (time) {
       item = this.timeline.items[this.current],
       state = State.copy(item.state)
 
-  keyframes[index] || (keyframes[index] = [])
+  if (!keyframes[index]) {
+    keyframes[index] = []
+  }
+
   keyframes[index].push({time: time, state: state})
   keyframes[index] = keyframes[index].sort(function (a, b) {
     return a.time - b.time
@@ -320,27 +325,7 @@ animatic.editor = function (nodes) {
     }
 
   })
-  new UI.Editor(timeline)
-}
-
-function bsearch(needle, stack, comparator) {
-  var low = 0,
-      high = stack.length,
-      middle = 0
-
-  while (low <= high) {
-    middle = (low + high) >> 1
-    var comparison = comparator(stack[middle], needle)
-
-    if (comparison > 0) {
-      low = middle + 1
-    } else if (comparison < 0) {
-      high = middle - 1
-    } else {
-      break
-    }
-  }
-  return middle
+  timeline.editor = new UI.Editor(timeline)
 }
 
 }())

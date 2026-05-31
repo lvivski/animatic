@@ -1,27 +1,28 @@
-import { Collection } from "./animations/collection.js"
-import { easings } from "./animations/easings.js"
-import { Item } from "./item.js"
 import { Matrix } from "./math/matrix.js"
 import { animationProperty, getProperty, transformProperty } from "./utils.js"
+import { buildEffect, containsCssAnimation } from "./waapi/effect.js"
 
 export class CSS {
   /**
    * CSSify animations
-   * @param {Item} item
+  * @param {import("./item.js").Item} item
    * @param {boolean=} idle
    * @constructor
    */
   constructor(item, idle) {
-    !document.styleSheets.length && this.createStyleSheet()
+    if (!document.styleSheets.length) {
+      this.createStyleSheet()
+    }
+
     this.stylesheet = document.styleSheets[0]
 
     this.item = item
     this.animation = item.animation
 
-    !idle && this.style()
+    if (!idle) {
+      this.style()
+    }
   }
-
-  static skip = { translate: null, rotate: null, scale: null }
 
   /**
    * Creates new stylesheet and adds it to HEAD
@@ -65,114 +66,90 @@ export class CSS {
    * Applies animations and sets item style
    */
   style() {
+    if (containsCssAnimation(this.animation)) {
+      throw new Error("CSS generation is not supported for named CSS animations")
+    }
+
     const animation = "a" + Date.now() + "r" + Math.floor(Math.random() * 1000)
+    const effect = buildEffect(this.animation)
 
     const cssRules = this.stylesheet.cssRules
     this.stylesheet.insertRule(
-      this.keyframes(animation),
+      this.keyframes(animation, effect),
       cssRules ? cssRules.length : 0
     )
 
     this.animation.empty()
-    this.animation.add(animation, this.animation.duration, "", 0, true)
+    this.animation.add(animation, effect.duration, "", 0, true)
   }
 
   /**
    * Generates @keyframes based on animations
    * @param {string} name Animation name
+   * @param {ReturnType<typeof buildEffect>=} effect
    * @return {string}
    */
-  keyframes(name) {
-    let time = 0
-    const rule = ["@" + getProperty("keyframes") + " " + name + "{"]
-
-    for (let i = 0; i < this.animation.length; ++i) {
-      const a = this.animation.get(i)
-      const aNext = this.animation.get(i + 1)
-
-      a.init(time)
-
-      if (a instanceof Collection) {
-        // Parallel (it doesn't work with custom easings for now)
-        let frames = []
-        a.animations.forEach(function frame(a) {
-          a.animations && a.animations.forEach(frame)
-          a.delay && frames.indexOf(a.delay) === -1 && frames.push(a.delay)
-          a.duration &&
-            frames.indexOf(a.delay + a.duration) === -1 &&
-            frames.push(a.delay + a.duration)
-        })
-
-        frames = frames.sort(function (a, b) {
-          return a - b
-        })
-
-        for (let k = 0; k < frames.length; ++k) {
-          const frame = frames[k]
-          for (let j = 0; j < a.animations.length; ++j) {
-            const pa = a.animations[j]
-            // it's animation start or it's already ended
-            if (pa.delay >= frame || pa.delay + pa.duration < frame) continue
-            pa.transform(pa.ease((frame - pa.delay) / pa.duration))
-          }
-
-          rule.push(this.frame((time += frame)))
-        }
-      } else {
-        // Single
-        i === 0 && rule.push(this.frame(0, easings.css[a.easeName]))
-
-        a.delay && rule.push(this.frame((time += a.delay)))
-
-        a.transform(1)
-
-        rule.push(
-          this.frame((time += a.duration), aNext && easings.css[aNext.easeName])
+  keyframes(name, effect) {
+    if (!effect) {
+      if (containsCssAnimation(this.animation)) {
+        throw new Error(
+          "CSS generation is not supported for named CSS animations"
         )
       }
+      effect = buildEffect(this.animation)
     }
+
+    const rule = ["@" + getProperty("keyframes") + " " + name + "{"]
+
+    effect.keyframes.forEach((keyframe, index) => {
+      rule.push(this.frame(keyframe, index < effect.keyframes.length - 1))
+    })
+
     rule.push("}")
     return rule.join("")
   }
 
   /**
    * Calcuates percent for keyframes
-   * @param {number} time
+   * @param {number} offset
    * @return {string}
    */
-  percent(time) {
-    return ((time * 100) / this.animation.duration).toFixed(3)
+  percent(offset) {
+    return (offset * 100).toFixed(3)
   }
 
   /**
    * Generates one frame for @keyframes
-   * @param {number} time
-   * @param {string=} ease
+  * @param {Record<string, string|number|undefined>} keyframe
+   * @param {boolean} withEasing
    * @return {string}
    */
-  frame(time, ease) {
-    const percent = this.percent(time)
+  frame(keyframe, withEasing) {
+    const percent = this.percent(keyframe.offset || 0)
     const props = []
-    for (const property in this.item.state) {
+
+    for (const property in keyframe) {
       if (property in CSS.skip) continue
+      props.push(this.property(property) + ":" + keyframe[property] + ";")
+    }
+
+    if (withEasing && keyframe.easing) {
       props.push(
-        percent
-          ? property.replace(/([A-Z])/g, "-$1") +
-              ":" +
-              this.item.get(property) +
-              ";"
-          : ""
+        getProperty("animation-timing-function") + ":" + keyframe.easing + ";"
       )
     }
-    return (
-      percent +
-      "% {" +
-      (percent ? transformProperty + ":" + this.item.transform() + ";" : "") +
-      props.join("") +
-      (ease
-        ? getProperty("animation-timing-function") + ":" + ease + ";"
-        : "") +
-      "}"
-    )
+
+    return percent + "% {" + props.join("") + "}"
   }
+
+  property(property) {
+    return property === transformProperty || property.indexOf("--") === 0
+      ? property
+      : property.replace(/([A-Z])/g, "-$1").toLowerCase()
+  }
+}
+
+CSS.skip = {
+  offset: null,
+  easing: null
 }

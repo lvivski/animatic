@@ -45,9 +45,9 @@ export class World extends EventEmitter {
   /**
    * Adds node to the animated world
    * @param {HTMLElement} node
-   * @param {number=} mass
+  * @param {number|{mass?: number, viscosity?: number, edge?: {min?: Array<number>, max?: Array<number>, bounce?: boolean}, physics?: string}=} mass
    * @param {number=} viscosity
-   * @param {any=} edge
+  * @param {{min?: Array<number>, max?: Array<number>, bounce?: boolean}=} edge
    * @return {Item | Particle}
    */
   add(node, mass, viscosity, edge) {
@@ -65,7 +65,10 @@ export class World extends EventEmitter {
    * Cancels next frame
    */
   cancel() {
-    this.frame && cancelAnimationFrame(this.frame)
+    if (this.frame) {
+      cancelAnimationFrame(this.frame)
+    }
+
     this.frame = 0
   }
 

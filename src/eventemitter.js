@@ -1,12 +1,13 @@
 export class EventEmitter {
   constructor() {
+    /** @type {Record<string, Array<(...args: Array<unknown>) => unknown>>} */
     this.handlers = {}
   }
 
   /**
    * Adds handler for event
    * @param {string} event
-   * @param {Function} handler
+  * @param {(...args: Array<unknown>) => unknown} handler
    * @returns {EventEmitter}
    */
   on(event, handler) {
@@ -18,14 +19,18 @@ export class EventEmitter {
   /**
    * Removes event handler
    * @param {string} event
-   * @param {Function} handler
+  * @param {((...args: Array<unknown>) => unknown)=} handler
    * @returns {EventEmitter}
    */
   off(event, handler) {
     const handlers = this.handlers[event]
 
     if (handler) {
-      handlers.splice(handlers.indexOf(handler), 1)
+      if (!handlers) return this
+      const index = handlers.indexOf(handler)
+      if (index !== -1) {
+        handlers.splice(index, 1)
+      }
     } else {
       delete this.handlers[event]
     }
@@ -36,7 +41,8 @@ export class EventEmitter {
   /**
    * Triggers event
    * @param {string} event
-   * @returns {EventEmitter}
+  * @param {...unknown} args
+  * @returns {EventEmitter}
    */
   emit(event, ...args) {
     const handlers = this.handlers[event]
@@ -53,7 +59,7 @@ export class EventEmitter {
   /**
    * List all event listeners
    * @param {string} event
-   * @returns {Array}
+  * @returns {Array<(...args: Array<unknown>) => unknown>}
    */
   listeners(event) {
     return this.handlers[event] || []

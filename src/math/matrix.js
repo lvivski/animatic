@@ -2,18 +2,28 @@ import { Vector } from "./vector.js"
 
 const radians = Math.PI / 180
 
+/** @typedef {{translate: Array<number>, rotate: Array<number>, scale: Array<number>}} MatrixTransform */
+
 /**
  * Matrix object for transformation calculations
- * @type {Object}
  */
 export const Matrix = {
+	/**
+	* @returns {Array<number>}
+	 */
   identity() {
 		return [1, 0, 0, 0,
 		        0, 1, 0, 0,
 		        0, 0, 1, 0,
 		        0, 0, 0, 1]
 	},
-  multiply(a, b) { // doesn't work for perspective
+	/**
+	 * @param {Array<number>} a
+	 * @param {Array<number>} b
+	 * @param {...Array<number>} matrices
+	 * @returns {Array<number>}
+	 */
+	multiply(a, b, ...matrices) { // doesn't work for perspective
     const c = this.identity()
 
 		c[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8]
@@ -32,10 +42,18 @@ export const Matrix = {
 		c[13] = a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + b[13]
 		c[14] = a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + b[14]
 
-		return 2 >= arguments.length
-			? c
-      : this.multiply.apply(this, [c].concat(Array.prototype.slice.call(arguments, 2)))
+		let result = c
+		for (let i = 0; i < matrices.length; ++i) {
+			result = this.multiply(result, matrices[i])
+		}
+		return result
 	},
+	/**
+	 * @param {number=} tx
+	 * @param {number=} ty
+	 * @param {number=} tz
+	 * @returns {Array<number>}
+	 */
   translate(tx, ty, tz) {
 		if (!(tx || ty || tz)) return this.identity()
 
@@ -59,7 +77,13 @@ export const Matrix = {
 		return this.translate(0, 0, t)
 	},
 	*/
-  scale(sx, sy, sz) {
+	/**
+	 * @param {number=} sx
+	 * @param {number=} sy
+	 * @param {number=} sz
+	 * @returns {Array<number>}
+	 */
+	scale(sx, sy, sz) {
 		if (!(sx || sy || sz)) return this.identity()
 
     sx ||= 1
@@ -82,7 +106,13 @@ export const Matrix = {
 		return this.scale(0, 0, s)
 	},
 	*/
-  rotate(ax, ay, az) {
+	/**
+	 * @param {number=} ax
+	 * @param {number=} ay
+	 * @param {number=} az
+	 * @returns {Array<number>}
+	 */
+	rotate(ax, ay, az) {
 		if (!(ax || ay || az)) return this.identity()
 
     ax ||= 0
@@ -142,7 +172,14 @@ export const Matrix = {
 		        0, 0, 0, 1]
 	},
 	*/
-  rotate3d(x, y, z, a = 0) {
+	/**
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} z
+	 * @param {number=} a
+	 * @returns {Array<number>}
+	 */
+	rotate3d(x, y, z, a = 0) {
 		a *= radians
 
     const s = Math.sin(a)
@@ -163,7 +200,12 @@ export const Matrix = {
 			x * z * _c + y * s, y * z * _c - x * s, zz + (1 - zz) * c, 0,
 			0, 0, 0, 1]
 	},
-  skew(ax, ay) {
+	/**
+	 * @param {number=} ax
+	 * @param {number=} ay
+	 * @returns {Array<number>}
+	 */
+	skew(ax, ay) {
 		if (!(ax || ay)) return this.identity()
 
     ax ||= 0
@@ -185,7 +227,11 @@ export const Matrix = {
 		return this.skew(0, a)
 	},
 	*/
-  perspective(p) {
+	/**
+	 * @param {number} p
+	 * @returns {Array<number>}
+	 */
+	perspective(p) {
 		p = -1 / p
 
 		return [1, 0, 0, 0,
@@ -193,8 +239,15 @@ export const Matrix = {
 			0, 0, 1, p,
 			0, 0, 0, 1]
 	},
+  /**
+   * @param {string} s
+	* @returns {Array<number>}
+   */
   parse(s) {
-    const m = s.match(/\((.+)\)/)[1].split(/,\s?/)
+		const match = s.match(/\((.+)\)/)
+		if (!match) return this.identity()
+
+		const m = match[1].split(/,\s?/).map(Number)
 		if (m.length === 6) {
 			m.splice(2, 0, 0, 0)
 			m.splice(6, 0, 0, 0)
@@ -204,6 +257,10 @@ export const Matrix = {
 
 		return m
 	},
+	/**
+	 * @param {Array<number>} m
+	 * @returns {Array<number>}
+	 */
   inverse(m) {
     const a = this.identity()
 
@@ -239,6 +296,12 @@ export const Matrix = {
 
 		return a
 	},
+	/**
+	 * @param {Array<number>=} translate
+	 * @param {Array<number>=} rotate
+	 * @param {Array<number>=} scale
+	 * @returns {Array<number>}
+	 */
   compose(translate = [], rotate = [], scale = []) {
     const a = this.rotate(rotate[0], rotate[1], rotate[2])
 
@@ -264,6 +327,10 @@ export const Matrix = {
 
 		return a
 	},
+	/**
+	 * @param {Array<number>} m
+	 * @returns {MatrixTransform}
+	 */
   decompose(m) { // supports only scale*rotate*translate matrix
     const sX = Vector.length(m[0], m[1], m[2])
     const sY = Vector.length(m[4], m[5], m[6])
@@ -289,6 +356,10 @@ export const Matrix = {
 			scale: [sX, sY, sZ]
 		}
 	},
+	/**
+	 * @param {Array<number>} m
+	 * @returns {Array<number>}
+	 */
   transpose(m) {
     let t
 
@@ -318,6 +389,12 @@ export const Matrix = {
 
 		return m
 	},
+	/**
+	 * @param {Array<number>} eye
+	 * @param {Array<number>} target
+	 * @param {Array<number>} up
+	 * @returns {Array<number>}
+	 */
   lookAt(eye, target, up) {
     let z = Vector.sub(eye, target)
 		z = Vector.norm(z)
@@ -348,6 +425,10 @@ export const Matrix = {
 
 		return a
 	},
+	/**
+	 * @param {Array<number>} m
+	 * @returns {string}
+	 */
   stringify(m) {
     for (let i = 0; i < m.length; ++i) {
 			if (Math.abs(m[i]) < 1e-5) m[i] = 0

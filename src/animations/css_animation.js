@@ -1,13 +1,14 @@
-import { Item } from "../item.js"
 import { easings } from "./easings.js"
 import { Matrix } from "../math/matrix.js"
 import { animationProperty, transformProperty } from "../utils.js"
 
+/** @typedef {{name?: string, duration?: number, delay?: number, ease?: string}} CssAnimationOptions */
+
 export class CssAnimation {
   /**
    * Creates new animation
-   * @param {Item} item Object to animate
-   * @param {Object | string} animation
+  * @param {import("../item.js").Item} item Object to animate
+  * @param {CssAnimationOptions | string} animation
    * @param {number} duration
    * @param {string} ease Timing function
    * @param {number} delay
@@ -16,16 +17,19 @@ export class CssAnimation {
    */
   constructor(item, animation, duration, ease, delay, generated) {
     this.item = item
+    const options = typeof animation === "string" ? { name: animation } : animation
+    const cssEasings = /** @type {{ css: Record<string, string> }} */ (easings).css
 
-    this.name = animation.name || animation
+    this.name = options.name || ""
 
+    /** @type {number | null} */
     this.start = null
+    /** @type {number | null} */
     this.diff = null
 
-    this.duration = (animation.duration || duration) | 0
-    this.delay = (animation.delay || delay) | 0
-    this.ease =
-      easings.css[animation.ease] || easings.css[ease] || easings.css.linear
+    this.duration = (options.duration || duration) | 0
+    this.delay = (options.delay || delay) | 0
+    this.ease = cssEasings[options.ease || ease || "linear"] || cssEasings.linear
 
     this._infinite = false
     this._generated = generated
@@ -67,7 +71,7 @@ export class CssAnimation {
    */
   pause() {
     this.item.style(animationProperty + "-play-state", "paused")
-    this.diff = performance.now() - this.start
+    this.diff = performance.now() - (this.start || 0)
   }
 
   /**
@@ -75,7 +79,7 @@ export class CssAnimation {
    */
   resume() {
     this.item.style(animationProperty + "-play-state", "running")
-    this.start = performance.now() - this.diff
+    this.start = performance.now() - (this.diff || 0)
   }
 
   /**

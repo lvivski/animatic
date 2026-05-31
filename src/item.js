@@ -6,6 +6,9 @@ import { CSS } from './css.js'
 import { transformProperty } from './utils.js'
 import { Collection } from "./animations/collection.js"
 
+/** @typedef {number|string|Array<number|string|undefined>|undefined} ItemStateValue */
+/** @typedef {Record<string, ItemStateValue>} ItemState */
+
 export class Item extends EventEmitter {
   /**
    * Creates new animated item
@@ -13,11 +16,15 @@ export class Item extends EventEmitter {
    */
   constructor(node) {
     super()
+    /** @type {HTMLElement} */
     this.dom = node
 
+    /** @type {Sequence} */
     this.animation = new Sequence(this)
 
     this.running = true
+  this.timelineControlled = false
+    /** @type {ItemState} */
     this.state = {}
   }
   /**
@@ -26,6 +33,7 @@ export class Item extends EventEmitter {
    */
   update(tick) {
     if (!this.running) return
+    if (this.animation.native.handlesPlayback()) return
     this.animation.run(tick)
   }
 
@@ -34,6 +42,7 @@ export class Item extends EventEmitter {
    * @param {number} tick
    */
   timeline(tick) {
+    if (this.animation.native.seek(tick)) return
     this.clear()
     this.animation.seek(tick)
   }
@@ -83,7 +92,7 @@ export class Item extends EventEmitter {
 
   /**
    * Calculates transformation matrix for the state
-   * @return {Object}
+  * @returns {Array<number>}
    */
   matrix() {
     const state = this.state
@@ -92,7 +101,7 @@ export class Item extends EventEmitter {
 
   /**
    * Gets transformation needed to make Item in center
-   * @return {Object}
+  * @returns {{translate: Array<number>, rotate: Array<number>, scale: Array<number>}}
    */
   center() {
     return Matrix.decompose(Matrix.inverse(this.matrix()))
@@ -173,6 +182,7 @@ export class Item extends EventEmitter {
         return
       }
       a.merge(transform, duration, ease, delay)
+      this.animation.native.invalidate()
     } else {
       this.animate.call(this, transform, duration, ease, delay)
     }

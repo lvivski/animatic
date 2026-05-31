@@ -1,9 +1,8 @@
-import { Vector } from "../../math/vector"
-import { Particle } from "../particle"
+import { Vector } from "../../math/vector.js"
 
 /**
  * Constant force
- * @param {Particle} item
+ * @param {import("../particle.js").PhysicsBody} item
  * @constructor
  */
 export function Constant(item) {

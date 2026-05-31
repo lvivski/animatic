@@ -1,9 +1,8 @@
 import { Vector } from '../../math/vector.js'
-import { Particle } from '../particle.js'
 
 /**
  * Edge force
- * @param {Particle} item
+ * @param {import('../particle.js').PhysicsBody} item
  * @param {number[]} min
  * @param {number[]} max
  * @param {boolean} bounce
@@ -20,14 +19,13 @@ export function Edge(
       item.current.position[i] < min[i] ||
       item.current.position[i] > max[i]
     ) {
+      const position = Math.max(min[i], Math.min(max[i], item.current.position[i]))
       if (bounce) {
         item.previous.position[i] =
-          2 * item.current.position[i] - item.previous.position[i]
+          position + item.current.position[i] - item.previous.position[i]
+        item.current.position[i] = position
       } else {
-        item.current.position[i] = Math.max(
-          min[i],
-          Math.min(max[i], item.current.position[i])
-        )
+        item.current.position[i] = position
       }
     }
   }

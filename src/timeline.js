@@ -8,8 +8,10 @@ export class Timeline extends World {
    */
   constructor() {
     super()
+    this.running = false
     this.currentTime = 0
     this.start = 0
+    this.changed = 0
   }
 
   /**
@@ -20,6 +22,7 @@ export class Timeline extends World {
 
     const self = this
 
+    /** @param {number} tick */
     function update(tick) {
       if (fixTick) {
         tick = performance.now()
@@ -44,10 +47,24 @@ export class Timeline extends World {
         item.timeline(tick)
         this.changed++
         this.emit("update", tick)
-      } else {
+      } else if (!item.animation.native.handlesPlayback()) {
         item.style()
       }
     }
+  }
+
+  /**
+   * Adds node to the timeline
+   * @param {HTMLElement} node
+   * @param {number|{mass?: number, viscosity?: number, edge?: {min?: Array<number>, max?: Array<number>, bounce?: boolean}, physics?: string}=} mass
+   * @param {number=} viscosity
+   * @param {{min?: Array<number>, max?: Array<number>, bounce?: boolean}=} edge
+   * @returns {import("./item.js").Item|import("./physics/particle.js").Particle}
+   */
+  add(node, mass, viscosity, edge) {
+    const item = super.add(node, mass, viscosity, edge)
+    item.timelineControlled = true
+    return item
   }
 
   /**
@@ -71,6 +88,7 @@ export class Timeline extends World {
   stop() {
     this.currentTime = 0
     this.running = false
+    this.changed = 0
   }
 
   /**

@@ -1,17 +1,45 @@
-import { Collection } from "./collection"
-import { CssAnimation } from "./css_animation"
-import { Item } from "../item"
+import { Collection } from "./collection.js"
+import { CssAnimation } from "./css_animation.js"
+import { Parallel } from "./parallel.js"
+import { WaapiSequenceController } from "../waapi/sequence.js"
+
+/** @typedef {{Sequence?: typeof Sequence, Parallel?: typeof Parallel, native?: boolean}} SequenceOptions */
 
 export class Sequence extends Collection {
   /**
    * Creates a set of parallel animations
-   * @param {Item} item
+  * @param {import("../item.js").Item} item
+  * @param {SequenceOptions=} options
    * @constructor
    */
-  constructor(item) {
-    super(item)
+  constructor(item, options = {}) {
+    super(item, {
+      Sequence: options.Sequence || Sequence,
+      Parallel: options.Parallel || Parallel
+    })
 
     this._infinite = false
+    this.native = new WaapiSequenceController(this, options.native !== false)
+  }
+
+  /**
+   * Add item to the sequence
+  * @param {Object|Array<unknown>|string|Collection} transform
+   * @param {number=} duration
+   * @param {string=} ease
+   * @param {number=} delay
+   * @param {boolean=} generated
+  * @returns {this}
+   */
+  add(transform, duration, ease, delay, generated) {
+    super.add(transform, duration, ease, delay, generated)
+    this.native.schedule()
+    return this
+  }
+
+  empty() {
+    this.native.cancel()
+    super.empty()
   }
 
   /**
@@ -32,8 +60,11 @@ export class Sequence extends Collection {
    * Runs one tick of animations
    * @param {number} tick
    */
-  run(tick, a) {
+  run(tick) {
+    if (this.native.play()) return
     if (!this.animations.length) return
+
+    let a
 
     while (this.animations.length !== 0) {
       a = this.animations[0]
@@ -41,7 +72,8 @@ export class Sequence extends Collection {
         a._infinite = this._infinite
       }
       a.init(tick)
-      if (a.start + a.duration <= tick) {
+      const start = a.start || 0
+      if (start + a.duration <= tick) {
         if (!(this._infinite && a instanceof CssAnimation)) {
           this.animations.shift()
           a.end()
@@ -71,12 +103,14 @@ export class Sequence extends Collection {
    * @param {number} tick
    */
   seek(tick) {
+    if (this.native.seek(tick)) return
     if (this.animations.length === 0) return
     let time = 0
     for (let i = 0; i < this.animations.length; ++i) {
       const a = this.animations[i]
       a.init(time, true)
-      if (a.start + a.duration <= tick) {
+      const start = a.start || 0
+      if (start + a.duration <= tick) {
         time += a.delay + a.duration
         a.end(false, true)
         continue
@@ -94,6 +128,7 @@ export class Sequence extends Collection {
    */
   infinite() {
     this._infinite = true
+    this.native.invalidate()
     return this
   }
 
@@ -101,14 +136,20 @@ export class Sequence extends Collection {
    * Pauses animations
    */
   pause() {
-    this.animations.length && this.animations[0].pause()
+    if (this.native.pause()) return
+    if (this.animations.length) {
+      this.animations[0].pause()
+    }
   }
 
   /**
    * Resumes animations
    */
   resume() {
-    this.animations.length && this.animations[0].resume()
+    if (this.native.resume()) return
+    if (this.animations.length) {
+      this.animations[0].resume()
+    }
   }
 
   /**
@@ -117,6 +158,7 @@ export class Sequence extends Collection {
    * @fires Sequence#end
    */
   end(abort = false) {
+    if (this.native.finish(abort)) return
     for (let i = 0; i < this.animations.length; ++i) {
       this.animations[i].end(abort)
     }

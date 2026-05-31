@@ -1,9 +1,8 @@
 import { Vector } from "../../math/vector.js"
-import { Particle } from "../particle.js"
 
 /**
  * Attraction force
- * @param {Particle} item
+ * @param {import("../particle.js").PhysicsBody} item
  * @param {number} radius
  * @param {number} strength
  * @constructor

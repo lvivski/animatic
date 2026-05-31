@@ -1,15 +1,17 @@
-import { Item } from "../item.js"
 import { easings } from "./easings.js"
 import { Vector } from "../math/vector.js"
 import { Matrix } from "../math/matrix.js"
 import { Tween } from "./tween.js"
 import { merge, transformProperty } from "../utils.js"
 
+/** @typedef {Record<string, unknown> & {duration?: number, delay?: number, ease?: string}} AnimationTransform */
+/** @typedef {Record<string, Tween>} AnimationTweenState */
+
 export class Animation {
   /**
    * Creates new animation
-   * @param {Item} item Object to animate
-   * @param {Object} transform
+  * @param {import("../item.js").Item} item Object to animate
+  * @param {AnimationTransform} transform
    * @param {number} duration
    * @param {string} ease Timing function
    * @param {number} delay
@@ -18,10 +20,15 @@ export class Animation {
   constructor(item, transform, duration, ease, delay) {
     this.item = item
 
+    /** @type {AnimationTransform} */
     this.transformation = transform
 
+    /** @type {number | null} */
     this.start = null
+    /** @type {number | null} */
     this.diff = null
+    /** @type {AnimationTweenState} */
+    this.state = {}
 
     this.duration = (transform.duration || duration) | 0
     this.delay = (transform.delay || delay) | 0
@@ -91,7 +98,7 @@ export class Animation {
 
   /**
    * Merges animation values
-   * @param {Object} transform
+  * @param {AnimationTransform} transform
    * @param {number} duration
    * @param {string} ease Timing function
    * @param {number} delay
@@ -119,14 +126,18 @@ export class Animation {
   /**
    * Runs one tick of animation
    * @param {number} tick
-   * @param {boolean} seek Is used in seek mode
+  * @param {boolean=} seek Is used in seek mode
    */
-  run(tick, seek) {
-    if (tick < this.start && !seek) return
+  run(tick, seek = false) {
+    if (this.start === null) return
+
+    const start = this.start
+
+    if (tick < start && !seek) return
     let percent = 0
 
-    if (tick >= this.start) {
-      percent = (tick - this.start) / this.duration
+    if (tick >= start) {
+      percent = (tick - start) / this.duration
       percent = this.ease(percent)
     }
 
@@ -137,14 +148,14 @@ export class Animation {
    * Pauses animation
    */
   pause() {
-    this.diff = performance.now() - this.start
+    this.diff = performance.now() - (this.start || 0)
   }
 
   /**
    * Resumes animation
    */
   resume() {
-    this.start = performance.now() - this.diff
+    this.start = performance.now() - (this.diff || 0)
   }
 
   interpolate(property, percent) {
@@ -163,11 +174,16 @@ export class Animation {
 
   /**
    * Ends animation
-   * @param {boolean} abort
-   * @param {boolean} seek Is used in seek mode
+  * @param {boolean=} abort
+  * @param {boolean=} seek Is used in seek mode
    */
-  end(abort, seek) {
-    !abort && this.transform(this.ease(1))
-    !seek && (this.start = null)
+  end(abort = false, seek = false) {
+    if (!abort) {
+      this.transform(this.ease(1))
+    }
+
+    if (!seek) {
+      this.start = null
+    }
   }
 }

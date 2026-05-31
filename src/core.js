@@ -3,19 +3,18 @@ import { World } from "./world.js"
 
 /**
  * Animatic
- * @type {Object}
  */
 export default {
   /**
    * Creates and initializes world with frame loop
-   * @return {World}
+  * @returns {World}
    */
   world() {
     return new World()
   },
   /**
    * Creates and initializes timeline
-   * @return {Timeline}
+  * @returns {Timeline}
    */
   timeline() {
     return new Timeline()

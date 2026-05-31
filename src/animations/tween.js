@@ -1,9 +1,19 @@
+/** @typedef {{r: number, g: number, b: number, a: number}} TweenColor */
+/** @typedef {number|Array<number|string>|TweenColor|undefined} TweenValue */
+
 export class Tween {
+  /**
+   * @param {Array<number|string>|number|string|undefined} start
+   * @param {Array<number|string>|number|string|undefined} end
+   * @param {string} property
+   */
   constructor(start, end, property) {
     const type = Tween.propTypes[property] || Tween.NUMERIC
     this.type = type
 
+    /** @type {TweenValue} */
     this.start = Tween.parseValue(start, type)
+    /** @type {TweenValue} */
     this.end = Tween.parseValue(end, type)
 
     this.suffix = Tween.px.indexOf(property) !== -1 ? "px" : ""
@@ -12,6 +22,7 @@ export class Tween {
   static NUMERIC = "NUMERIC"
   static COLOR = "COLOR"
 
+  /** @type {Record<string, string>} */
   static propTypes = {
     color: Tween.COLOR,
     backgroundColor: Tween.COLOR,
@@ -25,12 +36,21 @@ top,left,bottom,right,\
 width,height,maxWidth,maxHeight,minWidth,minHeight,\
 borderRadius,borderWidth".split(",")
 
+  /**
+   * @param {Array<number|string>|number|string|undefined} value
+   * @param {string} type
+   * @returns {TweenValue}
+   */
   static parseValue(value, type) {
     return type === Tween.COLOR
       ? Tween.parseColor(value)
       : Tween.parseNumeric(value)
   }
 
+  /**
+   * @param {Array<number|string>|number|string|undefined} numeric
+   * @returns {number|Array<number>}
+   */
   static parseNumeric(numeric) {
     if (!Array.isArray(numeric)) {
       numeric = String(numeric).split(/\s+/)
@@ -38,6 +58,10 @@ borderRadius,borderWidth".split(",")
     return Array.isArray(numeric) ? numeric.map(parseFloat) : Number(numeric)
   }
 
+  /**
+   * @param {string} color
+   * @returns {TweenColor|undefined}
+   */
   static parseColor(color) {
     const hex = color.match(/^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i)
     if (hex) {
@@ -62,6 +86,10 @@ borderRadius,borderWidth".split(",")
     }
   }
 
+  /**
+   * @param {number} percent
+   * @returns {TweenValue|string}
+   */
   interpolate(percent) {
     if (this.type === Tween.NUMERIC) {
       if (Array.isArray(this.end)) {
@@ -74,12 +102,18 @@ borderRadius,borderWidth".split(",")
     }
   }
 
+  /**
+   * @param {number} percent
+   * @returns {Array<number|string>}
+   */
   array(percent) {
     const value = []
-    if (Array.isArray(this.end)) {
-      for (let i = 0; i < this.end.length; ++i) {
-        if (this.end[i]) {
-          value[i] = this.start[i] + this.end[i] * percent
+    const start = /** @type {Array<number>} */ (this.start)
+    const end = /** @type {Array<number>} */ (this.end)
+    if (Array.isArray(end)) {
+      for (let i = 0; i < end.length; ++i) {
+        if (end[i] !== undefined) {
+          value[i] = start[i] + end[i] * percent
           if (this.suffix) {
             value[i] += this.suffix
           }
@@ -89,6 +123,10 @@ borderRadius,borderWidth".split(",")
     return value
   }
 
+  /**
+   * @param {number} percent
+   * @returns {number|string}
+   */
   absolute(percent) {
     /** @type {number | string} */
     let value =
@@ -99,25 +137,36 @@ borderRadius,borderWidth".split(",")
     return value
   }
 
+  /**
+   * @param {number} percent
+   * @returns {string}
+   */
   color(percent) {
     const rgb = { r: 0, g: 0, b: 0 }
     let spectra, value
+    const start = /** @type {TweenColor} */ (this.start)
+    const end = /** @type {TweenColor} */ (this.end)
     for (spectra in rgb) {
       const value = Math.round(
-        this.start[spectra] +
-          (this.end[spectra] - this.start[spectra]) * percent
+        start[spectra] + (end[spectra] - start[spectra]) * percent
       )
       rgb[spectra] = clamp(value, 0, 255)
     }
     spectra = "a"
     value = Math.round(
-      this.start[spectra] + (this.end[spectra] - this.start[spectra]) * percent
+      start[spectra] + (end[spectra] - start[spectra]) * percent
     )
     rgb[spectra] = clamp(value, 0, 1)
     return "rgba(" + [rgb.r, rgb.g, rgb.b, rgb.a] + ")"
   }
 }
 
+/**
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
 }

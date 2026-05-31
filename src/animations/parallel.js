@@ -1,26 +1,26 @@
 import { Collection } from "./collection.js"
-import { Item } from "../item.js"
 
 export class Parallel extends Collection {
   /**
    * Creates a set of parallel animations
-   * @param {Item} item
+    * @param {import("../item.js").Item} item
+    * @param {{Sequence?: Function, Parallel?: Function}=} options
    * @constructor
    */
-  constructor(item) {
-    super(item)
+  constructor(item, options = {}) {
+    super(item, options)
   }
 
   /**
    * Calls a method on all animations
    * @param {string} method
+  * @param {...unknown} args
    */
-  all(method) {
-    const args = Array.prototype.slice.call(arguments, 1)
-
+  all(method, ...args) {
     for (let i = 0; i < this.animations.length; ++i) {
       const a = this.animations[i]
-      a[method].apply(a, args)
+      const callable = /** @type {Record<string, (...args: Array<unknown>) => unknown>} */ (/** @type {unknown} */ (a))
+      callable[method].apply(a, args)
     }
   }
 
@@ -46,12 +46,12 @@ export class Parallel extends Collection {
 
     for (let i = 0; i < this.animations.length; ++i) {
       const a = this.animations[i]
-      if (a.start + a.duration <= tick) {
+      if ((a.start || 0) + a.duration <= tick) {
         this.animations.splice(i--, 1)
-        a.end()
+        a.end(false, false)
         continue
       }
-      a.run(tick)
+      a.run(tick, false)
     }
     this.item.style()
 

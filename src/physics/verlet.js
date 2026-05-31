@@ -1,9 +1,8 @@
 import { Vector } from '../math/vector.js'
-import { Particle } from './particle.js'
 
 /**
- * Velocity Verlet Integrator
- * @param {Particle} self
+ * Position Verlet integrator
+ * @param {import('./particle.js').PhysicsBody} self
  * @param {number} delta
  * @param {number} drag
  * @constructor
