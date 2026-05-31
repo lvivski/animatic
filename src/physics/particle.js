@@ -1,102 +1,157 @@
-/**
- * Creatites particle with physics
- * @param {HTMLElement} node
- * @param {number=} mass
- * @param {number=} viscosity
- * @constructor
- */
-function Particle(node, mass, viscosity, edge) {
-	Item.call(this, node)
+import { Item } from "../item.js"
+import { Constant } from "./forces/constant.js"
+import { Edge } from "./forces/edge.js"
+import { Verlet } from "./verlet.js"
+import { Matrix } from "../math/matrix.js"
+import { Vector } from "../math/vector.js"
 
-	if (mass === Object(mass)) {
-		viscosity = mass.viscosity
-		edge = mass.edge
-		mass = mass.mass
-	}
+/** @typedef {import("../item.js").ItemStateValue} PhysicsStateValue */
+/** @typedef {import("../item.js").ItemState & {translate: Array<number>}} PhysicsState */
+/** @typedef {{position: Array<number>, velocity: Array<number>, acceleration: Array<number>}} PhysicsKinematics */
+/** @typedef {{min?: number|Array<number>, max?: number|Array<number>, bounce?: boolean}|null} PhysicsEdge */
+/** @typedef {{mass: number, viscosity: number, edge: PhysicsEdge, state: PhysicsState, current: PhysicsKinematics, previous: PhysicsKinematics}} PhysicsBody */
+/** @typedef {{mass?: number, viscosity?: number, edge?: NonNullable<PhysicsEdge>, physics?: string}} ParticleOptions */
 
-	mass /= 100
+export class Particle extends Item {
+  /**
+   * Creates particle with physics
+   * @param {HTMLElement} node
+  * @param {number | ParticleOptions} mass
+  * @param {number=} viscosity
+  * @param {PhysicsEdge=} edge
+   * @constructor
+   */
+  constructor(node, mass, viscosity, edge) {
+    super(node)
+    let physicsMode
+    let particleMass
 
-	mass || (mass = 0.01)
-	viscosity || (viscosity = 0.1)
-	edge || (edge = false)
+    if (typeof mass === "object") {
+      physicsMode = mass.physics
+      viscosity = mass.viscosity || viscosity
+      edge = mass.edge || edge
+      particleMass = mass.mass
+    } else {
+      particleMass = mass / 100
+    }
 
-	this.mass = 1 / mass
-	this.viscosity = viscosity
-	this.edge = edge
+    particleMass ||= 0.01
+    viscosity ||= 0.1
+    edge ||= null
 
-	this.current = {
-		position: Vector.zero(),
-		velocity: Vector.zero(),
-		acceleration: Vector.zero()
-	}
+    /** @type {number} */
+    this.mass = 1 / particleMass
+    /** @type {number} */
+    this.viscosity = viscosity
+    /** @type {PhysicsEdge} */
+    this.edge = edge
 
-	this.previous = {
-		position: Vector.zero(),
-		velocity: Vector.zero(),
-		acceleration: Vector.zero()
-	}
+    /** @type {PhysicsKinematics} */
+    this.current = {
+      position: Vector.zero(),
+      velocity: Vector.zero(),
+      acceleration: Vector.zero()
+    }
 
-	this.clock = null
-}
+    /** @type {PhysicsKinematics} */
+    this.previous = {
+      position: Vector.zero(),
+      velocity: Vector.zero(),
+      acceleration: Vector.zero()
+    }
 
-Particle.prototype = Object.create(Item.prototype)
-Particle.prototype.constructor = Particle
+    this.clock = null
+    this.physicsMode = physicsMode || "auto"
+    this.nativeAnimations = this.physicsMode !== "live"
+  }
 
-/**
- * Updates particle and applies integration
- * @param {number} tick
- */
-Particle.prototype.update = function (tick) {
-	this.animation.run(tick)
+  /**
+   * Updates particle and applies integration
+   * @param {number} tick
+   */
+  update(tick) {
+    if (this.animation.native.handlesPlayback()) return
+    this.animation.run(tick)
+    if (this.animation.native.handlesPlayback()) return
 
-	this.integrate(tick)
+    this.integrate(tick)
 
-	this.style()
-}
+    this.style()
+  }
 
-Particle.prototype.timeline = function (tick) {
-	this.clear()
-	this.animation.seek(tick)
+  /**
+   * Updates particle on timeline
+   * @param {number} tick
+   */
+  timeline(tick) {
+    if (this.animation.native.seek(tick)) return
+    this.clear()
+    this.animation.seek(tick)
 
-	this.integrate(tick, true)
+    this.integrate(tick, true)
 
-	this.style()
-}
+    this.style()
+  }
 
-/**
- * Integrates particle
- * @param {number} delta
- */
-Particle.prototype.integrate = function (tick, clamp) {
-	this.clock || (this.clock = tick)
+  /**
+   * Integrates particle
+   * @param {number} tick
+   * @param {boolean=} clamp
+   */
+  integrate(tick, clamp) {
+    this.clock ??= tick
 
-	var delta = tick - this.clock
+    let delta = tick - this.clock
 
-	if (delta) {
-		clamp && (delta = Math.max(-16, Math.min(16, delta)))
+    if (delta) {
+      if (clamp) {
+        delta = Math.max(-16, Math.min(16, delta))
+      }
 
-		this.clock = tick
+      this.clock = tick
 
-		delta *= 0.001
+      delta *= 0.001
 
-		Constant.call(this)
-		this.edge && Edge.call(this, Vector.set(this.edge.min), Vector.set(this.edge.max), this.edge.bounce)
+      const body = /** @type {PhysicsBody} */ (/** @type {unknown} */ (this))
 
-		Verlet.call(this, delta, 1.0 - this.viscosity)
-	}
-}
+      Constant.call(null, body)
+      if (this.edge) {
+        Edge.call(
+          null,
+          body,
+          Vector.set(this.edge.min),
+          Vector.set(this.edge.max),
+          this.edge.bounce
+        )
+      }
 
-Particle.prototype.css = function () {
-	throw new Error('CSS is nor supported for physics');
-}
+      Verlet.call(null, body, delta, 1.0 - this.viscosity)
 
-/**
- * Gets particle matrix
- * @returns {Array}
- */
-Particle.prototype.matrix = function () {
-	var state = this.state
-	return Matrix.compose(
-		this.current.position, state.rotate, state.scale
-	)
+      if (this.edge) {
+        Edge.call(
+          null,
+          body,
+          Vector.set(this.edge.min),
+          Vector.set(this.edge.max),
+          this.edge.bounce
+        )
+      }
+    }
+  }
+
+  /**
+   * @return {ReturnType<Item['css']>}
+   */
+  css() {
+    throw new Error("CSS is nor supported for physics")
+  }
+
+  /**
+   * Gets particle matrix
+   * @returns {number[]}
+   */
+  matrix() {
+    const state = /** @type {{ rotate: number[], scale: number[] }} */ (this.state)
+    return Matrix.compose(this.current.position, state.rotate, state.scale)
+  }
 }

@@ -1,5 +1,11 @@
-var Vector = {
-	set: function (x, y, z) {
+export const Vector = {
+	/**
+	 * @param {number|Array<number>=} x
+	 * @param {number=} y
+	 * @param {number=} z
+	 * @returns {Array<number>}
+	 */
+  set(x, y, z) {
 		if (Array.isArray(x)) {
 			y = x[1]
 			z = x[2]
@@ -14,7 +20,13 @@ var Vector = {
 		}
 		return [x, y, z]
 	},
-	length: function (x, y, z) {
+	/**
+	 * @param {number|Array<number>} x
+	 * @param {number=} y
+	 * @param {number=} z
+	 * @returns {number}
+	 */
+  length(x, y, z) {
 		if (Array.isArray(x)) {
 			y = x[1]
 			z = x[2]
@@ -22,27 +34,43 @@ var Vector = {
 		}
 		return Math.sqrt(x * x + y * y + z * z)
 	},
-	add: function (a, b) {
+	/**
+	 * @param {Array<number>} a
+	 * @param {Array<number>} b
+	 * @returns {Array<number>}
+	 */
+  add(a, b) {
 		return [
 			a[0] + b[0],
 			a[1] + b[1],
 			a[2] + b[2]
 		]
 	},
-	sub: function (a, b) {
+	/**
+	 * @param {Array<number>} a
+	 * @param {Array<number>} b
+	 * @returns {Array<number>}
+	 */
+  sub(a, b) {
 		return [
 			a[0] - b[0],
 			a[1] - b[1],
 			a[2] - b[2]
 		]
 	},
-	norm: function (x, y, z) {
+	/**
+	 * @param {number|Array<number>} x
+	 * @param {number=} y
+	 * @param {number=} z
+	 * @returns {Array<number>}
+	 */
+  norm(x, y, z) {
 		if (Array.isArray(x)) {
 			y = x[1]
 			z = x[2]
 			x = x[0]
 		}
-		var len = this.length(x, y, z)
+    const len = this.length(x, y, z)
 
 		if (len !== 0) {
 			x /= len
@@ -56,24 +84,45 @@ var Vector = {
 
 		return [x, y, z]
 	},
-	dist: function (a, b) {
-		var dx = a[0] - b[0],
-		    dy = a[1] - b[1],
-		    dz = a[2] - b[2]
+	/**
+	 * @param {Array<number>} a
+	 * @param {Array<number>} b
+	 * @returns {number}
+	 */
+  dist(a, b) {
+    const dx = a[0] - b[0]
+    const dy = a[1] - b[1]
+    const dz = a[2] - b[2]
 
-		return Math.sqrt(dx * dx + dy * dy + dz + dz)
+		return Math.sqrt(dx * dx + dy * dy + dz * dz)
 	},
-	cross: function (a, b) {
-		var x = a[1] * b[2] - a[2] * b[1],
-		    y = a[2] * b[0] - a[0] * b[2],
-		    z = a[1] * b[1] - a[1] * b[0]
+	/**
+	 * @param {Array<number>} a
+	 * @param {Array<number>} b
+	 * @returns {Array<number>}
+	 */
+  cross(a, b) {
+    const x = a[1] * b[2] - a[2] * b[1]
+    const y = a[2] * b[0] - a[0] * b[2]
+		const z = a[0] * b[1] - a[1] * b[0]
 
 		return [x, y, z]
 	},
-	clone: function (v) {
+	/**
+	 * @param {Array<number>} v
+	 * @returns {Array<number>}
+	 */
+  clone(v) {
 		return v.slice()
 	},
-	scale: function (x, y, z, f) {
+	/**
+	 * @param {number|Array<number>} x
+	 * @param {number=} y
+	 * @param {number=} z
+	 * @param {number=} f
+	 * @returns {Array<number>}
+	 */
+  scale(x, y, z, f) {
 		if (Array.isArray(x)) {
 			f = y
 			y = x[1]
@@ -82,7 +131,10 @@ var Vector = {
 		}
 		return [x * f, y * f, z * f]
 	},
-	zero: function () {
+	/**
+	 * @returns {Array<number>}
+	 */
+  zero() {
 		return [0, 0, 0]
 	}
 }

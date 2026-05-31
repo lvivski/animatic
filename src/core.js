@@ -1,29 +1,22 @@
+import { Timeline } from "./timeline.js"
+import { World } from "./world.js"
+
 /**
  * Animatic
- * @type {Object}
  */
-var a = {}
-
-/**
- * Creates and initializes world with frame loop
- * @return {World}
- */
-a.world = function () {
-	return new World
-}
-
-/**
- * Creates and initializes timeline
- * @return {Timeline}
- */
-a.timeline = function () {
-	return new Timeline
-}
-
-if (typeof module === 'object' && typeof module.exports === 'object') {
-	module.exports = a
-} else if (typeof define === 'function' && define.amd) {
-	define(a)
-} else {
-	root.animatic = root.a = a
+export default {
+  /**
+   * Creates and initializes world with frame loop
+  * @returns {World}
+   */
+  world() {
+    return new World()
+  },
+  /**
+   * Creates and initializes timeline
+  * @returns {Timeline}
+   */
+  timeline() {
+    return new Timeline()
+  }
 }

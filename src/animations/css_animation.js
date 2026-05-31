@@ -1,77 +1,100 @@
-/**
- * Creates new animation
- * @param {Item} item Object to animate
- * @param {Object || string} animation
- * @param {number} duration
- * @param {string} ease Timing function
- * @param {number} delay
- * @param {boolean} generated
- * @constructor
- */
-function CssAnimation(item, animation, duration, ease, delay, generated) {
-	this.item = item
+import { easings } from "./easings.js"
+import { Matrix } from "../math/matrix.js"
+import { animationProperty, transformProperty } from "../utils.js"
 
-	this.name = animation.name || animation
+/** @typedef {{name?: string, duration?: number, delay?: number, ease?: string}} CssAnimationOptions */
 
-	this.start = null
-	this.diff = null
+export class CssAnimation {
+  /**
+   * Creates new animation
+  * @param {import("../item.js").Item} item Object to animate
+  * @param {CssAnimationOptions | string} animation
+   * @param {number} duration
+   * @param {string} ease Timing function
+   * @param {number} delay
+   * @param {boolean} generated
+   * @constructor
+   */
+  constructor(item, animation, duration, ease, delay, generated) {
+    this.item = item
+    const options = typeof animation === "string" ? { name: animation } : animation
+    const cssEasings = /** @type {{ css: Record<string, string> }} */ (easings).css
 
-	this.duration = (animation.duration || duration) | 0
-	this.delay = (animation.delay || delay) | 0
-	this.ease = easings.css[animation.ease] || easings.css[ease] || easings.css.linear
+    this.name = options.name || ""
 
-	this._infinite = false
-	this._generated = generated
-}
+    /** @type {number | null} */
+    this.start = null
+    /** @type {number | null} */
+    this.diff = null
 
-/**
- * Starts animation timer
- * @param {number} tick Timestamp
- * @param {boolean=} force Force initialization
- */
-CssAnimation.prototype.init = function (tick, force) {
-	if (this.start !== null && !force) return
-	this.start = tick + this.delay
+    this.duration = (options.duration || duration) | 0
+    this.delay = (options.delay || delay) | 0
+    this.ease = cssEasings[options.ease || ease || "linear"] || cssEasings.linear
 
-	this.item.style(animationProperty,
-		this.name + ' ' + this.duration + 'ms' + ' ' + this.ease + ' ' +
-		this.delay + 'ms' + (this._infinite ? ' infinite' : '') + ' ' + 'forwards')
-}
+    this._infinite = false
+    this._generated = generated
+  }
 
-/**
- * Runs one tick of animation
- */
-CssAnimation.prototype.run = function () {
-}
+  /**
+   * Starts animation timer
+   * @param {number} tick Timestamp
+   * @param {boolean=} force Force initialization
+   */
+  init(tick, force) {
+    if (this.start !== null && !force) return
+    this.start = tick + this.delay
 
-/**
- * Pauses animation
- */
-CssAnimation.prototype.pause = function () {
-	this.item.style(animationProperty + '-play-state', 'paused')
-	this.diff = performance.now() - this.start
-}
+    this.item.style(
+      animationProperty,
+      this.name +
+        " " +
+        this.duration +
+        "ms" +
+        " " +
+        this.ease +
+        " " +
+        this.delay +
+        "ms" +
+        (this._infinite ? " infinite" : "") +
+        " " +
+        "forwards"
+    )
+  }
 
-/**
- * Resumes animation
- */
-CssAnimation.prototype.resume = function () {
-	this.item.style(animationProperty + '-play-state', 'running')
-	this.start = performance.now() - this.diff
-}
+  /**
+   * Runs one tick of animation
+   */
+  run() {}
 
-/**
- * Ends animation
- */
-CssAnimation.prototype.end = function () {
-	if (this._generated) {
-		var computed = getComputedStyle(this.item.dom, null),
-		    transform = computed[transformProperty]
+  /**
+   * Pauses animation
+   */
+  pause() {
+    this.item.style(animationProperty + "-play-state", "paused")
+    this.diff = performance.now() - (this.start || 0)
+  }
 
-		this.item.style(animationProperty, '')
-		this.item.state = Matrix.decompose(Matrix.parse(transform))
-		this.item.style()
-	}
+  /**
+   * Resumes animation
+   */
+  resume() {
+    this.item.style(animationProperty + "-play-state", "running")
+    this.start = performance.now() - (this.diff || 0)
+  }
 
-	this.start = null
+  /**
+   * Ends animation
+   */
+  end() {
+    if (this._generated) {
+      const computed = getComputedStyle(this.item.dom, null)
+      const transform = computed[transformProperty]
+
+      this.item.style(animationProperty, "")
+      this.item.state = Matrix.decompose(Matrix.parse(transform))
+      this.item.style()
+    }
+
+    this.start = null
+  }
 }

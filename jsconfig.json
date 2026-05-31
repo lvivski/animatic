@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext"
+  },
+  "exclude": [
+    "animatic.js",
+    "animatic.esm.js",
+    "animatic.min.js",
+    "animatic.min.js.map"
+  ]
+}

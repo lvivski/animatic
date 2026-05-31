@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "CSS/JS Animations Library with Physics support",
   "main": "animatic.js",
+  "module": "animatic.esm.js",
   "keywords": [
     "animation",
     "animations",
@@ -13,6 +14,9 @@
     "physics"
   ],
   "scripts": {
+    "build": "make -B",
+    "lint": "oxlint src test editor jquery.animatic.js --deny-warnings",
+    "smoke": "node test/smoke.mjs",
     "prepublish": "make -B"
   },
   "repository": {
@@ -20,7 +24,13 @@
     "url": "https://github.com/lvivski/animatic.git"
   },
   "devDependencies": {
-    "uglify-js": "^2.4.19"
+    "esbuild": "^0.25.5",
+    "oxlint": "^1.67.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "prettier": {
+    "singleQuote": false,
+    "trailingComma": "none",
+    "semi": false
+  }
 }

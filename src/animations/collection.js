@@ -1,119 +1,149 @@
-/**
- * Creates a set of animations
- * @param {Item} item
- * @constructor
- */
-function Collection(item) {
-	EventEmitter.call(this)
+import { EventEmitter } from "../eventemitter.js"
+import { easings } from "./easings.js"
+import { CssAnimation } from "./css_animation.js"
+import { Animation } from "./animation.js"
 
-	this.start = null
-	this.item = item
-	this.delay = 0
-	this.duration = 0
-	this.ease = easings.linear
-	this.easeName = 'linear'
-	this.animations = []
-}
+/** @typedef {Object|Array<unknown>|string|Collection} AnimationInput */
+/** @typedef {{Sequence?: Function, Parallel?: Function}} CollectionOptions */
 
-Collection.prototype = Object.create(EventEmitter.prototype)
-Collection.prototype.constructor = Collection
+export class Collection extends EventEmitter {
+  /**
+   * Creates a set of animations
+  * @param {import("../item.js").Item} item
+  * @param {CollectionOptions=} options
+   * @constructor
+   */
+  constructor(item, options = {}) {
+    super()
 
-/**
- * Add item to the collection
- * @param transform
- * @param duration
- * @param ease
- * @param delay
- * @param generated
- */
-Collection.prototype.add = function (transform, duration, ease, delay, generated) {
-	if (Array.isArray(transform)) {
-		transform = parallel(this.item, transform)
-	} else if (typeof transform == 'string' || transform.name != undefined) {
-		transform = new CssAnimation(this.item, transform, duration, ease, delay, generated)
-	} else if (!(transform instanceof Collection)) {
-		transform = new Animation(this.item, transform, duration, ease, delay)
-	}
+    /** @type {number | null} */
+    this.start = null
+    this.item = item
+    this.delay = 0
+    this.duration = 0
+    this.ease = easings.linear
+    this.easeName = "linear"
+    /** @type {Array<Animation|CssAnimation|import("./sequence.js").Sequence|import("./parallel.js").Parallel>} */
+    this.animations = []
+    this.Sequence = options.Sequence
+    this.Parallel = options.Parallel
+  }
 
-	this.animations.push(transform)
+  /**
+   * Add item to the collection
+    * @param {AnimationInput} transform
+    * @param {number=} duration
+    * @param {string=} ease
+    * @param {number=} delay
+    * @param {boolean=} generated
+    * @returns {this}
+   */
+  add(transform, duration, ease, delay, generated) {
+    if (Array.isArray(transform)) {
+      transform = parallel.call(this, this.item, transform)
+    } else if (typeof transform == "string" || transform.name != undefined) {
+      transform = new CssAnimation(
+        this.item,
+        transform,
+        duration,
+        ease,
+        delay,
+        generated
+      )
+    } else if (!(transform instanceof Collection)) {
+      transform = new Animation(this.item, transform, duration, ease, delay)
+    }
 
-	duration = this.animations.map(function (a) {
-		return a.duration + a.delay
-	})
+    this.animations.push(transform)
 
-	if (this instanceof Parallel) {
-		this.duration = Math.max.apply(null, duration)
-	} else {
-		this.duration = duration.reduce(function (a, b) {
-			return a + b
-		}, 0)
-	}
+    const durations = this.animations.map(function (a) {
+      return a.duration + a.delay
+    })
 
-	return this
+    if (this.constructor === this.Parallel) {
+      this.duration = Math.max.apply(null, durations)
+    } else {
+      this.duration = durations.reduce(function (a, b) {
+        return a + b
+      }, 0)
+    }
 
-	function sequence(item, transforms) {
-		var sequence = new Sequence(item)
+    return this
 
-		transforms.forEach(function (t) {
-			sequence.add(t, duration, ease, delay)
-		})
+    function sequence(item, transforms) {
+      const sequence = new this.Sequence(item, {
+        native: false,
+        Sequence: this.Sequence,
+        Parallel: this.Parallel
+      })
 
-		return sequence
-	}
+      transforms.forEach(function (t) {
+        sequence.add(t, duration, ease, delay)
+      })
 
-	function parallel(item, transforms) {
-		var parallel = new Parallel(item)
+      return sequence
+    }
 
-		transforms.forEach(function (t) {
-			if (Array.isArray(t)) {
-				parallel.add(sequence(item, t))
-			} else {
-				parallel.add(t, duration, ease, delay)
-			}
-		})
+    function parallel(item, transforms) {
+      const parallel = new this.Parallel(item, {
+        Sequence: this.Sequence,
+        Parallel: this.Parallel
+      })
 
-		return parallel
-	}
-}
+      transforms.forEach(function (t) {
+        if (Array.isArray(t)) {
+          parallel.add(sequence.call(this, item, t))
+        } else {
+          parallel.add(t, duration, ease, delay)
+        }
+      }, this)
 
-/**
- * Collection length
- */
-Object.defineProperty(Collection.prototype, 'length', {
-	get: function () {
-		return this.animations.length
-	}
-});
+      return parallel
+    }
+  }
 
-/**
- * Get element by index
- * @param {number} index
- * @returns {Animation|Collection}
- */
-Collection.prototype.get = function (index) {
-	return this.animations[index]
-}
+  /**
+   * Collection length
+   */
+  get length() {
+    return this.animations.length
+  }
 
-/**
- * Remove all elements from collection
- */
-Collection.prototype.empty = function () {
-	this.animations = []
-}
+  /**
+   * Get element by index
+   * @param {number} index
+   * @returns {Animation | Parallel}
+   */
+  get(index) {
+    return this.animations[index]
+  }
 
-/**
- * Add animation to collection
- * chainable
- * @returns {Sequence}
- */
-Collection.prototype.animate = function (transform, duration, ease, delay) {
-	return this.add(transform, duration, ease, delay)
-}
+  /**
+   * Remove all elements from collection
+   */
+  empty() {
+    this.animations = []
+  }
 
-/**
- * Apply styles
- * @returns {CSS}
- */
-Collection.prototype.css = function () {
-	return this.item.css()
+  /**
+   * Add animation to collection
+   * chainable
+    * @param {AnimationInput} transform
+    * @param {number=} duration
+    * @param {string=} ease
+    * @param {number=} delay
+    * @returns {Collection}
+   */
+  animate(transform, duration, ease, delay) {
+    return this.add(transform, duration, ease, delay)
+  }
+
+  /**
+   * Apply styles
+   * @param {boolean=} idle
+  * @returns {import("../css.js").CSS}
+   */
+  css(idle = false) {
+    return this.item.css(idle)
+  }
 }

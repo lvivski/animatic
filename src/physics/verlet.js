@@ -1,24 +1,33 @@
+import { Vector } from '../math/vector.js'
+
 /**
- * Velocity Verlet Integrator
+ * Position Verlet integrator
+ * @param {import('./particle.js').PhysicsBody} self
  * @param {number} delta
  * @param {number} drag
  * @constructor
  */
-function Verlet(delta, drag) {
-	// velocity = position - old_position
-	// position = position + (velocity + acceleration * delta * delta)
-	var current = this.current,
-	    previous = this.previous
+export function Verlet(self, delta, drag) {
+  // velocity = position - old_position
+  // position = position + (velocity + acceleration * delta * delta)
+  const current = self.current
+  const previous = self.previous
 
-	current.acceleration = Vector.scale(current.acceleration, this.mass)
-	current.velocity = Vector.sub(current.position, previous.position)
+  current.acceleration = Vector.scale(current.acceleration, self.mass)
+  current.velocity = Vector.sub(current.position, previous.position)
 
-	if (drag !== undefined) {
-		current.velocity = Vector.scale(current.velocity, drag)
-	}
+  if (drag !== undefined) {
+    current.velocity = Vector.scale(current.velocity, drag)
+  }
 
-	previous.position = current.position
-	current.position = Vector.add(current.position, Vector.add(current.velocity, Vector.scale(current.acceleration, delta * delta)))
+  previous.position = current.position
+  current.position = Vector.add(
+    current.position,
+    Vector.add(
+      current.velocity,
+      Vector.scale(current.acceleration, delta * delta)
+    )
+  )
 
-	current.acceleration = Vector.zero()
+  current.acceleration = Vector.zero()
 }
