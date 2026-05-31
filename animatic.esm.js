@@ -1117,9 +1117,9 @@ var Animation = class _Animation {
   /**
    * Runs one tick of animation
    * @param {number} tick
-   * @param {boolean} seek Is used in seek mode
+  * @param {boolean=} seek Is used in seek mode
    */
-  run(tick, seek) {
+  run(tick, seek = false) {
     if (this.start === null) return;
     const start = this.start;
     if (tick < start && !seek) return;
@@ -1156,10 +1156,10 @@ var Animation = class _Animation {
   }
   /**
    * Ends animation
-   * @param {boolean} abort
-   * @param {boolean} seek Is used in seek mode
+  * @param {boolean=} abort
+  * @param {boolean=} seek Is used in seek mode
    */
-  end(abort, seek) {
+  end(abort = false, seek = false) {
     if (!abort) {
       this.transform(this.ease(1));
     }
@@ -2278,7 +2278,8 @@ var Sequence = class _Sequence extends Collection {
         a._infinite = this._infinite;
       }
       a.init(tick);
-      if (a.start + a.duration <= tick) {
+      const start = a.start || 0;
+      if (start + a.duration <= tick) {
         if (!(this._infinite && a instanceof CssAnimation)) {
           this.animations.shift();
           a.end();
@@ -2311,7 +2312,8 @@ var Sequence = class _Sequence extends Collection {
     for (let i = 0; i < this.animations.length; ++i) {
       const a = this.animations[i];
       a.init(time, true);
-      if (a.start + a.duration <= tick) {
+      const start = a.start || 0;
+      if (start + a.duration <= tick) {
         time += a.delay + a.duration;
         a.end(false, true);
         continue;
